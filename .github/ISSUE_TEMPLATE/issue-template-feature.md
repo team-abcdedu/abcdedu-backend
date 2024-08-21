@@ -1,7 +1,7 @@
 ---
-name: 이슈 생성 템플릿
+name: issue-template-feature
 about: Describe this issue template's purpose here.
-title: ''
+title: "[FEAT] Title"
 labels: ''
 assignees: ''
 
