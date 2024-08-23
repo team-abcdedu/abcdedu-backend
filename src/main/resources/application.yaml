@@ -1,1 +1,5 @@
-spring.application.name=abcdedu_backend
+spring:
+  application:
+    name: abcdedu_backend
+  profiles:
+    active: local
