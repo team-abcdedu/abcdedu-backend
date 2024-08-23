@@ -46,7 +46,7 @@ class MemberRepositoryTest {
                 .build();
         final Member result = memberRepository.save(member);
 
-        final Member findMember = memberRepository.findByEmail("ehdcjs159@gmail.com");
+        final Member findMember = memberRepository.findByEmail("ehdcjs159@gmail.com").get();
 
         assertThat(findMember.getId()).isNotNull();
         assertThat(findMember.getName()).isEqualTo("고동천");

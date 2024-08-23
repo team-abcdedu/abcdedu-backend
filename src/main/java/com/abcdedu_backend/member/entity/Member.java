@@ -20,7 +20,7 @@ public class Member {
     @Column(nullable = false, length = 40)
     private String email;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 60)
     private String encodedPassword;
 
     @Column(length = 10)
@@ -32,6 +32,7 @@ public class Member {
     @Column(length=100)
     private String image_url;
 
+    @Enumerated(EnumType.STRING)
     private MemberRole role;
 
     @Builder
