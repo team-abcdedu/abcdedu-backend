@@ -14,9 +14,9 @@ public class JwtUtil {
     private Long ACCESS_TOKEN_EXPIRED_MS = Duration.ofHours(2).toMillis();
     private Long REFRESH_TOKEN_EXPIRED_MS = Duration.ofDays(14).toMillis();
 
-    @Value("{jwt.access-token-secret-key}")
+    @Value("${jwt.access-token-secret-key}")
     private String accessTokenSecretKey;
-    @Value("{jwt.refresh-token-secret-key}")
+    @Value("${jwt.refresh-token-secret-key}")
     private String refreshTokenSecretKey;
 
     public String createAccessToken(Long userId){

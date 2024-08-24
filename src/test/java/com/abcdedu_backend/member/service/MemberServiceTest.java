@@ -4,8 +4,10 @@ import com.abcdedu_backend.member.controller.dto.LoginTokenDTO;
 import com.abcdedu_backend.member.controller.dto.request.LoginRequest;
 import com.abcdedu_backend.member.controller.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.member.entity.RefreshToken;
 import com.abcdedu_backend.member.exception.UnauthorizedException;
 import com.abcdedu_backend.member.repository.MemberRepository;
+import com.abcdedu_backend.member.repository.RefreshTokenRepository;
 import com.abcdedu_backend.utils.JwtUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,8 @@ class MemberServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private JwtUtil jwtUtil;
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
 
     @Test
     public void 회원가입_성공(){
@@ -69,9 +73,13 @@ class MemberServiceTest {
     public void 로그인_성공(){
         //given
         LoginRequest request = new LoginRequest("ehdcjs159@gmail.com", "123456");
+        Member member = createMember();
+        RefreshToken refreshToken = new RefreshToken("refreshToken", member.getId());
 
         doReturn("encodedPassword").when(passwordEncoder).encode("123456");
-        doReturn(Optional.of(createMember())).when(memberRepository).findByEmailAndEncodedPassword(request.email(), "encodedPassword");
+        doReturn(true).when(passwordEncoder).matches("123456", "encodedPassword");
+        doReturn(Optional.of(member)).when(memberRepository).findByEmail(request.email());
+        doReturn(refreshToken).when(refreshTokenRepository).save(any(RefreshToken.class));
         doReturn("accessToken").when(jwtUtil).createAccessToken(any(Long.class));
         doReturn("refreshToken").when(jwtUtil).createRefreshToken(any(Long.class));
 
@@ -82,9 +90,11 @@ class MemberServiceTest {
         assertThat(loginTokenDTO.accessToken()).isEqualTo("accessToken");
         assertThat(loginTokenDTO.refreshToken()).isEqualTo("refreshToken");
 
-        verify(memberRepository, times(1)).findByEmailAndEncodedPassword(request.email(), "encodedPassword");
+        verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
+        verify(memberRepository, times(1)).findByEmail(request.email());
         verify(jwtUtil, times(1)).createAccessToken(any(Long.class));
         verify(jwtUtil, times(1)).createRefreshToken(any(Long.class));
+        verify(passwordEncoder, times(1)).matches("123456", "encodedPassword");
         verify(passwordEncoder, times(1)).encode("123456");
     }
 
@@ -93,13 +103,13 @@ class MemberServiceTest {
         //given
         LoginRequest request = new LoginRequest("asd123456@gmail.com", "123456");
         doReturn("encodedPassword").when(passwordEncoder).encode("123456");
-        doReturn(Optional.empty()).when(memberRepository).findByEmailAndEncodedPassword(request.email(), "encodedPassword");
+        doReturn(Optional.empty()).when(memberRepository).findByEmail(request.email());
 
         //when
         Assertions.assertThrows(UnauthorizedException.class, () -> target.login(request));
 
         //then
-        verify(memberRepository, times(1)).findByEmailAndEncodedPassword(request.email(),"encodedPassword");
+        verify(memberRepository, times(1)).findByEmail(request.email());
         verify(passwordEncoder, times(1)).encode("123456");
     }
 
@@ -107,15 +117,18 @@ class MemberServiceTest {
     public void password_잘못_입력하여_로그인_실패(){
         //given
         LoginRequest request = new LoginRequest("asd123456@gmail.com", "123456789");
+        Member member = createMember();
+
         doReturn("encodedPassword222").when(passwordEncoder).encode("123456789");
-        doReturn(Optional.empty()).when(memberRepository).findByEmailAndEncodedPassword(request.email(), "encodedPassword222");
+        doReturn(false).when(passwordEncoder).matches("123456789", "encodedPassword");
+        doReturn(Optional.of(member)).when(memberRepository).findByEmail(request.email());
 
         //when
         Assertions.assertThrows(UnauthorizedException.class, () -> target.login(request));
 
         //then
-        verify(memberRepository, times(1)).findByEmailAndEncodedPassword(request.email(),"encodedPassword222");
-        verify(memberRepository, times(0)).findByEmailAndEncodedPassword(request.email(),"encodedPassword");
+        verify(memberRepository, times(1)).findByEmail(request.email());
+        verify(passwordEncoder, times(1)).matches("123456789", "encodedPassword");
         verify(passwordEncoder, times(1)).encode("123456789");
     }
 

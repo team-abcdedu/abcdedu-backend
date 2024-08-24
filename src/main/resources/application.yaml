@@ -5,5 +5,5 @@ spring:
     active: local
 
 jwt:
-  access-token-secret-key: myAccessSecretKey12345
-  refresh-token-secret-key: myRefreshTokenSecretKey12345
+  access-token-secret-key: sN2uR8vF5aYpL3oX9qWzKbNcTlVoRfGasdfasd123141341243124166
+  refresh-token-secret-key: dY7bTcKjMnBvG4qX9aLtPwZyEsVpOdHnasdfasdqwer1123434122
