@@ -3,3 +3,7 @@ spring:
     name: abcdedu_backend
   profiles:
     active: local
+
+jwt:
+  access-token-secret-key: myAccessSecretKey12345
+  refresh-token-secret-key: myRefreshTokenSecretKey12345

@@ -1,13 +1,16 @@
 package com.abcdedu_backend.member.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@NoArgsConstructor()
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Member {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +38,11 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-    @Builder
-    public Member(String name, String email, String encodedPassword) {
-        this.name = name;
-        this.email = email;
-        this.encodedPassword = encodedPassword;
-        this.role = MemberRole.BASIC;
-    }
+//    @Builder
+//    public Member(String name, String email, String encodedPassword) {
+//        this.name = name;
+//        this.email = email;
+//        this.encodedPassword = encodedPassword;
+//        this.role = MemberRole.BASIC;
+//    }
 }
