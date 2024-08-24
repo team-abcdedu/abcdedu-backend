@@ -38,14 +38,11 @@ public class MemberService {
         }
 
         Member signUpMember = createMember(request);
-        log.info(request.password());
-        log.info(signUpMember.getEncodedPassword());
         memberRepository.save(signUpMember);
     }
 
     @Transactional
     public LoginTokenDTO login(LoginRequest request) {
-        System.out.println(passwordEncoder.encode(request.password()));
         Member findMember = memberRepository.findByEmail(request.email())
                 .orElseThrow(()-> new UnauthorizedException(ErrorCode.LOGIN_FAILED));
 
