@@ -35,6 +35,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
 
     runtimeOnly 'com.h2database:h2'
+
+    // 검증 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 tasks.named('test') {
