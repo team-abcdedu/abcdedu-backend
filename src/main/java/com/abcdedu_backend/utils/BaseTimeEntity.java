@@ -1,4 +1,4 @@
-package com.abcdedu_backend;
+package com.abcdedu_backend.utils;
 
 import jakarta.persistence.*;
 
