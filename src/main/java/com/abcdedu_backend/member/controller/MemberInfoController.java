@@ -1,8 +1,8 @@
 package com.abcdedu_backend.member.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
-import com.abcdedu_backend.member.controller.dto.request.UpdateMemberInfoRequest;
-import com.abcdedu_backend.member.controller.dto.response.MemberInfoResponse;
+import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
+import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

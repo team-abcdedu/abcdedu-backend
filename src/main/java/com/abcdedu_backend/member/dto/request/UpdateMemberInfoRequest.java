@@ -1,4 +1,4 @@
-package com.abcdedu_backend.member.controller.dto.request;
+package com.abcdedu_backend.member.dto.request;
 
 public record UpdateMemberInfoRequest(
         String name,

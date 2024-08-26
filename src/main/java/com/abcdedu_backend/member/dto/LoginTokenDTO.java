@@ -1,4 +1,4 @@
-package com.abcdedu_backend.member.controller.dto;
+package com.abcdedu_backend.member.dto;
 
 import lombok.Builder;
 

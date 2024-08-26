@@ -1,8 +1,8 @@
 package com.abcdedu_backend.member.service;
 
-import com.abcdedu_backend.member.controller.dto.LoginTokenDTO;
-import com.abcdedu_backend.member.controller.dto.request.LoginRequest;
-import com.abcdedu_backend.member.controller.dto.request.SignUpRequest;
+import com.abcdedu_backend.member.dto.LoginTokenDTO;
+import com.abcdedu_backend.member.dto.request.LoginRequest;
+import com.abcdedu_backend.member.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.RefreshToken;
 import com.abcdedu_backend.member.exception.UnauthorizedException;

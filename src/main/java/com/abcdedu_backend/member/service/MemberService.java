@@ -2,12 +2,12 @@ package com.abcdedu_backend.member.service;
 
 import com.abcdedu_backend.infra.file.FileDirectory;
 import com.abcdedu_backend.infra.file.FileHandler;
-import com.abcdedu_backend.member.controller.dto.LoginTokenDTO;
-import com.abcdedu_backend.member.controller.dto.request.LoginRequest;
-import com.abcdedu_backend.member.controller.dto.request.SignUpRequest;
-import com.abcdedu_backend.member.controller.dto.request.UpdateMemberInfoRequest;
-import com.abcdedu_backend.member.controller.dto.response.MemberInfoResponse;
-import com.abcdedu_backend.member.controller.dto.response.ReissueResponse;
+import com.abcdedu_backend.member.dto.LoginTokenDTO;
+import com.abcdedu_backend.member.dto.request.LoginRequest;
+import com.abcdedu_backend.member.dto.request.SignUpRequest;
+import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
+import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
+import com.abcdedu_backend.member.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.entity.RefreshToken;

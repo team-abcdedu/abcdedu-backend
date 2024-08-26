@@ -1,4 +1,4 @@
-package com.abcdedu_backend.member.controller.dto.response;
+package com.abcdedu_backend.member.dto.response;
 
 import lombok.Builder;
 

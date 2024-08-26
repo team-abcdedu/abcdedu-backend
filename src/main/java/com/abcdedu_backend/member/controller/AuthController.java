@@ -1,10 +1,10 @@
 package com.abcdedu_backend.member.controller;
 
-import com.abcdedu_backend.member.controller.dto.LoginTokenDTO;
-import com.abcdedu_backend.member.controller.dto.request.LoginRequest;
-import com.abcdedu_backend.member.controller.dto.request.SignUpRequest;
-import com.abcdedu_backend.member.controller.dto.response.LoginResponse;
-import com.abcdedu_backend.member.controller.dto.response.ReissueResponse;
+import com.abcdedu_backend.member.dto.LoginTokenDTO;
+import com.abcdedu_backend.member.dto.request.LoginRequest;
+import com.abcdedu_backend.member.dto.request.SignUpRequest;
+import com.abcdedu_backend.member.dto.response.LoginResponse;
+import com.abcdedu_backend.member.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
