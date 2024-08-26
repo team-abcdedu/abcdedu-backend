@@ -3,12 +3,12 @@ package com.abcdedu_backend.member.entity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.stream.Stream;
-
 @Getter
 @RequiredArgsConstructor
 public enum MemberRole {
-    ADMIN,
-    STUDENT,
-    BASIC;
+    ADMIN("관리자"),
+    STUDENT("학생"),
+    BASIC("새싹");
+
+    private final String name;
 }

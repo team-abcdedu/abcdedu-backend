@@ -23,7 +23,7 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-public class LoginController {
+public class AuthController {
 
     private final MemberService memberService;
 

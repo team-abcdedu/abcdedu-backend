@@ -30,10 +30,10 @@ public class Member {
     private String school;
 
     @Column
-    private Long student_id;
+    private Long studentId;
 
     @Column(length=100)
-    private String image_url;
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;

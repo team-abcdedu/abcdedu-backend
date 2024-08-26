@@ -3,8 +3,10 @@ package com.abcdedu_backend.member.service;
 import com.abcdedu_backend.member.controller.dto.LoginTokenDTO;
 import com.abcdedu_backend.member.controller.dto.request.LoginRequest;
 import com.abcdedu_backend.member.controller.dto.request.SignUpRequest;
+import com.abcdedu_backend.member.controller.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.controller.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.entity.RefreshToken;
 import com.abcdedu_backend.member.exception.ErrorCode;
 import com.abcdedu_backend.member.exception.UnauthorizedException;
@@ -13,7 +15,6 @@ import com.abcdedu_backend.member.repository.RefreshTokenRepository;
 import com.abcdedu_backend.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.Token;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,23 +63,38 @@ public class MemberService {
                 .build();
     }
 
+    public ReissueResponse reissue(String refreshToken) {
+        refreshTokenRepository.findById(refreshToken)
+                .orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN));
+
+        Long userId = jwtUtil.getMemberIdFromRefreshToken(refreshToken);
+
+        String accessToken = jwtUtil.createAccessToken(userId);
+
+        return new ReissueResponse(accessToken);
+    }
+
+    public MemberInfoResponse getMemberInfo(Long memberId) {
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new UnauthorizedException(ErrorCode.USER_NOT_FOUND));
+
+        return MemberInfoResponse.builder()
+                .studentId(findMember.getStudentId())
+                .email(findMember.getEmail())
+                .name(findMember.getName())
+                .role(findMember.getRole().getName())
+                .school(findMember.getSchool())
+                .imageUrl(findMember.getImageUrl())
+                .build();
+    }
+
     private Member createMember(SignUpRequest request) {
         Member signUpMember = Member.builder()
                 .name(request.name())
                 .email(request.email())
                 .encodedPassword(passwordEncoder.encode(request.password()))
+                .role(MemberRole.BASIC)
                 .build();
         return signUpMember;
-    }
-
-    public ReissueResponse reissue(String refreshToken) {
-        refreshTokenRepository.findById(refreshToken)
-                .orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN));
-
-        Long userId = jwtUtil.getUserIdFromRefreshToken(refreshToken);
-
-        String accessToken = jwtUtil.createAccessToken(userId);
-
-        return new ReissueResponse(accessToken);
     }
 }

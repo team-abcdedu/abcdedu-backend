@@ -133,7 +133,7 @@ class MemberServiceTest {
         RefreshToken refreshToken = createRefreshToken(token);
 
         doReturn(Optional.of(refreshToken)).when(refreshTokenRepository).findById(token);
-        doReturn(1L).when(jwtUtil).getUserIdFromRefreshToken(token);
+        doReturn(1L).when(jwtUtil).getMemberIdFromRefreshToken(token);
         doReturn("accessToken").when(jwtUtil).createAccessToken(1L);
 
         //when
@@ -141,7 +141,7 @@ class MemberServiceTest {
 
         //then
         verify(refreshTokenRepository, times(1)).findById(token);
-        verify(jwtUtil, times(1)).getUserIdFromRefreshToken(token);
+        verify(jwtUtil, times(1)).getMemberIdFromRefreshToken(token);
         verify(jwtUtil, times(1)).createAccessToken(1L);
     }
 
