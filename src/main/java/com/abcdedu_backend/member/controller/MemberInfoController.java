@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 @Tag(name = "프로필 기능", description = "프로필 관련 api입니다.")
 public class MemberInfoController {
