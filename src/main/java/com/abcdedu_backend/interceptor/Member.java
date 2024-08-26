@@ -3,12 +3,14 @@ package com.abcdedu_backend.interceptor;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import com.abcdedu_backend.post.Post;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@NoArgsConstructor
 @Table(name = "members")
 public class Member extends BaseTimeEntity {
     @Id
@@ -24,9 +26,6 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
-
-    public Member() {
-    }
 
     // interceptor 전용 Member 생성
     public Member(String name, String email, MemberRole role) {
