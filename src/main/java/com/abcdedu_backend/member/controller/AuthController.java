@@ -6,6 +6,7 @@ import com.abcdedu_backend.member.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.dto.response.LoginResponse;
 import com.abcdedu_backend.member.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
@@ -15,7 +16,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -32,14 +32,14 @@ public class AuthController {
 
     @Operation(summary = "회원 가입", description = "회원가입을 합니다.")
     @PostMapping("/signup")
-    public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
+    public Response<Void> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
         memberService.signUp(signUpRequest);
-        return ResponseEntity.ok().build();
+        return Response.success();
     }
 
     @Operation(summary = "로그인", description = "로그인을 합니다.")
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(HttpServletResponse response, @Valid @RequestBody LoginRequest loginRequest){
+    public Response<LoginResponse> login(HttpServletResponse response, @Valid @RequestBody LoginRequest loginRequest){
         LoginTokenDTO loginTokenDto = memberService.login(loginRequest);
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", loginTokenDto.refreshToken())
                 .httpOnly(true)
@@ -48,19 +48,19 @@ public class AuthController {
                 .build();
         response.setHeader("Set-Cookie", refreshTokenCookie.toString());
         LoginResponse loginResponse = new LoginResponse(loginTokenDto.accessToken());
-        return ResponseEntity.ok(loginResponse);
+        return Response.success(loginResponse);
     }
 
     @Operation(summary = "액세스 토큰 재발급", description = "리프레시 토큰으로 액세스 토큰을 재발급 합니다.")
     @GetMapping("/reissue")
-    public ResponseEntity<ReissueResponse> reissue(HttpServletRequest request) {
+    public Response<ReissueResponse> reissue(HttpServletRequest request) {
         Cookie refreshTokenCookie = Arrays.stream(request.getCookies())
                 .filter(cookie -> "refreshToken".equals(cookie.getName()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException());
         String refreshToken = refreshTokenCookie.getValue();
         ReissueResponse reissueResponse = memberService.reissue(refreshToken);
-        return ResponseEntity.ok(reissueResponse);
+        return Response.success(reissueResponse);
     }
 
 }
