@@ -1,5 +1,6 @@
 package com.abcdedu_backend.member.entity;
 
+import com.abcdedu_backend.comment.Comment;
 import com.abcdedu_backend.post.Post;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -44,5 +45,8 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
 }
