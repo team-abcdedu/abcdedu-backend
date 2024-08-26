@@ -1,12 +1,18 @@
 package com.abcdedu_backend.interceptor;
 
+import com.abcdedu_backend.utils.BaseTimeEntity;
+import com.abcdedu_backend.post.Post;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.util.List;
 
-@Data
-public class Member {
+@Entity
+@Getter
+@NoArgsConstructor
+@Table(name = "members")
+public class Member extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,9 +21,11 @@ public class Member {
     private String encodedPassword;
     private String school;
     private Long studentId;
-    private Date created_at;
     @Enumerated(EnumType.STRING)
     private MemberRole role;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
 
     // interceptor 전용 Member 생성
     public Member(String name, String email, MemberRole role) {
