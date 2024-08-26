@@ -1,11 +1,11 @@
 package com.abcdedu_backend.member.service;
 
+import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.member.dto.LoginTokenDTO;
 import com.abcdedu_backend.member.dto.request.LoginRequest;
 import com.abcdedu_backend.member.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.RefreshToken;
-import com.abcdedu_backend.member.exception.UnauthorizedException;
 import com.abcdedu_backend.member.repository.MemberRepository;
 import com.abcdedu_backend.member.repository.RefreshTokenRepository;
 import com.abcdedu_backend.utils.JwtUtil;
@@ -103,7 +103,7 @@ class MemberServiceTest {
         doReturn(Optional.empty()).when(memberRepository).findByEmail(request.email());
 
         //when
-        Assertions.assertThrows(UnauthorizedException.class, () -> target.login(request));
+        Assertions.assertThrows(ApplicationException.class, () -> target.login(request));
 
         //then
         verify(memberRepository, times(1)).findByEmail(request.email());
@@ -119,7 +119,7 @@ class MemberServiceTest {
         doReturn(Optional.of(member)).when(memberRepository).findByEmail(request.email());
 
         //when
-        Assertions.assertThrows(UnauthorizedException.class, () -> target.login(request));
+        Assertions.assertThrows(ApplicationException.class, () -> target.login(request));
 
         //then
         verify(memberRepository, times(1)).findByEmail(request.email());
@@ -153,7 +153,7 @@ class MemberServiceTest {
         doReturn(Optional.empty()).when(refreshTokenRepository).findById(token);
 
         //when
-        Assertions.assertThrows(UnauthorizedException.class, () -> target.reissue(token));
+        Assertions.assertThrows(ApplicationException.class, () -> target.reissue(token));
 
         //then
         verify(refreshTokenRepository, times(1)).findById(token);

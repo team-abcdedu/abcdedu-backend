@@ -1,7 +1,7 @@
 package com.abcdedu_backend.utils;
 
-import com.abcdedu_backend.member.exception.ErrorCode;
-import com.abcdedu_backend.member.exception.UnauthorizedException;
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -63,7 +63,7 @@ public class JwtUtil {
 
     private String removeBearerPrefix(String token){
         if (!token.startsWith("Bearer ")){
-            throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN);
+            throw new ApplicationException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
         token = token.substring(7);
         return token;

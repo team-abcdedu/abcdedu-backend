@@ -1,5 +1,7 @@
 package com.abcdedu_backend.member.service;
 
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.infra.file.FileDirectory;
 import com.abcdedu_backend.infra.file.FileHandler;
 import com.abcdedu_backend.member.dto.LoginTokenDTO;
@@ -11,8 +13,6 @@ import com.abcdedu_backend.member.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.entity.RefreshToken;
-import com.abcdedu_backend.member.exception.ErrorCode;
-import com.abcdedu_backend.member.exception.UnauthorizedException;
 import com.abcdedu_backend.member.repository.MemberRepository;
 import com.abcdedu_backend.member.repository.RefreshTokenRepository;
 import com.abcdedu_backend.utils.JwtUtil;
@@ -51,10 +51,10 @@ public class MemberService {
     @Transactional
     public LoginTokenDTO login(LoginRequest request) {
         Member findMember = memberRepository.findByEmail(request.email())
-                .orElseThrow(()-> new UnauthorizedException(ErrorCode.LOGIN_FAILED));
+                .orElseThrow(()-> new ApplicationException(ErrorCode.LOGIN_FAILED));
 
         if (!passwordEncoder.matches(request.password() ,findMember.getEncodedPassword())){
-            throw new UnauthorizedException(ErrorCode.LOGIN_FAILED);
+            throw new ApplicationException(ErrorCode.LOGIN_FAILED);
         }
 
         String accessToken = jwtUtil.createAccessToken(findMember.getId());
@@ -70,7 +70,7 @@ public class MemberService {
 
     public ReissueResponse reissue(String refreshToken) {
         refreshTokenRepository.findById(refreshToken)
-                .orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_REFRESH_TOKEN));
 
         Long userId = jwtUtil.getMemberIdFromRefreshToken(refreshToken);
 
@@ -81,7 +81,7 @@ public class MemberService {
 
     public MemberInfoResponse getMemberInfo(Long memberId) {
         Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new UnauthorizedException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         return MemberInfoResponse.builder()
                 .studentId(findMember.getStudentId())
@@ -98,7 +98,7 @@ public class MemberService {
     @Transactional
     public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request, MultipartFile profileImage) {
         Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new UnauthorizedException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         String uploadImageUrl = fileHandler.upload(profileImage, FileDirectory.PROFILE_IMAGE);
 

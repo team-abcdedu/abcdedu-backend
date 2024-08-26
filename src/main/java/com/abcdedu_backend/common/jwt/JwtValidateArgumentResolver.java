@@ -1,7 +1,7 @@
 package com.abcdedu_backend.common.jwt;
 
-import com.abcdedu_backend.member.exception.ErrorCode;
-import com.abcdedu_backend.member.exception.UnauthorizedException;
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -31,7 +31,7 @@ public class JwtValidateArgumentResolver implements HandlerMethodArgumentResolve
         String token = webRequest.getHeader(ACCESS_TOKEN_HEADER);
 
         if (token == null) {
-            throw new UnauthorizedException(ErrorCode.TOKEN_NOT_FOUND);
+            throw new ApplicationException(ErrorCode.TOKEN_NOT_FOUND);
         }
 
         Long memberId = jwtUtil.getMemberIdFromAccessToken(token);
