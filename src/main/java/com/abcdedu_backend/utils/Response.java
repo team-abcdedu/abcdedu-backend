@@ -16,6 +16,12 @@ public class Response<T> {
                 .result(result)
                 .build();
     }
+    public static <T> Response<T> success() {
+        return Response.<T>builder()
+                .resultCode("SUCCESS")
+                .build();
+    }
+
 
     public static <T> Response<T> error(T result) {
         return Response.<T>builder()
