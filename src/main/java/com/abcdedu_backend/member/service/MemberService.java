@@ -85,6 +85,9 @@ public class MemberService {
                 .role(findMember.getRole().getName())
                 .school(findMember.getSchool())
                 .imageUrl(findMember.getImageUrl())
+                .createdAt(findMember.getCreatedAt())
+                .createCommentCount(findMember.getPosts().size())
+
                 .build();
     }
 

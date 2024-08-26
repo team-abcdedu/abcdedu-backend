@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/member")
+@RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberInfoController {
 

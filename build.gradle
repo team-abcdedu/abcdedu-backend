@@ -47,6 +47,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     runtimeOnly 'com.h2database:h2'
+
+    // 검증 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // SpringDoc OpenAPI UI (Swagger)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
 
 tasks.named('test') {
