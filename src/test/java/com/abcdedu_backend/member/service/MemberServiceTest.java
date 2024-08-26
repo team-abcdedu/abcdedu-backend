@@ -76,7 +76,6 @@ class MemberServiceTest {
         Member member = createMember();
         RefreshToken refreshToken = new RefreshToken("refreshToken", member.getId());
 
-        doReturn("encodedPassword").when(passwordEncoder).encode("123456");
         doReturn(true).when(passwordEncoder).matches("123456", "encodedPassword");
         doReturn(Optional.of(member)).when(memberRepository).findByEmail(request.email());
         doReturn(refreshToken).when(refreshTokenRepository).save(any(RefreshToken.class));
@@ -95,14 +94,12 @@ class MemberServiceTest {
         verify(jwtUtil, times(1)).createAccessToken(any(Long.class));
         verify(jwtUtil, times(1)).createRefreshToken(any(Long.class));
         verify(passwordEncoder, times(1)).matches("123456", "encodedPassword");
-        verify(passwordEncoder, times(1)).encode("123456");
     }
 
     @Test
     public void email_잘못_입력하여_로그인_실패(){
         //given
         LoginRequest request = new LoginRequest("asd123456@gmail.com", "123456");
-        doReturn("encodedPassword").when(passwordEncoder).encode("123456");
         doReturn(Optional.empty()).when(memberRepository).findByEmail(request.email());
 
         //when
@@ -110,7 +107,6 @@ class MemberServiceTest {
 
         //then
         verify(memberRepository, times(1)).findByEmail(request.email());
-        verify(passwordEncoder, times(1)).encode("123456");
     }
 
     @Test
@@ -119,7 +115,6 @@ class MemberServiceTest {
         LoginRequest request = new LoginRequest("asd123456@gmail.com", "123456789");
         Member member = createMember();
 
-        doReturn("encodedPassword222").when(passwordEncoder).encode("123456789");
         doReturn(false).when(passwordEncoder).matches("123456789", "encodedPassword");
         doReturn(Optional.of(member)).when(memberRepository).findByEmail(request.email());
 
@@ -129,7 +124,39 @@ class MemberServiceTest {
         //then
         verify(memberRepository, times(1)).findByEmail(request.email());
         verify(passwordEncoder, times(1)).matches("123456789", "encodedPassword");
-        verify(passwordEncoder, times(1)).encode("123456789");
+    }
+
+    @Test
+    public void AccessToken_재발급_성공() {
+        //given
+        String token = "refreshToken";
+        RefreshToken refreshToken = createRefreshToken(token);
+
+        doReturn(Optional.of(refreshToken)).when(refreshTokenRepository).findById(token);
+        doReturn(1L).when(jwtUtil).getUserIdFromRefreshToken(token);
+        doReturn("accessToken").when(jwtUtil).createAccessToken(1L);
+
+        //when
+        target.reissue(token);
+
+        //then
+        verify(refreshTokenRepository, times(1)).findById(token);
+        verify(jwtUtil, times(1)).getUserIdFromRefreshToken(token);
+        verify(jwtUtil, times(1)).createAccessToken(1L);
+    }
+
+    @Test
+    public void 유효하지않은_refreshToken_AccessToken_재발급_실패() {
+        //given
+        String token = "refreshToken22";
+
+        doReturn(Optional.empty()).when(refreshTokenRepository).findById(token);
+
+        //when
+        Assertions.assertThrows(UnauthorizedException.class, () -> target.reissue(token));
+
+        //then
+        verify(refreshTokenRepository, times(1)).findById(token);
     }
 
 
@@ -139,6 +166,13 @@ class MemberServiceTest {
                 .name("고동천")
                 .email("ehdcjs159@gmail.com")
                 .encodedPassword("encodedPassword")
+                .build();
+    }
+
+    private RefreshToken createRefreshToken(String token){
+        return RefreshToken.builder()
+                .token(token)
+                .id(1L)
                 .build();
     }
 }

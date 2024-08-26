@@ -3,11 +3,11 @@ package com.abcdedu_backend.member.exception;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
-    //회원 가입
+    //회원
+    LOGIN_FAILED(HttpStatus.BAD_REQUEST, "존재하지 않는 이메일 또는 비밀번호입니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
+    TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다.");
 
-
-    //로그인
-    LOGIN_FAILED(HttpStatus.BAD_REQUEST, "존재하지 않는 이메일 또는 비밀번호입니다.");
 
     private HttpStatus status;
     private String message;

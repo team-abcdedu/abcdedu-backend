@@ -4,7 +4,10 @@ import com.abcdedu_backend.member.controller.dto.LoginTokenDTO;
 import com.abcdedu_backend.member.controller.dto.request.LoginRequest;
 import com.abcdedu_backend.member.controller.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.controller.dto.response.LoginResponse;
+import com.abcdedu_backend.member.controller.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.service.MemberService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.Arrays;
 
 @Slf4j
 @RestController
@@ -35,11 +39,22 @@ public class LoginController {
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", loginTokenDto.refreshToken())
                 .httpOnly(true)
                 .path("/")
-                .maxAge(Duration.ofDays(14).toMillis())
+                .maxAge(Duration.ofDays(14).toSeconds())
                 .build();
         response.setHeader("Set-Cookie", refreshTokenCookie.toString());
         LoginResponse loginResponse = new LoginResponse(loginTokenDto.accessToken());
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @GetMapping("/reissue")
+    public ResponseEntity<ReissueResponse> reissue(HttpServletRequest request) {
+        Cookie refreshTokenCookie = Arrays.stream(request.getCookies())
+                .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException());
+        String refreshToken = refreshTokenCookie.getValue();
+        ReissueResponse reissueResponse = memberService.reissue(refreshToken);
+        return ResponseEntity.ok(reissueResponse);
     }
 
 }
