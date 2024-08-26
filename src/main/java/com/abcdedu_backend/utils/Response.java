@@ -6,7 +6,6 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class Response<T> {
     private String resultCode;
     private T result;

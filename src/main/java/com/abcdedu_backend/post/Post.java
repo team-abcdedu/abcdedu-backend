@@ -1,5 +1,6 @@
 package com.abcdedu_backend.post;
 
+import com.abcdedu_backend.comment.Comment;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import com.abcdedu_backend.board.Board;
 import com.abcdedu_backend.interceptor.Member;
@@ -48,18 +49,5 @@ public class Post extends BaseTimeEntity {
 
     @Column(name = "comment_allow", nullable = false)
     private Boolean commentAllow;
-
-    /*
-    public static Post updatePost(PostUpdateRequest req) {
-        return Post.builder()
-                .title(req.getTitle())
-                .content(req.getContent())
-                .secret(req.getSecret())
-                .commentAllow(req.getCommentAllow())
-                .build();
-    }
-     */
-
-
 
 }
