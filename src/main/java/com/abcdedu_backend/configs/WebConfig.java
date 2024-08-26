@@ -14,7 +14,7 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final LoginInterceptor loginInterceptor;
+//    private final LoginInterceptor loginInterceptor;
     private final JwtValidateArgumentResolver jwtValidateArgumentResolver;
 
     @Override
@@ -22,9 +22,9 @@ public class WebConfig implements WebMvcConfigurer {
         resolvers.add(jwtValidateArgumentResolver);
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/**");
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(loginInterceptor)
+//                .addPathPatterns("/**");
+//    }
 }

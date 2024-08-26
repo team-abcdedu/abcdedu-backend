@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-@Component
+//@Component
 @Slf4j
 @RequiredArgsConstructor
 public class LoginInterceptor implements HandlerInterceptor {
