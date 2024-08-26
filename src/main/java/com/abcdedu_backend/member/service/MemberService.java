@@ -1,8 +1,11 @@
 package com.abcdedu_backend.member.service;
 
+import com.abcdedu_backend.infra.file.FileDirectory;
+import com.abcdedu_backend.infra.file.FileHandler;
 import com.abcdedu_backend.member.controller.dto.LoginTokenDTO;
 import com.abcdedu_backend.member.controller.dto.request.LoginRequest;
 import com.abcdedu_backend.member.controller.dto.request.SignUpRequest;
+import com.abcdedu_backend.member.controller.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.controller.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.controller.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.entity.Member;
@@ -18,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -31,6 +35,7 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final FileHandler fileHandler;
 
     @Transactional
     public void signUp(SignUpRequest request){
@@ -89,6 +94,16 @@ public class MemberService {
                 .createPostCount(findMember.getPosts().size())
                 .createCommentCount(findMember.getComments().size())
                 .build();
+    }
+    @Transactional
+    public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request, MultipartFile profileImage) {
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new UnauthorizedException(ErrorCode.USER_NOT_FOUND));
+
+        String uploadImageUrl = fileHandler.upload(profileImage, FileDirectory.PROFILE_IMAGE);
+
+
+        findMember.updateProfile(request.name(), uploadImageUrl, request.school(), request.studentId());
     }
 
     private Member createMember(SignUpRequest request) {

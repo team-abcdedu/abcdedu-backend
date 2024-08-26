@@ -49,4 +49,11 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
+
+    public void updateProfile(String name, String imageUrl, String school, Long studentId){
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.school = school;
+        this.studentId = studentId;
+    }
 }
