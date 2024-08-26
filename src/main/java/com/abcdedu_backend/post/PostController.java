@@ -1,9 +1,9 @@
 package com.abcdedu_backend.post;
 
+import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.post.dto.response.PostResponse;
 import com.abcdedu_backend.utils.Response;
 import com.abcdedu_backend.interceptor.LoginInterceptor;
-import com.abcdedu_backend.interceptor.Member;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
