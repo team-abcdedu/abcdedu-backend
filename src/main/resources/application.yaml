@@ -1,36 +1,5 @@
 spring:
-  # 테스트용 h2 DB 기본 설정
-  datasource:
-      url: 'jdbc:h2:~/testdb'
-      username: 'sa'
-      password:
-      driver-class-name: org.h2.Driver
-  h2:
-    console:
-      enabled: true  # H2 콘솔 활성화
-      path: /h2-console  # H2 콘솔 경로 설정
-
-  # JPA 설정
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: create        # DB 초기화 전략 (none, create, create-drop, update, validate)
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true      # 쿼리 로그 포맷 (정렬)
-        show_sql: true        # 쿼리 로그 출력
-
-  data:
-    web:
-      pageable:
-        default-page-size: 10 # 기본 페이지 사이즈
-        max-page-size: 1000 # 최대 페이지 사이즈
-
-# 어플리케이션 단위로 공통 api 주소 설정
-server:
-  servlet:
-    context-path: /api/v1
-
-
-
+  application:
+    name: abcdedu_backend
+  profiles:
+    active: local
