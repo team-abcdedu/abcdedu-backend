@@ -9,7 +9,7 @@ name: abcdedu-server-cicd-dev
 
 on:
   push:
-    branches: [ "build/cicd-aws" ]
+    branches: [ "develop" ]
 
 jobs:
   CI-CD:
