@@ -5,6 +5,7 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
+import com.abcdedu_backend.member.repository.MemberRepository;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.response.PostResponse;
@@ -21,38 +22,49 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
     private final PostReposiroty postReposiroty;
     private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     public Page<PostListResponse> getAllPosts(Pageable pageable) {
-        log.info("PostService.getAllPosts = {} ", postReposiroty.findAllWithMemberAndComment(pageable));
         return postReposiroty.findAllWithMemberAndComment(pageable)
                 .map(post -> PostToPostListResponse(post));
     }
 
     @Transactional
-    public Long createPost(PostCreateRequest req, Member member) {
-        Board board = checkBoard(req.boardName());
-        Post post = toEntity(member, board, req);
+    public Long createPost(PostCreateRequest req, Long memberId) {
+        Board findBoard = checkBoard(req.boardName());
+        Member findMember = checkMember(memberId);
+        Post post = of(findMember, findBoard, req);
         postReposiroty.save(post);
         return post.getId();
     }
 
-    public PostResponse findPost(Long postId, Member member) {
-        // 해당하는 post는 없다.
-        Post post = postReposiroty.findById(postId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_FOUND));
-
+    public PostResponse findPost(Long postId, Long memberId) {
+        Post findPost = checkPost(postId);
+        Member findMember = checkMember(memberId);
         // 비밀글은 본인과 관리자만 볼 수 있다.
-        if (post.getSecret()) {
-            if (member.getRole() != MemberRole.ADMIN && member.getId() != post.getMember().getId()) {
+        if (findPost.getSecret()) {
+            if (findMember.getRole() != MemberRole.ADMIN && findMember.getId() != findPost.getMember().getId()) {
                 throw new ApplicationException(ErrorCode.SECRET_POST_INVALID_PERMISSION);
             }
         }
-        return postToPostResponse(post);
+        return postToPostResponse(findPost);
     }
+
+    // ======= 비즈니스 유효성 검사, find() =========
 
     private Board checkBoard(String boardName) {
         return boardRepository.findByName(boardName)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
+    }
+
+    private Member checkMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private Post checkPost(Long postId) {
+        return postReposiroty.findById(postId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_FOUND));
     }
 
     // ====== DTO, Entity 변환 =======
@@ -80,7 +92,7 @@ public class PostService {
                 .build();
     }
 
-    public Post toEntity(Member member, Board board, PostCreateRequest req) {
+    public Post of(Member member, Board board, PostCreateRequest req) {
         return Post.builder()
                 .board(board)
                 .member(member)

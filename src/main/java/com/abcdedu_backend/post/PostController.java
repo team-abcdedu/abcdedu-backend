@@ -1,9 +1,8 @@
 package com.abcdedu_backend.post;
 
-import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.post.dto.response.PostResponse;
 import com.abcdedu_backend.utils.Response;
-import com.abcdedu_backend.interceptor.LoginInterceptor;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,8 +35,8 @@ public class PostController {
     }
     @GetMapping("/{postId}")
     public Response<PostResponse> findPost(@Valid @PathVariable Long postId,
-                                           @SessionAttribute(LoginInterceptor.LOGIN_MEMBER) Member member) {
-        return Response.success(postService.findPost(postId, member));
+                                           @JwtValidation Long memberId) {
+        return Response.success(postService.findPost(postId, memberId));
     }
 
     /**
@@ -46,7 +45,7 @@ public class PostController {
 
     @PostMapping("/")
     public Response<Long> addPost(@Valid @RequestBody PostCreateRequest req,
-                                        @SessionAttribute(LoginInterceptor.LOGIN_MEMBER) Member member) {
-        return Response.success(postService.createPost(req, member));
+                                  @JwtValidation Long memberId) {
+        return Response.success(postService.createPost(req, memberId));
     }
 }
