@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
+@Transactional
+@SpringBootTest
 class MemberRepositoryTest {
 
     @Autowired
@@ -24,6 +26,7 @@ class MemberRepositoryTest {
                 .name("고동천")
                 .email("ehdcjs159@gmail.com")
                 .encodedPassword("abcd1234!!")
+                .role(MemberRole.BASIC)
                 .build();
 
         final Member result = memberRepository.save(member);
@@ -33,8 +36,8 @@ class MemberRepositoryTest {
         assertThat(result.getRole()).isEqualTo(MemberRole.BASIC);
         assertThat(result.getEncodedPassword()).isEqualTo("abcd1234!!");
         assertThat(result.getSchool()).isNull();
-        assertThat(result.getImage_url()).isNull();
-        assertThat(result.getStudent_id()).isNull();
+        assertThat(result.getImageUrl()).isNull();
+        assertThat(result.getStudentId()).isNull();
     }
 
     @Test
@@ -43,6 +46,7 @@ class MemberRepositoryTest {
                 .name("고동천")
                 .email("ehdcjs159@gmail.com")
                 .encodedPassword("abcd1234!!")
+                .role(MemberRole.BASIC)
                 .build();
         final Member result = memberRepository.save(member);
 
