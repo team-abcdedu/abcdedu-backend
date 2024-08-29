@@ -57,4 +57,8 @@ public class Member extends BaseTimeEntity {
         this.school = school;
         this.studentId = studentId;
     }
+    // ToDo : 관리자 역할 바꾸기 위한 test용 기능
+    public void updateRole(MemberRole memberRole) {
+        this.role = memberRole;
+    }
 }

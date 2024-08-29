@@ -3,6 +3,7 @@ package com.abcdedu_backend.member.controller;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
+import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +48,15 @@ public class MemberInfoController {
                                                  @Valid @ModelAttribute UpdateMemberInfoRequest updateMemberInfoRequest,
                                                  @RequestPart("file") MultipartFile profileImage){
         memberService.updateMemberInfo(memberId, updateMemberInfoRequest, profileImage);
+        return Response.success();
+    }
+
+    // ToDo : 관리자 역할 바꾸기 위한 test용 기능
+    @Operation(summary = "등업", description = "test를 위한 임시기능, 관리자 아니여도 내 등급을 관리자로 만들 수 있습니다.")
+    @PostMapping("/up/{memberId}")
+    public Response<Void> updateMemberRole(@JwtValidation Long memberId,
+                                            @Valid @RequestBody MemberRole memberRole) {
+        memberService.updateMemberRole(memberId, memberRole);
         return Response.success();
     }
 }

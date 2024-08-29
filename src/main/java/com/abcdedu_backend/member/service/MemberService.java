@@ -106,6 +106,13 @@ public class MemberService {
         findMember.updateProfile(request.name(), uploadImageUrl, request.school(), request.studentId());
     }
 
+    // ToDo : 관리자 역할 바꾸기 위한 test용 기능
+    @Transactional
+    public void updateMemberRole(Long memberId, MemberRole memberRole) {
+        Member findMember = checkMember(memberId);
+        findMember.updateRole(memberRole);
+    }
+
     private Member createMember(SignUpRequest request) {
         Member signUpMember = Member.builder()
                 .name(request.name())
