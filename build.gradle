@@ -13,6 +13,10 @@ java {
     }
 }
 
+bootJar {
+    archiveFileName.set("abcdedu-server.jar")
+}
+::qq
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -48,10 +52,16 @@ dependencies {
 
     runtimeOnly 'com.h2database:h2'
 
+    implementation 'mysql:mysql-connector-java:8.0.30'
+
     // SpringDoc OpenAPI UI (Swagger)
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+    // 모니터링 actuator 추가
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
