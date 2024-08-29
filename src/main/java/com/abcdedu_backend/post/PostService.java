@@ -1,11 +1,11 @@
 package com.abcdedu_backend.post;
 import com.abcdedu_backend.board.Board;
-import com.abcdedu_backend.board.BoardRepository;
+import com.abcdedu_backend.board.BoardService;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.repository.MemberRepository;
+import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.response.PostResponse;
@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class PostService {
     private final PostReposiroty postReposiroty;
-    private final BoardRepository boardRepository;
-    private final MemberRepository memberRepository;
+    private final BoardService boardService;
+    private final MemberService memberService;
 
     public Page<PostListResponse> getAllPosts(Pageable pageable) {
         return postReposiroty.findAllWithMemberAndComment(pageable)
@@ -31,8 +31,8 @@ public class PostService {
 
     @Transactional
     public Long createPost(PostCreateRequest req, Long memberId) {
-        Board findBoard = checkBoard(req.boardName());
-        Member findMember = checkMember(memberId);
+        Board findBoard = boardService.checkBoard(req.boardName());
+        Member findMember = memberService.checkMember(memberId);
         Post post = of(findMember, findBoard, req);
         postReposiroty.save(post);
         return post.getId();
@@ -40,7 +40,7 @@ public class PostService {
 
     public PostResponse findPost(Long postId, Long memberId) {
         Post findPost = checkPost(postId);
-        Member findMember = checkMember(memberId);
+        Member findMember = memberService.checkMember(memberId);
         // 비밀글은 본인과 관리자만 볼 수 있다.
         if (findPost.getSecret()) {
             if (findMember.getRole() != MemberRole.ADMIN && findMember.getId().equals(findPost.getMember().getId())) {
@@ -50,19 +50,7 @@ public class PostService {
         return postToPostResponse(findPost);
     }
 
-    // ======= 비즈니스 유효성 검사, find() =========
-
-    private Board checkBoard(String boardName) {
-        return boardRepository.findByName(boardName)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
-    }
-
-    private Member checkMember(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    private Post checkPost(Long postId) {
+    public Post checkPost(Long postId) {
         return postReposiroty.findById(postId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_FOUND));
     }

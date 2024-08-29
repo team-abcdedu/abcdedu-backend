@@ -115,4 +115,9 @@ public class MemberService {
                 .build();
         return signUpMember;
     }
+
+    public Member checkMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+    }
 }
