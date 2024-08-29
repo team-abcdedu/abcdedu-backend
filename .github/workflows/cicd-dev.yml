@@ -25,9 +25,12 @@ jobs:
     - name: application.yml 생성
       run: |
         cd ./src/main/resources 
-        echo "$APPLICATION_DEV" > ./application.yml
+        echo "$APPLICATION_DEV" > ./application.yaml
+        touch ./application-local.yaml
+        echo "$APPLICATION_TEST" > ./application-local.yaml
       env:
         APPLICATION_DEV: ${{ secrets.APPLICATION_DEV }}
+        APPLICATION_TEST: ${{ secrets.APPLICATION_TEST }}
 
 
     - name: Setup Gradle
