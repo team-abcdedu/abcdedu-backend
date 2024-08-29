@@ -41,24 +41,31 @@ public class JwtUtil {
     }
 
     public Long getMemberIdFromRefreshToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(refreshTokenSecretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.get(MEMBER_ID_KEY, Long.class);
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(refreshTokenSecretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get(MEMBER_ID_KEY, Long.class);
+        } catch (Exception e){
+            throw new ApplicationException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
     }
 
     public Long getMemberIdFromAccessToken(String token) {
         token = removeBearerPrefix(token);
-        Claims claims = Jwts.parser()
-                .setSigningKey(accessTokenSecretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(accessTokenSecretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get(MEMBER_ID_KEY, Long.class);
+        } catch (Exception e){
+            throw new ApplicationException(ErrorCode.INVALID_ACCESS_TOKEN);
+        }
 
-        return claims.get(MEMBER_ID_KEY, Long.class);
     }
 
     private String removeBearerPrefix(String token){

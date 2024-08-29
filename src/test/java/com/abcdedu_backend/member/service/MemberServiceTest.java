@@ -63,7 +63,7 @@ class MemberServiceTest {
         doReturn(Optional.of(createMember())).when(memberRepository).findByEmail(request.email());
 
         //when
-        Assertions.assertThrows(IllegalStateException.class, () -> target.signUp(request));
+        Assertions.assertThrows(ApplicationException.class, () -> target.signUp(request));
 
         //then
         verify(memberRepository).findByEmail(request.email());
