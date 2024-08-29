@@ -42,7 +42,7 @@ public class MemberService {
         String signUpEmail = request.email();
         Optional<Member> findMember = memberRepository.findByEmail(signUpEmail);
         if (findMember.isPresent()){
-            throw new IllegalStateException();
+            throw new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
         Member signUpMember = createMember(request);
         memberRepository.save(signUpMember);

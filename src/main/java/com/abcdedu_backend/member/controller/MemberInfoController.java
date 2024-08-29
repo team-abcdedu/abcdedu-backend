@@ -6,6 +6,9 @@ import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "성공적으로 요청이 완료되었습니다.", content = @Content),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. (RequestBody Validation)", content = @Content),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰입니다.", content = @Content),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content)
+})
 @Tag(name = "프로필 기능", description = "프로필 관련 api입니다.")
 public class MemberInfoController {
 
@@ -29,6 +38,9 @@ public class MemberInfoController {
         return Response.success(memberInfoResponse);
     }
 
+    @ApiResponses(value ={
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.", content = @Content),
+    })
     @Operation(summary = "프로필 정보 수정", description = "프로필을 정보를 수정합니다.")
     @PatchMapping("/info")
     public Response<Void> updateMemberInfo(@JwtValidation Long memberId,
