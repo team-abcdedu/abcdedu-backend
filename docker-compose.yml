@@ -1,13 +1,13 @@
 version: "3"
 services:
   blue:
-    image: 124355679627.dkr.ecr.ap-northeast-2.amazonaws.com/abcdedu-ecr-dev
+    image: 124355679627.dkr.ecr.ap-northeast-2.amazonaws.com/abcdedu-server-ecr-dev
     container_name: blue
     ports:
       - 8081:8080
 
   green:
-    image: 124355679627.dkr.ecr.ap-northeast-2.amazonaws.com/abcdedu-ecr-dev
+    image: 124355679627.dkr.ecr.ap-northeast-2.amazonaws.com/abcdedu-server-ecr-dev
     container_name: green
     ports:
       - 8082:8080
