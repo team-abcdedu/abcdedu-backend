@@ -43,7 +43,7 @@ public class PostService {
         Member findMember = checkMember(memberId);
         // 비밀글은 본인과 관리자만 볼 수 있다.
         if (findPost.getSecret()) {
-            if (findMember.getRole() != MemberRole.ADMIN && findMember.getId() != findPost.getMember().getId()) {
+            if (findMember.getRole() != MemberRole.ADMIN && findMember.getId().equals(findPost.getMember().getId())) {
                 throw new ApplicationException(ErrorCode.SECRET_POST_INVALID_PERMISSION);
             }
         }
