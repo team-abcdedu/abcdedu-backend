@@ -26,8 +26,8 @@ jobs:
       run: |
         cd ./src/main/resources 
         echo "$APPLICATION_DEV" > ./application.yaml
-        touch ./application-local.yaml
-        echo "$APPLICATION_TEST" > ./application-local.yaml
+        touch ./application-test.yaml
+        echo "$APPLICATION_TEST" > ./application-test.yaml
       env:
         APPLICATION_DEV: ${{ secrets.APPLICATION_DEV }}
         APPLICATION_TEST: ${{ secrets.APPLICATION_TEST }}
