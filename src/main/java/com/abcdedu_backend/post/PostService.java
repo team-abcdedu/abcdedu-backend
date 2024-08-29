@@ -41,18 +41,27 @@ public class PostService {
     public PostResponse findPost(Long postId, Long memberId) {
         Post findPost = checkPost(postId);
         Member findMember = memberService.checkMember(memberId);
-        // 비밀글은 본인과 관리자만 볼 수 있다.
-        if (findPost.getSecret()) {
-            if (findMember.getRole() != MemberRole.ADMIN && findMember.getId().equals(findPost.getMember().getId())) {
-                throw new ApplicationException(ErrorCode.SECRET_POST_INVALID_PERMISSION);
-            }
-        }
+        checkPermission(findMember, findPost);
         return postToPostResponse(findPost);
+    }
+
+    @Transactional
+    public void removePost(Long postId, Long memberId) {
+        Member findMember = memberService.checkMember(memberId);
+        Post findPost = checkPost(postId);
+        checkPermission(findMember, findPost);
+        postReposiroty.delete(findPost);
     }
 
     public Post checkPost(Long postId) {
         return postReposiroty.findById(postId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_FOUND));
+    }
+    // post 게시자 본인과 관리자만 할 수 있는 기능에 추가
+    private void checkPermission(Member member, Post post) {
+        if (!member.getRole().equals(MemberRole.ADMIN) && !member.getId().equals(post.getMember().getId())) {
+            throw new ApplicationException(ErrorCode.POST_INVALID_PERMISSION);
+        }
     }
 
     // ====== DTO, Entity 변환 =======
@@ -91,4 +100,6 @@ public class PostService {
                 .commentAllow(req.commentAllow())
                 .build();
     }
+
+
 }
