@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Parameter(name = "AccessToken", in = ParameterIn.HEADER, required = true, schema = @Schema(type = "string"))
+@Parameter(name = "Authorization", in = ParameterIn.HEADER, required = true, schema = @Schema(type = "string"))
 public @interface JwtValidation {
 }
