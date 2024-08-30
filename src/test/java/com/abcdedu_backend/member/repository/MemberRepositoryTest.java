@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @DataJpaTest
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 class MemberRepositoryTest {
 
     @Autowired

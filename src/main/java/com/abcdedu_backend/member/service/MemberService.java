@@ -9,6 +9,7 @@ import com.abcdedu_backend.member.dto.request.LoginRequest;
 import com.abcdedu_backend.member.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
+import com.abcdedu_backend.member.dto.response.MemberShortInfoResponse;
 import com.abcdedu_backend.member.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
@@ -123,8 +124,13 @@ public class MemberService {
         return signUpMember;
     }
 
-    public Member checkMember(Long memberId) {
-        return memberRepository.findById(memberId)
+    public MemberShortInfoResponse getMemberShortInfo(Long memberId) {
+        Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        return MemberShortInfoResponse.builder()
+                .name(findMember.getName())
+                .role(findMember.getRole().getName())
+                .build();
     }
 }

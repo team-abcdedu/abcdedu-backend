@@ -39,6 +39,7 @@ out/
 application.yaml
 application-local.yaml
 application-dev.yaml
+application-test.yaml
 
 # Local .terraform directories
 **/.terraform/*
