@@ -24,6 +24,5 @@ public record PostCreateRequest (
         // 기본 설정 값 뺀 필드들을 파라미터로 받아 객체 생성
         public PostCreateRequest(String title, String content, Boolean secret, Boolean commentAllow, String boardName) {
                 this(title, content, 0L, secret, commentAllow, boardName);
-                log.info("===================== Hey I'm ready ==============");
         }
 }

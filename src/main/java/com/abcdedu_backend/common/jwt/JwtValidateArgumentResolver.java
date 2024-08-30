@@ -14,7 +14,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 @RequiredArgsConstructor
 public class JwtValidateArgumentResolver implements HandlerMethodArgumentResolver {
-    private final String ACCESS_TOKEN_HEADER = "AccessToken";
+    private final String ACCESS_TOKEN_HEADER = "Authorization";
 
     private final JwtUtil jwtUtil;
 
