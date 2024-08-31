@@ -14,6 +14,10 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 포스트가 없습니다."),
     POST_INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "본인과 관리자만 가능한 기능입니다."),
 
+    // 댓글
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다."),
+    COMMENT_INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "댓글 수정 및 삭제는 관리자나 작성자만 가능합니다."),
+
 
     // 카테고리
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."),
