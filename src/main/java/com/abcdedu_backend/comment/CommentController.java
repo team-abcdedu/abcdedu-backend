@@ -41,7 +41,7 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 수정")
-    @PostMapping ("/{commentId}")
+    @PatchMapping ("/{commentId}")
     public Response<Void> updateComment(@PathVariable Long commentId, @JwtValidation Long memberId, @RequestBody CommentUpdateRequest updateRequest) {
         commentService.updateComment(commentId, memberId, updateRequest);
         return Response.success();
