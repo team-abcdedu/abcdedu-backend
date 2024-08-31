@@ -10,6 +10,8 @@ import lombok.Builder;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE posts SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 @Table(name = "posts")
 public class Post extends BaseTimeEntity {
     @Id
@@ -41,7 +45,7 @@ public class Post extends BaseTimeEntity {
     @Column(name = "content", length = 300, nullable = false)
     private String content;
 
-    @Column(name = "view", nullable = false)
+    @Column(name = "viewCount", nullable = false)
     private Long viewCount;
 
     @Column(name = "secret", nullable = false)
@@ -50,4 +54,6 @@ public class Post extends BaseTimeEntity {
     @Column(name = "comment_allow", nullable = false)
     private Boolean commentAllow;
 
+    @Column(name = "deleted")
+    private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
 }

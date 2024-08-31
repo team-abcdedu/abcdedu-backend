@@ -1,10 +1,11 @@
 package com.abcdedu_backend.post;
 import com.abcdedu_backend.board.Board;
-import com.abcdedu_backend.board.BoardRepository;
+import com.abcdedu_backend.board.BoardService;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
+import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.response.PostResponse;
@@ -20,39 +21,47 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class PostService {
     private final PostReposiroty postReposiroty;
-    private final BoardRepository boardRepository;
+    private final BoardService boardService;
+    private final MemberService memberService;
 
     public Page<PostListResponse> getAllPosts(Pageable pageable) {
-        log.info("PostService.getAllPosts = {} ", postReposiroty.findAllWithMemberAndComment(pageable));
         return postReposiroty.findAllWithMemberAndComment(pageable)
                 .map(post -> PostToPostListResponse(post));
     }
 
     @Transactional
-    public Long createPost(PostCreateRequest req, Member member) {
-        Board board = checkBoard(req.boardName());
-        Post post = toEntity(member, board, req);
+    public Long createPost(PostCreateRequest req, Long memberId) {
+        Board findBoard = boardService.checkBoard(req.boardName());
+        Member findMember = memberService.checkMember(memberId);
+        Post post = of(findMember, findBoard, req);
         postReposiroty.save(post);
         return post.getId();
     }
 
-    public PostResponse findPost(Long postId, Member member) {
-        // 해당하는 post는 없다.
-        Post post = postReposiroty.findById(postId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_FOUND));
-
-        // 비밀글은 본인과 관리자만 볼 수 있다.
-        if (post.getSecret()) {
-            if (member.getRole() != MemberRole.ADMIN && member.getId() != post.getMember().getId()) {
-                throw new ApplicationException(ErrorCode.SECRET_POST_INVALID_PERMISSION);
-            }
-        }
-        return postToPostResponse(post);
+    public PostResponse findPost(Long postId, Long memberId) {
+        Post findPost = checkPost(postId);
+        Member findMember = memberService.checkMember(memberId);
+        checkPermission(findMember, findPost);
+        return postToPostResponse(findPost);
     }
 
-    private Board checkBoard(String boardName) {
-        return boardRepository.findByName(boardName)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
+    @Transactional
+    public void removePost(Long postId, Long memberId) {
+        Member findMember = memberService.checkMember(memberId);
+        Post findPost = checkPost(postId);
+        checkPermission(findMember, findPost);
+        postReposiroty.delete(findPost);
+    }
+
+    public Post checkPost(Long postId) {
+        return postReposiroty.findById(postId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_FOUND));
+    }
+    // post 게시자 본인과 관리자만 할 수 있는 기능에 추가
+    private void checkPermission(Member member, Post post) {
+        if (!member.getRole().equals(MemberRole.ADMIN) && !member.getId().equals(post.getMember().getId())) {
+            throw new ApplicationException(ErrorCode.POST_INVALID_PERMISSION);
+        }
     }
 
     // ====== DTO, Entity 변환 =======
@@ -80,7 +89,7 @@ public class PostService {
                 .build();
     }
 
-    public Post toEntity(Member member, Board board, PostCreateRequest req) {
+    public Post of(Member member, Board board, PostCreateRequest req) {
         return Post.builder()
                 .board(board)
                 .member(member)
@@ -91,4 +100,6 @@ public class PostService {
                 .commentAllow(req.commentAllow())
                 .build();
     }
+
+
 }

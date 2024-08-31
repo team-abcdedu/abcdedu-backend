@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface PostReposiroty extends JpaRepository<Post, Long> {
     Optional<Post> findById (Long id);
 
-    @EntityGraph(attributePaths = {"member", "comments"})
+    @EntityGraph(attributePaths = {"member", "comments"}) // TODO. member 전 컬럼을 가져오지 않도록 성능 최적화
     @Query("SELECT DISTINCT p FROM Post p")
     Page<Post> findAllWithMemberAndComment(Pageable pageable);
 

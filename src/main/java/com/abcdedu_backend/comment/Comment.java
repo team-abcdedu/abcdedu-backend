@@ -1,8 +1,8 @@
 package com.abcdedu_backend.comment;
 
-import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.post.Post;
 import com.abcdedu_backend.utils.BaseTimeEntity;
+import com.abcdedu_backend.interceptor.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 
