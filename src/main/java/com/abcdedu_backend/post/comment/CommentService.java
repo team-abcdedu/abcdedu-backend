@@ -1,8 +1,8 @@
-package com.abcdedu_backend.comment;
+package com.abcdedu_backend.post.comment;
 
-import com.abcdedu_backend.comment.dto.request.CommentCreateRequest;
-import com.abcdedu_backend.comment.dto.request.CommentUpdateRequest;
-import com.abcdedu_backend.comment.dto.response.CommentResponse;
+import com.abcdedu_backend.post.comment.dto.request.CommentCreateRequest;
+import com.abcdedu_backend.post.comment.dto.request.CommentUpdateRequest;
+import com.abcdedu_backend.post.comment.dto.response.CommentResponse;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;

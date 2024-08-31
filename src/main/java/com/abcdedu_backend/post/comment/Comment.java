@@ -1,4 +1,4 @@
-package com.abcdedu_backend.comment;
+package com.abcdedu_backend.post.comment;
 
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.post.Post;

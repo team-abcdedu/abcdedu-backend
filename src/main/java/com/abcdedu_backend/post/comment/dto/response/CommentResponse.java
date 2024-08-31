@@ -1,4 +1,4 @@
-package com.abcdedu_backend.comment.dto.response;
+package com.abcdedu_backend.post.comment.dto.response;
 
 import lombok.Builder;
 

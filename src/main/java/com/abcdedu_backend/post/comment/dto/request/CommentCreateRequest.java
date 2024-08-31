@@ -1,4 +1,4 @@
-package com.abcdedu_backend.comment.dto.request;
+package com.abcdedu_backend.post.comment.dto.request;
 
 public record CommentCreateRequest(String content) {
 }

@@ -1,6 +1,6 @@
 package com.abcdedu_backend.post;
 
-import com.abcdedu_backend.comment.Comment;
+import com.abcdedu_backend.post.comment.Comment;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import com.abcdedu_backend.board.Board;

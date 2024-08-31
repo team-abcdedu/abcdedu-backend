@@ -1,6 +1,6 @@
 package com.abcdedu_backend.post.dto.response;
 
-import com.abcdedu_backend.comment.Comment;
+import com.abcdedu_backend.post.comment.Comment;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
