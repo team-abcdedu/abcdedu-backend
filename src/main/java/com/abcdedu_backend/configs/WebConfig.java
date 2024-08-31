@@ -16,18 +16,21 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final JwtValidateArgumentResolver jwtValidateArgumentResolver;
 
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
+        registry.addMapping("/*")
                 .allowedOrigins("http://localhost:3000")
-                .allowedHeaders("*")
+                .allowedHeaders("")
                 .allowedMethods(
-                    HttpMethod.GET.name(),
-                    HttpMethod.POST.name(),
-                    HttpMethod.PATCH.name(),
-                    HttpMethod.PUT.name(),
-                    HttpMethod.DELETE.name())
+                        HttpMethod.GET.name(),
+                        HttpMethod.POST.name(),
+                        HttpMethod.PATCH.name(),
+                        HttpMethod.PUT.name(),
+                        HttpMethod.DELETE.name())
+                .allowCredentials(true)
                 .maxAge(3600L);
+
     }
 
     @Override
