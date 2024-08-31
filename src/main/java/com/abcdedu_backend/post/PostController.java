@@ -10,6 +10,9 @@ import com.abcdedu_backend.utils.Response;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +29,15 @@ import java.util.List;
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "게시글 기능", description = "게시글과 관련된 기능들입니다.")
+@Tag(name = "게시글, 댓글 기능", description = "게시글과 관련된 기능들입니다.")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "성공적으로 요청이 완료되었습니다.", content = @Content),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. (RequestBody Validation)", content = @Content),
+        @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
+        @ApiResponse(responseCode = "404", description = "해당 댓글이 없습니다.", content = @Content),
+        @ApiResponse(responseCode = "401", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content)
+})
 public class PostController {
     private final PostService postService;
     private final CommentService commentService;
@@ -68,14 +79,14 @@ public class PostController {
     @Operation(summary = "댓글 생성", description = "게시글에 댓글을 작성합니다.")
     @PostMapping("/{postId}/comments")
     public Response<Void> create(@PathVariable Long postId, @JwtValidation Long memberId, CommentCreateRequest createRequest) {
-        commentService.create(postId, memberId, createRequest);
+        commentService.CreateComment(postId, memberId, createRequest);
         return Response.success();
     }
 
     @Operation(summary = "게시글 댓글 조회", description = "게시글 id에 따라 댓글이 조회됩니다")
     @GetMapping("/{postId}/comments")
     public Response<List<CommentResponse>> read(@PathVariable Long postId) {
-        List<CommentResponse> commentResponses = commentService.read(postId);
+        List<CommentResponse> commentResponses = commentService.readComments(postId);
         return Response.success(commentResponses);
     }
 

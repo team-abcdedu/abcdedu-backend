@@ -37,7 +37,7 @@ public class CommentService {
     }
 
 
-    public List<CommentResponse> read(Long postId) {
+    public List<CommentResponse> readComments(Long postId) {
         Post findpost = postService.checkPost(postId);
         List<Comment> comments = findpost.getComments();
         List<CommentResponse> commentResponses = comments.stream()
@@ -50,7 +50,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void create(Long postId, Long memberId, CommentCreateRequest createRequest) {
+    public void CreateComment(Long postId, Long memberId, CommentCreateRequest createRequest) {
         Post findpost = postService.checkPost(postId);
         Member findMember = memberService.checkMember(memberId);
         Comment comment = Comment.builder()
