@@ -39,8 +39,6 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "deleted")
     private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
 
-    //private boolean secret;
-
     public void updateContent(String content) {
         this.content = content;
     }
