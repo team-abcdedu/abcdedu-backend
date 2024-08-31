@@ -114,6 +114,11 @@ public class MemberService {
         findMember.updateRole(memberRole);
     }
 
+    public Member checkMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+    }
+
     private Member createMember(SignUpRequest request) {
         Member signUpMember = Member.builder()
                 .name(request.name())
