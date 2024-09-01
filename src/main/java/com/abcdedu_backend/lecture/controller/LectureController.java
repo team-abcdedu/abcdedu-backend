@@ -1,6 +1,7 @@
 package com.abcdedu_backend.lecture.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.lecture.dto.CreateAssignmentRequest;
 import com.abcdedu_backend.lecture.dto.CreateLectureRequest;
 import com.abcdedu_backend.lecture.dto.CreateSubLectureRequest;
 import com.abcdedu_backend.lecture.service.LectureService;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/classes")
+@RequestMapping("/lectures")
 @RequiredArgsConstructor
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "성공적으로 요청이 완료되었습니다.", content = @Content),
@@ -45,4 +46,15 @@ public class LectureController {
         lectureService.createSubLecture(lectureId, memberId, createSubLectureRequest);
         return Response.success();
     }
+
+    @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
+    @Operation(summary = "과제 등록", description = "클래스 과제를 등록합니다.")
+    @PostMapping("/{subLectureId}/assignments")
+    public Response<Void> createAssignments(@PathVariable Long subLectureId, @JwtValidation Long memberId, @Valid @RequestBody CreateAssignmentRequest createAssignmentRequest){
+        lectureService.createAssignments(subLectureId, memberId, createAssignmentRequest);
+        return Response.success();
+    }
+
+
+
 }
