@@ -6,7 +6,7 @@ import java.util.List;
 public record CreateAssignmentRequest(
         String title,
         String body,
-        List<CreateAssignmentQuestionsRequest> questions
+        List<CreateAssignmentQuestionsDto> questions
 
 ) {
 }

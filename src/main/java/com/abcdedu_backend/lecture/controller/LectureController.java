@@ -1,6 +1,7 @@
 package com.abcdedu_backend.lecture.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.lecture.dto.CreateAssignmentAnswerRequest;
 import com.abcdedu_backend.lecture.dto.CreateAssignmentRequest;
 import com.abcdedu_backend.lecture.dto.CreateLectureRequest;
 import com.abcdedu_backend.lecture.dto.CreateSubLectureRequest;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
         @ApiResponse(responseCode = "200", description = "성공적으로 요청이 완료되었습니다.", content = @Content),
         @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. (RequestBody Validation)", content = @Content),
         @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰입니다.", content = @Content),
+        @ApiResponse(responseCode = "404", description = "~를 찾을 찾을 수 없습니다. (유저, 과제, 클래스 등)", content = @Content),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content)
 })
 @Tag(name = "클래스 기능", description = "클래스 관련 api 입니다")
@@ -52,6 +54,13 @@ public class LectureController {
     @PostMapping("/{subLectureId}/assignments")
     public Response<Void> createAssignments(@PathVariable Long subLectureId, @JwtValidation Long memberId, @Valid @RequestBody CreateAssignmentRequest createAssignmentRequest){
         lectureService.createAssignments(subLectureId, memberId, createAssignmentRequest);
+        return Response.success();
+    }
+
+    @Operation(summary = "과제 제출", description = "과제를 제출합니다.")
+    @PostMapping("/assignments/{assignmentId}")
+    public Response<Void> saveAssignmentAnswer(@PathVariable Long assignmentId, @JwtValidation Long memberId, @Valid @RequestBody CreateAssignmentAnswerRequest createAssignmentAnswerRequest){
+        lectureService.createAssignmentsAnswer(assignmentId, memberId, createAssignmentAnswerRequest);
         return Response.success();
     }
 

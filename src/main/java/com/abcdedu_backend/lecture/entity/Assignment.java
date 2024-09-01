@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -26,4 +28,8 @@ public class Assignment {
 
     @Column(nullable = false, length = 20)
     private String body;
+
+    @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("orderNumber ASC")
+    private List<AssignmentQuestion> assignmentQuestions;
 }

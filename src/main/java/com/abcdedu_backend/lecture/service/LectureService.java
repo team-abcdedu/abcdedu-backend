@@ -2,15 +2,9 @@ package com.abcdedu_backend.lecture.service;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.lecture.dto.CreateAssignmentQuestionsRequest;
-import com.abcdedu_backend.lecture.dto.CreateAssignmentRequest;
-import com.abcdedu_backend.lecture.dto.CreateLectureRequest;
-import com.abcdedu_backend.lecture.dto.CreateSubLectureRequest;
+import com.abcdedu_backend.lecture.dto.*;
 import com.abcdedu_backend.lecture.entity.*;
-import com.abcdedu_backend.lecture.repository.AssignmentQuestionRepository;
-import com.abcdedu_backend.lecture.repository.AssignmentRepository;
-import com.abcdedu_backend.lecture.repository.LectureRepository;
-import com.abcdedu_backend.lecture.repository.SubLectureRepository;
+import com.abcdedu_backend.lecture.repository.*;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.repository.MemberRepository;
@@ -32,6 +26,7 @@ public class LectureService {
     private final SubLectureRepository subLectureRepository;
     private final AssignmentRepository assignmentRepository;
     private final AssignmentQuestionRepository assignmentQuestionRepository;
+    private final AssignmentAnswerRepository assignmentAnswerRepository;
 
     @Transactional
     public void createLecture(Long memberId, CreateLectureRequest request) {
@@ -61,16 +56,44 @@ public class LectureService {
         checkPermission(findMember);
         SubLecture subLecture = getSubLecture(subLectureId);
         Assignment assignment = createAssignment(request, subLecture);
-        List<CreateAssignmentQuestionsRequest> questions = request.questions();
+        List<CreateAssignmentQuestionsDto> questions = request.questions();
         assignmentRepository.save(assignment);
         for (int i = 0; i < questions.size(); i++){
-            CreateAssignmentQuestionsRequest questionsRequest  = questions.get(i);
+            CreateAssignmentQuestionsDto questionsRequest  = questions.get(i);
             AssignmentQuestion assignmentQuestion = createAssignmentQuestion(assignment, questionsRequest);
             assignmentQuestionRepository.save(assignmentQuestion);
         }
     }
 
-    private static AssignmentQuestion createAssignmentQuestion(Assignment assignment, CreateAssignmentQuestionsRequest questionsRequest) {
+    @Transactional
+    public void createAssignmentsAnswer(Long assignmentId, Long memberId, CreateAssignmentAnswerRequest createAssignmentAnswerRequest) {
+        Member findMember = findMember(memberId);
+        checkPermission(findMember);
+        Assignment assignment = getAssignment(assignmentId);
+        List<AssignmentQuestion> questions = assignment.getAssignmentQuestions();
+        List<CreateAssignmentAnswerDto> answers = createAssignmentAnswerRequest.answers();
+        for (int i = 0; i < questions.size(); i++){
+            AssignmentQuestion assignmentQuestion = questions.get(i);
+            AssignmentAnswer assignmentAnswer = createAssignmentAnswer(assignment, assignmentQuestion, findMember, answers, i);
+            assignmentAnswerRepository.save(assignmentAnswer);
+        }
+    }
+
+    private AssignmentAnswer createAssignmentAnswer(Assignment assignment, AssignmentQuestion assignmentQuestion, Member findMember, List<CreateAssignmentAnswerDto> answers, int i) {
+        return AssignmentAnswer.builder()
+                .assignment(assignment)
+                .assignmentQuestion(assignmentQuestion)
+                .member(findMember)
+                .body(answers.get(i).body())
+                .build();
+    }
+
+    private Assignment getAssignment(Long assignmentId) {
+        return assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_ANSWER_TYPE_NOT_FOUND));
+    }
+
+    private AssignmentQuestion createAssignmentQuestion(Assignment assignment, CreateAssignmentQuestionsDto questionsRequest) {
         return AssignmentQuestion.builder()
                 .assignment(assignment)
                 .assignmentAnswerType(AssignmentAnswerType.of(questionsRequest.assignmentAnswerType()))
@@ -79,7 +102,7 @@ public class LectureService {
                 .build();
     }
 
-    private static Assignment createAssignment(CreateAssignmentRequest request, SubLecture subLecture) {
+    private Assignment createAssignment(CreateAssignmentRequest request, SubLecture subLecture) {
         return Assignment.builder()
                 .title(request.title())
                 .body(request.body())
