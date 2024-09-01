@@ -52,6 +52,16 @@ public class AuthController {
         return Response.success();
     }
 
+    @Operation(summary = "관리자 회원 가입", description = "관리자 회원가입을 합니다.")
+    @ApiResponses(value ={
+            @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일입니다.", content = @Content),
+    })
+    @PostMapping("/signup/admin")
+    public Response<Void> adminSignUp(@Valid @RequestBody SignUpRequest signUpRequest){
+        memberService.adminSignUp(signUpRequest);
+        return Response.success();
+    }
+
     @Operation(summary = "로그인", description = "로그인을 합니다.")
     @ApiResponses(value ={
             @ApiResponse(responseCode = "400", description = "존재하지 않는 이메일 또는 패스워드입니다.", content = @Content),

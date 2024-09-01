@@ -40,12 +40,15 @@ public class MemberService {
 
     @Transactional
     public void signUp(SignUpRequest request){
-        String signUpEmail = request.email();
-        Optional<Member> findMember = memberRepository.findByEmail(signUpEmail);
-        if (findMember.isPresent()){
-            throw new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS);
-        }
-        Member signUpMember = createMember(request);
+        checkDuplicateEmail(request);
+        Member signUpMember = createBasicMember(request);
+        memberRepository.save(signUpMember);
+    }
+
+    @Transactional
+    public void adminSignUp(SignUpRequest request) {
+        checkDuplicateEmail(request);
+        Member signUpMember = createAdminMember(request);
         memberRepository.save(signUpMember);
     }
 
@@ -107,16 +110,6 @@ public class MemberService {
         findMember.updateProfile(request.name(), uploadImageUrl, request.school(), request.studentId());
     }
 
-    private Member createMember(SignUpRequest request) {
-        Member signUpMember = Member.builder()
-                .name(request.name())
-                .email(request.email())
-                .encodedPassword(passwordEncoder.encode(request.password()))
-                .role(MemberRole.BASIC)
-                .build();
-        return signUpMember;
-    }
-
     public MemberShortInfoResponse getMemberShortInfo(Long memberId) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
@@ -125,5 +118,31 @@ public class MemberService {
                 .name(findMember.getName())
                 .role(findMember.getRole().getName())
                 .build();
+    }
+
+    private Member createAdminMember(SignUpRequest request) {
+       return createMember(request, MemberRole.ADMIN);
+    }
+
+    private Member createBasicMember(SignUpRequest request) {
+        return createMember(request, MemberRole.BASIC);
+    }
+
+    private Member createMember(SignUpRequest request, MemberRole role) {
+        Member signUpMember = Member.builder()
+                .name(request.name())
+                .email(request.email())
+                .encodedPassword(passwordEncoder.encode(request.password()))
+                .role(role)
+                .build();
+        return signUpMember;
+    }
+
+    private void checkDuplicateEmail(SignUpRequest request) {
+        String signUpEmail = request.email();
+        Optional<Member> findMember = memberRepository.findByEmail(signUpEmail);
+        if (findMember.isPresent()){
+            throw new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
     }
 }
