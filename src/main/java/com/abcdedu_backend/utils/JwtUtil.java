@@ -24,7 +24,7 @@ public class JwtUtil {
     private String refreshTokenSecretKey;
 
     public String createAccessToken(Long memberId){
-        return "Bearer "+createToken(memberId, accessTokenSecretKey, ACCESS_TOKEN_EXPIRED_MS);
+        return createToken(memberId, accessTokenSecretKey, ACCESS_TOKEN_EXPIRED_MS);
     }
 
     public String createRefreshToken(Long memberId){
