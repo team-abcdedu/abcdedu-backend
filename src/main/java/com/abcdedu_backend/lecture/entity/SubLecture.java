@@ -31,6 +31,4 @@ public class SubLecture {
     @Column(nullable = false, length = 200)
     private String description;
 
-    @Column(nullable = false, length = 1)
-    private String type;
 }

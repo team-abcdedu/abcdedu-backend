@@ -2,6 +2,7 @@ package com.abcdedu_backend.lecture.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.lecture.dto.CreateLectureRequest;
+import com.abcdedu_backend.lecture.dto.CreateSubLectureRequest;
 import com.abcdedu_backend.lecture.service.LectureService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,10 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -37,6 +35,14 @@ public class LectureController {
     @PostMapping
     public Response<Void> createLecture(@JwtValidation Long memberId, @Valid @RequestBody CreateLectureRequest createLectureRequest){
         lectureService.createLecture(memberId, createLectureRequest);
+        return Response.success();
+    }
+
+    @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
+    @Operation(summary = "서브 클래스 등록", description = "서브 클래스를 등록합니다.")
+    @PostMapping("/{lectureId}")
+    public Response<Void> createSubLecture(@PathVariable Long lectureId, @JwtValidation Long memberId, @Valid @RequestBody CreateSubLectureRequest createSubLectureRequest){
+        lectureService.createSubLecture(lectureId, memberId, createSubLectureRequest);
         return Response.success();
     }
 }

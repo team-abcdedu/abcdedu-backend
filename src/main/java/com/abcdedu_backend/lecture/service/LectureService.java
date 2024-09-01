@@ -3,8 +3,11 @@ package com.abcdedu_backend.lecture.service;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.lecture.dto.CreateLectureRequest;
+import com.abcdedu_backend.lecture.dto.CreateSubLectureRequest;
 import com.abcdedu_backend.lecture.entity.Lecture;
+import com.abcdedu_backend.lecture.entity.SubLecture;
 import com.abcdedu_backend.lecture.repository.LectureRepository;
+import com.abcdedu_backend.lecture.repository.SubLectureRepository;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.repository.MemberRepository;
@@ -21,12 +24,33 @@ public class LectureService {
 
     private final LectureRepository lectureRepository;
     private final MemberRepository memberRepository;
+    private final SubLectureRepository subLectureRepository;
 
+    @Transactional
     public void createLecture(Long memberId, CreateLectureRequest request) {
         Member findMember = findMember(memberId);
         checkPermission(findMember);
         Lecture lecture = createLecture(request);
         lectureRepository.save(lecture);
+    }
+
+    @Transactional
+    public void createSubLecture(Long lectureId, Long memberId, CreateSubLectureRequest request) {
+        Member findMember = findMember(memberId);
+        checkPermission(findMember);
+        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow();
+        SubLecture subLecture = createSubLecture(lecture, request);
+        subLectureRepository.save(subLecture);
+
+    }
+
+    private SubLecture createSubLecture(Lecture lecture, CreateSubLectureRequest request) {
+        return SubLecture.builder()
+                .title(request.title())
+                .description(request.description())
+                .orderNumber(request.OrderNumber())
+                .lecture(lecture)
+                .build();
     }
 
     private Lecture createLecture(CreateLectureRequest request) {
