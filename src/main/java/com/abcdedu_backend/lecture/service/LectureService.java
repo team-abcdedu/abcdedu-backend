@@ -119,7 +119,7 @@ public class LectureService {
         return SubLecture.builder()
                 .title(request.title())
                 .description(request.description())
-                .orderNumber(request.OrderNumber())
+                .orderNumber(request.orderNumber())
                 .lecture(lecture)
                 .build();
     }

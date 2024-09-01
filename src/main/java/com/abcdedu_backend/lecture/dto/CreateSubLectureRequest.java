@@ -1,13 +1,14 @@
 package com.abcdedu_backend.lecture.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record CreateSubLectureRequest(
         @NotBlank
         String title,
         @NotBlank
         String description,
-        @NotBlank
-        Integer OrderNumber
+        @NotNull
+        Integer orderNumber
 ) {
 }

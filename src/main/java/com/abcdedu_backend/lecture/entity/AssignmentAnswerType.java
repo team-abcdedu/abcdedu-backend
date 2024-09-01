@@ -21,6 +21,6 @@ public enum AssignmentAnswerType {
         return Stream.of(AssignmentAnswerType.values())
                 .filter(a -> a.getType().equals(type))
                 .findFirst()
-                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_ANSWER_TYPE_NOT_FOUND));
     }
 }
