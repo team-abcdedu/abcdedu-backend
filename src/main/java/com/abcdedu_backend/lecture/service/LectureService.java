@@ -3,6 +3,12 @@ package com.abcdedu_backend.lecture.service;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.lecture.dto.*;
+import com.abcdedu_backend.lecture.dto.request.CreateAssignmentAnswerRequest;
+import com.abcdedu_backend.lecture.dto.request.CreateAssignmentRequest;
+import com.abcdedu_backend.lecture.dto.request.CreateLectureRequest;
+import com.abcdedu_backend.lecture.dto.request.CreateSubLectureRequest;
+import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponse;
+import com.abcdedu_backend.lecture.dto.response.GetClassResponse;
 import com.abcdedu_backend.lecture.entity.*;
 import com.abcdedu_backend.lecture.repository.*;
 import com.abcdedu_backend.member.entity.Member;
@@ -14,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @Service
@@ -54,12 +61,12 @@ public class LectureService {
     public void createAssignments(Long subLectureId, Long memberId, CreateAssignmentRequest request) {
         Member findMember = findMember(memberId);
         checkPermission(findMember);
-        SubLecture subLecture = getSubLecture(subLectureId);
+        SubLecture subLecture = findSubLecture(subLectureId);
         Assignment assignment = createAssignment(request, subLecture);
-        List<CreateAssignmentQuestionsDto> questions = request.questions();
+        List<QuestionsDto> questions = request.questions();
         assignmentRepository.save(assignment);
         for (int i = 0; i < questions.size(); i++){
-            CreateAssignmentQuestionsDto questionsRequest  = questions.get(i);
+            QuestionsDto questionsRequest  = questions.get(i);
             AssignmentQuestion assignmentQuestion = createAssignmentQuestion(assignment, questionsRequest);
             assignmentQuestionRepository.save(assignmentQuestion);
         }
@@ -69,7 +76,7 @@ public class LectureService {
     public void createAssignmentsAnswer(Long assignmentId, Long memberId, CreateAssignmentAnswerRequest createAssignmentAnswerRequest) {
         Member findMember = findMember(memberId);
         checkPermission(findMember);
-        Assignment assignment = getAssignment(assignmentId);
+        Assignment assignment = findAssignment(assignmentId);
         List<AssignmentQuestion> questions = assignment.getAssignmentQuestions();
         List<CreateAssignmentAnswerDto> answers = createAssignmentAnswerRequest.answers();
         for (int i = 0; i < questions.size(); i++){
@@ -77,6 +84,23 @@ public class LectureService {
             AssignmentAnswer assignmentAnswer = createAssignmentAnswer(assignment, assignmentQuestion, findMember, answers, i);
             assignmentAnswerRepository.save(assignmentAnswer);
         }
+    }
+
+    public List<GetClassResponse> getLectures() {
+        List<Lecture> lectures = lectureRepository.findAll();
+
+        List<GetClassResponse> getClassesResponse = lectures.stream()
+                .map(this::convertToGetClassResponse)
+                .collect(Collectors.toUnmodifiableList());
+
+        return getClassesResponse;
+    }
+
+    public GetAssignmentResponse getAssignment(Long assignmentId) {
+        Assignment assignment = findAssignment(assignmentId);
+        List<QuestionsDto> questionsDto = convertToQuestionsDtoList(assignment);
+
+        return GetAssignmentResponse.of(assignment.getTitle(), assignment.getBody(), questionsDto);
     }
 
     private AssignmentAnswer createAssignmentAnswer(Assignment assignment, AssignmentQuestion assignmentQuestion, Member findMember, List<CreateAssignmentAnswerDto> answers, int i) {
@@ -88,15 +112,16 @@ public class LectureService {
                 .build();
     }
 
-    private Assignment getAssignment(Long assignmentId) {
+    private Assignment findAssignment(Long assignmentId) {
         return assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_ANSWER_TYPE_NOT_FOUND));
     }
 
-    private AssignmentQuestion createAssignmentQuestion(Assignment assignment, CreateAssignmentQuestionsDto questionsRequest) {
+    private AssignmentQuestion createAssignmentQuestion(Assignment assignment, QuestionsDto questionsRequest) {
         return AssignmentQuestion.builder()
                 .assignment(assignment)
                 .assignmentAnswerType(AssignmentAnswerType.of(questionsRequest.assignmentAnswerType()))
+                .title(questionsRequest.title())
                 .body(questionsRequest.body())
                 .orderNumber(questionsRequest.orderNumber())
                 .build();
@@ -110,7 +135,7 @@ public class LectureService {
                 .build();
     }
 
-    private SubLecture getSubLecture(Long subLectureId) {
+    private SubLecture findSubLecture(Long subLectureId) {
         return subLectureRepository.findById(subLectureId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.SUB_CLASS_NOT_FOUND));
     }
@@ -143,4 +168,44 @@ public class LectureService {
             throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
     }
+
+    private List<QuestionsDto> convertToQuestionsDtoList(Assignment assignment) {
+        return assignment.getAssignmentQuestions().stream()
+                .map(this::convertToQuestionsDto)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    private QuestionsDto convertToQuestionsDto(AssignmentQuestion question) {
+        return QuestionsDto.builder()
+                .title(question.getTitle())
+                .body(question.getBody())
+                .orderNumber(question.getOrderNumber())
+                .assignmentAnswerType(question.getAssignmentAnswerType().getType())
+                .build();
+    }
+
+    private GetClassResponse convertToGetClassResponse(Lecture lecture) {
+        return GetClassResponse.builder()
+                .title(lecture.getTitle())
+                .type(lecture.getType())
+                .description(lecture.getDescription())
+                .subClasses(convertToSubClassesDto(lecture.getSubLectures()))
+                .build();
+    }
+
+    private List<SubClassDto> convertToSubClassesDto(List<SubLecture> subLectures) {
+        return subLectures.stream()
+                .map(this::convertToSubClassDto)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    private SubClassDto convertToSubClassDto(SubLecture subLecture) {
+        return SubClassDto.builder()
+                .title(subLecture.getTitle())
+                .orderNumber(subLecture.getOrderNumber())
+                .description(subLecture.getDescription())
+                .subClassId(subLecture.getId())
+                .build();
+    }
+
 }

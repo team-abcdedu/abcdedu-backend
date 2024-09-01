@@ -23,6 +23,9 @@ public class AssignmentQuestion {
     private Assignment assignment;
 
     @Column(nullable = false, length = 100)
+    private String title;
+
+    @Column(nullable = false, length = 100)
     private String body;
 
     @Column(nullable = false)

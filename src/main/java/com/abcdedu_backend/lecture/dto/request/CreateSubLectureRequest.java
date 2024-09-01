@@ -1,4 +1,4 @@
-package com.abcdedu_backend.lecture.dto;
+package com.abcdedu_backend.lecture.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

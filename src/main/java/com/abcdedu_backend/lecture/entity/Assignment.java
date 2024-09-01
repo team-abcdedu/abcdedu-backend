@@ -32,4 +32,7 @@ public class Assignment {
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderNumber ASC")
     private List<AssignmentQuestion> assignmentQuestions;
+
+    @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AssignmentAnswer> assignmentAnswers;
 }
