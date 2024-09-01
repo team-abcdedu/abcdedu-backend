@@ -18,8 +18,8 @@ public class Assignment {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lecture_id", nullable = false)
-    private Lecture lecture;
+    @JoinColumn(name = "sub_lecture_id", nullable = false)
+    private SubLecture subLecture;
 
     @Column(nullable = false, length = 20)
     private String title;

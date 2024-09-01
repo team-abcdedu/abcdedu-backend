@@ -11,19 +11,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "lectureTypes")
-public class LectureType {
+@Table(name = "subLectures")
+public class SubLecture {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lecture_id", nullable = false)
+    private Lecture lecture;
+
     @Column(nullable = false, length = 20)
     private String title;
 
-    @Column(nullable = false, length = 1)
-    private String type;
+    @Column(nullable = false)
+    private Integer orderNumber;
 
     @Column(nullable = false, length = 200)
     private String description;
+
+    @Column(nullable = false, length = 1)
+    private String type;
 }
