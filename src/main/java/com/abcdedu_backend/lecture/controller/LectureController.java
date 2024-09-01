@@ -34,7 +34,7 @@ public class LectureController {
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @Operation(summary = "클래스등록", description = "클래스(A, B, C, D)를 등록합니다.")
-    @PostMapping("/type")
+    @PostMapping
     public Response<Void> createLecture(@JwtValidation Long memberId, @Valid @RequestBody CreateLectureRequest createLectureRequest){
         lectureService.createLecture(memberId, createLectureRequest);
         return Response.success();
