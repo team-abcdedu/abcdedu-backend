@@ -129,6 +129,11 @@ public class MemberService {
         return signUpMember;
     }
 
+    public boolean isAdmin(Long memberId) {
+        Member findMember = checkMember(memberId);
+        return findMember.getRole().equals(MemberRole.ADMIN);
+    }
+
     public MemberShortInfoResponse getMemberShortInfo(Long memberId) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));

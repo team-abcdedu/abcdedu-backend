@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "사용자가 권한이 없습니다."),
+    // 상담
+    CONTACT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상담이 없습니다."),
+    CONTACT_INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "본인과 관리자만 가능한 기능입니다."),
 
 
     // 게시판
