@@ -1,15 +1,17 @@
-package com.abcdedu_backend.post.comment;
+package com.abcdedu_backend.post.service;
 
-import com.abcdedu_backend.post.comment.dto.request.CommentCreateRequest;
-import com.abcdedu_backend.post.comment.dto.request.CommentUpdateRequest;
-import com.abcdedu_backend.post.comment.dto.response.CommentResponse;
+import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
+import com.abcdedu_backend.post.dto.request.CommentUpdateRequest;
+import com.abcdedu_backend.post.dto.response.CommentResponse;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
-import com.abcdedu_backend.post.Post;
-import com.abcdedu_backend.post.PostService;
+import com.abcdedu_backend.post.entity.Comment;
+import com.abcdedu_backend.post.entity.Post;
+import com.abcdedu_backend.post.service.PostService;
+import com.abcdedu_backend.post.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

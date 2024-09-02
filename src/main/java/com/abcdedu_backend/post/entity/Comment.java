@@ -1,7 +1,6 @@
-package com.abcdedu_backend.post.comment;
+package com.abcdedu_backend.post.entity;
 
 import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.post.Post;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

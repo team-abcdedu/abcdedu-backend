@@ -1,11 +1,12 @@
-package com.abcdedu_backend.post;
+package com.abcdedu_backend.post.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
-import com.abcdedu_backend.post.comment.CommentService;
-import com.abcdedu_backend.post.comment.dto.request.CommentCreateRequest;
-import com.abcdedu_backend.post.comment.dto.request.CommentUpdateRequest;
-import com.abcdedu_backend.post.comment.dto.response.CommentResponse;
+import com.abcdedu_backend.post.service.CommentService;
+import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
+import com.abcdedu_backend.post.dto.request.CommentUpdateRequest;
+import com.abcdedu_backend.post.dto.response.CommentResponse;
 import com.abcdedu_backend.post.dto.response.PostResponse;
+import com.abcdedu_backend.post.service.PostService;
 import com.abcdedu_backend.utils.Response;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;

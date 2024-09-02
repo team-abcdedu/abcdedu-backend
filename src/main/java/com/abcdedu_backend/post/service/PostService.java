@@ -1,4 +1,4 @@
-package com.abcdedu_backend.post;
+package com.abcdedu_backend.post.service;
 import com.abcdedu_backend.board.Board;
 import com.abcdedu_backend.board.BoardService;
 import com.abcdedu_backend.exception.ApplicationException;
@@ -9,6 +9,8 @@ import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.response.PostResponse;
+import com.abcdedu_backend.post.entity.Post;
+import com.abcdedu_backend.post.repository.PostReposiroty;
 import org.springframework.data.domain.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
