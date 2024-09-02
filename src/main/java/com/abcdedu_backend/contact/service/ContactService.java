@@ -10,6 +10,7 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class ContactService {
 
     private final ContactRepository contactRepository;
 
+    @Transactional
     public Long createContact(ContactCreateRequest contactCreateRequest, ContactType contactType) {
         Contact contact = Contact.builder()
                 .userName(contactCreateRequest.userName())
