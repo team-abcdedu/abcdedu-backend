@@ -14,11 +14,15 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 포스트가 없습니다."),
     POST_INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "본인과 관리자만 가능한 기능입니다."),
 
+    // 댓글
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다."),
+    COMMENT_INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "본인과 관리자만 가능한 기능입니다."),
+
 
     // 카테고리
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."),
     BOARD_DUPLICATION(HttpStatus.CONFLICT, "이미 존재하는 카테고리입니다."),
-    BOARD_INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "카테고리 추가 및 삭제는 관리자만 가능합니다."),
+    BOARD_INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "본인과 관리자만 가능한 기능입니다."),
 
 
     //회원

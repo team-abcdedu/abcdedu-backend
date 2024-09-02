@@ -5,6 +5,9 @@ import com.abcdedu_backend.board.dto.response.BoardResponse;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,14 @@ import java.util.List;
 @RequestMapping("/boards")
 @RequiredArgsConstructor
 @Tag(name = "게시판 카테고리", description = "게시판 카테고리 추가/조회/삭제하는 기능입니다.")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "성공적으로 요청이 완료되었습니다.", content = @Content),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. (RequestBody Validation)", content = @Content),
+        @ApiResponse(responseCode = "401", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
+        @ApiResponse(responseCode = "404", description = "해당 카테고리를 찾을 수 없습니다.", content = @Content),
+        @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리입니다.", content = @Content),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content)
+})
 public class BoardController {
 
     private final BoardService boardService;
