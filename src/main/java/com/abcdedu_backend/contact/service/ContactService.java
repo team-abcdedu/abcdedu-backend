@@ -1,10 +1,11 @@
-package com.abcdedu_backend.contact;
+package com.abcdedu_backend.contact.service;
 
 import com.abcdedu_backend.contact.dto.request.ContactCreateRequest;
 import com.abcdedu_backend.contact.dto.response.ContactListResponse;
 import com.abcdedu_backend.contact.dto.response.ContactResponse;
 import com.abcdedu_backend.contact.entity.Contact;
 import com.abcdedu_backend.contact.entity.ContactType;
+import com.abcdedu_backend.contact.repository.ContactRepository;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;

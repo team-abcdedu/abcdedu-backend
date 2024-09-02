@@ -1,6 +1,7 @@
-package com.abcdedu_backend.contact;
+package com.abcdedu_backend.contact.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.contact.service.ContactService;
 import com.abcdedu_backend.contact.dto.request.ContactCreateRequest;
 import com.abcdedu_backend.contact.dto.response.ContactListResponse;
 import com.abcdedu_backend.contact.dto.response.ContactResponse;
