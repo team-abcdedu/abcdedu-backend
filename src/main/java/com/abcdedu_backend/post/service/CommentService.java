@@ -10,7 +10,6 @@ import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.post.entity.Comment;
 import com.abcdedu_backend.post.entity.Post;
-import com.abcdedu_backend.post.service.PostService;
 import com.abcdedu_backend.post.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
