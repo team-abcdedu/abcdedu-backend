@@ -47,12 +47,12 @@ public class LectureService {
     public void createSubLecture(Long lectureId, Long memberId, CreateSubLectureRequest request) {
         Member findMember = findMember(memberId);
         checkPermission(findMember);
-        Lecture lecture = getLecture(lectureId);
-        SubLecture subLecture = createSubLecture(lecture, request);
+        Lecture findLecture = findLecture(lectureId);
+        SubLecture subLecture = createSubLecture(findLecture, request);
         subLectureRepository.save(subLecture);
     }
 
-    private Lecture getLecture(Long lectureId) {
+    private Lecture findLecture(Long lectureId) {
         return lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.CLASS_NOT_FOUND));
     }
@@ -98,7 +98,7 @@ public class LectureService {
 
     public GetAssignmentResponse getAssignment(Long assignmentId) {
         Assignment assignment = findAssignment(assignmentId);
-        List<QuestionsDto> questionsDto = convertToQuestionsDtoList(assignment);
+        List<QuestionsDto> questionsDto = convertToQuestionsDtoList(assignment.getAssignmentQuestions());
 
         return GetAssignmentResponse.of(assignment.getTitle(), assignment.getBody(), questionsDto);
     }
@@ -169,8 +169,8 @@ public class LectureService {
         }
     }
 
-    private List<QuestionsDto> convertToQuestionsDtoList(Assignment assignment) {
-        return assignment.getAssignmentQuestions().stream()
+    private List<QuestionsDto> convertToQuestionsDtoList(List<AssignmentQuestion> questions) {
+        return questions.stream()
                 .map(this::convertToQuestionsDto)
                 .collect(Collectors.toUnmodifiableList());
     }
