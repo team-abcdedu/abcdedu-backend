@@ -36,3 +36,14 @@ variable "public_key" {
   description = "The public key for the AWS key pair"
   type        = string
 }
+
+variable "aws_access_key" {
+  description = "access Key"
+  type = string
+}
+
+variable "aws_secret_key" {
+  description = "secret access Key"
+  type = string
+}
+
