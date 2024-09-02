@@ -4,6 +4,7 @@ import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberShortInfoResponse;
+import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,10 +52,19 @@ public class MemberInfoController {
         return Response.success();
     }
 
+    // ToDo : 관리자 역할 바꾸기 위한 test용 기능
+    @Operation(summary = "등업", description = "test를 위한 임시기능, 관리자 아니여도 내 등급을 관리자로 만들 수 있습니다.")
+    @PostMapping("/up/{memberId}")
+    public Response<Void> updateMemberRole(@JwtValidation Long memberId,
+                                            @Valid @RequestBody MemberRole memberRole) {
+        memberService.updateMemberRole(memberId, memberRole);
+        return Response.success();
+    }
+
     @Operation(summary = "프로필 이름, 역할 정보 조회", description = "프로필 이름, 역할을 조회합니다.")
     @GetMapping("/info/name-and-role")
-    public Response<MemberShortInfoResponse> getMemberShortInfo(@JwtValidation Long memberId){
-        MemberShortInfoResponse memberShortInfoResponse = memberService.getMemberShortInfo(memberId);
+    public Response<MemberShortInfoResponse> getMemberNameAndRoleInfo(@JwtValidation Long memberId){
+        MemberShortInfoResponse memberShortInfoResponse = memberService.getMemberNameAndRoleInfo(memberId);
         return Response.success(memberShortInfoResponse);
     }
 }

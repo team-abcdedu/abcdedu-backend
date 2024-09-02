@@ -29,7 +29,7 @@ public class JwtValidateArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         String token = webRequest.getHeader(ACCESS_TOKEN_HEADER);
         if (token == null) {
             throw new ApplicationException(ErrorCode.TOKEN_NOT_FOUND);

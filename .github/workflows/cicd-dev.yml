@@ -76,7 +76,7 @@ jobs:
         script: |
           aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin $AWS_ECR_DNS
           docker pull $IMAGE_NAME:$IMAGE_TAG
-          docker image tag $IMAGE_NAME:$IMAGE_TAG meongcare/dev
+          docker image tag $IMAGE_NAME:$IMAGE_TAG abcdedu/dev
           chmod 777 ./deploy.sh
           ./deploy.sh
           docker image prune -f

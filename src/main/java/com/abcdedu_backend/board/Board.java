@@ -1,6 +1,6 @@
 package com.abcdedu_backend.board;
 
-import com.abcdedu_backend.post.Post;
+import com.abcdedu_backend.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.*;
 

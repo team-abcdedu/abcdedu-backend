@@ -110,7 +110,7 @@ public class MemberService {
         findMember.updateProfile(request.name(), uploadImageUrl, request.school(), request.studentId());
     }
 
-    public MemberShortInfoResponse getMemberShortInfo(Long memberId) {
+    public MemberShortInfoResponse getMemberNameAndRoleInfo(Long memberId) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
@@ -128,6 +128,18 @@ public class MemberService {
         return createMember(request, MemberRole.BASIC);
     }
 
+    // ToDo : 관리자 역할 바꾸기 위한 test용 기능
+    @Transactional
+    public void updateMemberRole(Long memberId, MemberRole memberRole) {
+        Member findMember = checkMember(memberId);
+        findMember.updateRole(memberRole);
+    }
+
+    public Member checkMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+    }
+
     private Member createMember(SignUpRequest request, MemberRole role) {
         Member signUpMember = Member.builder()
                 .name(request.name())
@@ -141,8 +153,12 @@ public class MemberService {
     private void checkDuplicateEmail(SignUpRequest request) {
         String signUpEmail = request.email();
         Optional<Member> findMember = memberRepository.findByEmail(signUpEmail);
-        if (findMember.isPresent()){
+        if (findMember.isPresent()) {
             throw new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
+    }
+    public boolean isAdmin(Long memberId) {
+        Member findMember = checkMember(memberId);
+        return findMember.getRole().equals(MemberRole.ADMIN);
     }
 }
