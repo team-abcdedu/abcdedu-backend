@@ -45,7 +45,6 @@ application-dev.yaml
 application-test.yaml
 application-prod.yaml
 
-
 # Local .terraform directories
 **/.terraform/*
 

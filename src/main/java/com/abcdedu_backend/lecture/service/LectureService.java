@@ -157,8 +157,8 @@ public class LectureService {
                 .build();
     }
 
-    private void checkAdminPermission(Member findMember) {
-        if (!findMember.isAdmin()){
+    private void checkAdminPermission(Member member) {
+        if (!member.isAdmin()){
             throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
     }
