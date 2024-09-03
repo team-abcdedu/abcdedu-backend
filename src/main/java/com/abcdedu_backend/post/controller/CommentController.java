@@ -46,14 +46,4 @@ public class CommentController {
         return Response.success();
     }
 
-    @Operation(summary = "댓글 삭제")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "해당 사용자/댓글을 찾을 수 없습니다.", content = @Content),
-            @ApiResponse(responseCode = "401", description = "해당 기능은 관리자/작성자만 사용가능합니다.", content = @Content)
-    })
-    @DeleteMapping("/comments/{commentId}")
-    public Response<Void> updateComment(@PathVariable Long commentId, @JwtValidation Long memberId) {
-        commentService.deleteComment(commentId,memberId);
-        return Response.success();
-    }
 }

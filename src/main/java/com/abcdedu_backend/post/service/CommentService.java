@@ -32,8 +32,9 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, Long memberId) {
-        Comment comment = checkVaildation(commentId, memberId);
+    public void deleteComment(Long postId, Long commentId, Long memberId) {
+        Comment findComment = checkVaildation(commentId, memberId);
+        postService.checkPost(postId).decrementCommentCount();
         commentRepository.deleteById(commentId);
     }
 
@@ -53,12 +54,12 @@ public class CommentService {
     @Transactional
     public void CreateComment(Long postId, Long memberId, CommentCreateRequest createRequest) {
         Post findpost = postService.checkPost(postId);
+        findpost.incrementCommentCount();
         Member findMember = memberService.checkMember(memberId);
         Comment comment = Comment.builder()
                 .post(findpost)
                 .member(findMember)
                 .content(createRequest.content())
-                //.secret(createRequest.secret())
                 .build();
         commentRepository.save(comment);
     }

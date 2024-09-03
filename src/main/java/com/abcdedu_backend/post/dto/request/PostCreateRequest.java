@@ -14,6 +14,7 @@ public record PostCreateRequest (
         @NotNull
         String content,
         Long viewCount,
+        Long commentCount,
         @NotNull
         Boolean secret,
         @NotNull
@@ -23,6 +24,6 @@ public record PostCreateRequest (
 ){
         // 기본 설정 값 뺀 필드들을 파라미터로 받아 객체 생성
         public PostCreateRequest(String title, String content, Boolean secret, Boolean commentAllow, String boardName) {
-                this(title, content, 0L, secret, commentAllow, boardName);
+                this(title, content, 0L, 0L,secret, commentAllow, boardName);
         }
 }

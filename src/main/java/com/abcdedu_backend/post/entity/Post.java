@@ -37,6 +37,11 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
+    @Column(name = "comment_count")  // 댓글이 생성되거나 삭제될 때 마다 업데이트 해줘야 하는 필드
+    private Long commentCount;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attachment> attachments;
 
     @Column(name = "title", length = 20, nullable = false)
     private String title;
@@ -55,4 +60,12 @@ public class Post extends BaseTimeEntity {
 
     @Column(name = "deleted")
     private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
+
+
+    public void incrementCommentCount() {
+        this.commentCount++;
+    }
+    public void decrementCommentCount() {
+        this.commentCount--;
+    }
 }
