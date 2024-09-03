@@ -78,6 +78,21 @@ public class AuthController {
         LoginResponse loginResponse = new LoginResponse(loginTokenDto.accessToken());
         return Response.success(loginResponse);
     }
+    @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
+    @DeleteMapping("/logout")
+    public Response<LoginResponse> logout(HttpServletRequest request, HttpServletResponse response){
+        String refreshToken = parseRefreshToken(request);
+        memberService.logout(refreshToken);
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+        response.setHeader("Set-Cookie", refreshTokenCookie.toString());
+        return Response.success();
+    }
+
+
 
     @Operation(summary = "액세스 토큰 재발급", description = "리프레시 토큰으로 액세스 토큰을 재발급 합니다.")
     @ApiResponses(value ={
@@ -86,13 +101,18 @@ public class AuthController {
     })
     @GetMapping("/reissue")
     public Response<ReissueResponse> reissue(HttpServletRequest request) {
+        String refreshToken = parseRefreshToken(request);
+        ReissueResponse reissueResponse = memberService.reissue(refreshToken);
+        return Response.success(reissueResponse);
+    }
+
+    private String parseRefreshToken(HttpServletRequest request) {
         Cookie refreshTokenCookie = Arrays.stream(request.getCookies())
                 .filter(cookie -> "refreshToken".equals(cookie.getName()))
                 .findFirst()
                 .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
         String refreshToken = refreshTokenCookie.getValue();
-        ReissueResponse reissueResponse = memberService.reissue(refreshToken);
-        return Response.success(reissueResponse);
+        return refreshToken;
     }
 
 }

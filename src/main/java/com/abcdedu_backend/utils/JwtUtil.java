@@ -14,7 +14,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private Long ACCESS_TOKEN_EXPIRED_MS = Duration.ofHours(2).toMillis();
+    private Long ACCESS_TOKEN_EXPIRED_MS = Duration.ofMinutes(30).toMillis();
     private Long REFRESH_TOKEN_EXPIRED_MS = Duration.ofDays(14).toMillis();
     private static final String MEMBER_ID_KEY = "memberId";
 

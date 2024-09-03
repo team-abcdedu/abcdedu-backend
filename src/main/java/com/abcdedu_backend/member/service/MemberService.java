@@ -161,4 +161,8 @@ public class MemberService {
         Member findMember = checkMember(memberId);
         return findMember.getRole().equals(MemberRole.ADMIN);
     }
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenRepository.deleteById(refreshToken);
+    }
 }
