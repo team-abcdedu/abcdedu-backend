@@ -33,6 +33,9 @@ out/
 /nbdist/
 /.nb-gradle/
 
+.DS_Store
+
+
 ### VS Code ###
 .vscode/
 
@@ -40,6 +43,8 @@ application.yaml
 application-local.yaml
 application-dev.yaml
 application-test.yaml
+application-prod.yaml
+
 
 # Local .terraform directories
 **/.terraform/*

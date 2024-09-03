@@ -1,7 +1,7 @@
 package com.abcdedu_backend.member.entity;
 
-import com.abcdedu_backend.comment.Comment;
-import com.abcdedu_backend.post.Post;
+import com.abcdedu_backend.post.entity.Comment;
+import com.abcdedu_backend.post.entity.Post;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -56,5 +56,9 @@ public class Member extends BaseTimeEntity {
         this.imageUrl = imageUrl;
         this.school = school;
         this.studentId = studentId;
+    }
+    // ToDo : 관리자 역할 바꾸기 위한 test용 기능
+    public void updateRole(MemberRole memberRole) {
+        this.role = memberRole;
     }
 }
