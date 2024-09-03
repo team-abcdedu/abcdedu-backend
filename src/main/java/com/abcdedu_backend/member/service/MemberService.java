@@ -143,4 +143,9 @@ public class MemberService {
                 .role(findMember.getRole().getName())
                 .build();
     }
+
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenRepository.deleteById(refreshToken);
+    }
 }
