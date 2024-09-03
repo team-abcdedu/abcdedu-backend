@@ -29,7 +29,7 @@ public class CommentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "해당 사용자를 찾을 수 없습니다.", content = @Content)
     })
-    @GetMapping("/comments/{memberId}")
+    @GetMapping("/members/{memberId}")
     public Response<Long> getCommentCountByMember(@PathVariable Long memberId) {
         Long count = commentService.countCommentsByMember(memberId);
         return Response.success(count);
@@ -40,7 +40,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404", description = "해당 사용자/댓글을 찾을 수 없습니다.", content = @Content),
             @ApiResponse(responseCode = "401", description = "해당 기능은 관리자/작성자만 사용가능합니다.", content = @Content)
     })
-    @PatchMapping("/comments/{commentId}")
+    @PatchMapping("/{commentId}")
     public Response<Void> updateComment(@PathVariable Long commentId, @JwtValidation Long memberId, @RequestBody CommentUpdateRequest updateRequest) {
         commentService.updateComment(commentId, memberId, updateRequest);
         return Response.success();

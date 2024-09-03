@@ -73,10 +73,7 @@ public class ContactController {
             @ApiResponse(responseCode = "401", description = "권한 검사 실패 : 관리자 권한만 조회 가능합니다.", content = @Content),
     })
     public Response<List<ContactListResponse>> readListContact(@JwtValidation Long memberdId) {
-        if (!memberService.isAdmin(memberdId)) {
-            throw new ApplicationException(ErrorCode.CONTACT_INVALID_PERMISSION);
-        }
-        List<ContactListResponse> contacts = contactService.readListContact();
+        List<ContactListResponse> contacts = contactService.readListContact(memberdId);
         return Response.success(contacts);
     }
 
@@ -87,10 +84,7 @@ public class ContactController {
             @ApiResponse(responseCode = "404", description = "해당 id에 해당하는 상담을 찾을 수 없습니다.", content = @Content)
     })
     public Response<ContactResponse> readContact(@JwtValidation Long memberdId, @PathVariable Long contactId) {
-        if (!memberService.isAdmin(memberdId)) {
-            throw new ApplicationException(ErrorCode.CONTACT_INVALID_PERMISSION);
-        }
-        ContactResponse contactResponse = contactService.readContact(contactId);
+        ContactResponse contactResponse = contactService.readContact(contactId, memberdId);
         return Response.success(contactResponse);
     }
 

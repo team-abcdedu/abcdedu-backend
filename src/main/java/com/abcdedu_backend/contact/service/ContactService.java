@@ -8,6 +8,7 @@ import com.abcdedu_backend.contact.entity.ContactType;
 import com.abcdedu_backend.contact.repository.ContactRepository;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
+import com.abcdedu_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class ContactService {
 
     private final ContactRepository contactRepository;
+    private final MemberService memberService;
 
     @Transactional
     public Long createContact(ContactCreateRequest contactCreateRequest, ContactType contactType) {
@@ -36,7 +38,10 @@ public class ContactService {
     }
 
 
-    public List<ContactListResponse> readListContact() {
+    public List<ContactListResponse> readListContact(Long memberId) {
+        if (!memberService.checkMember(memberId).isAdmin()) {
+            throw new ApplicationException(ErrorCode.CONTACT_INVALID_PERMISSION);
+        }
         List<Contact> contacts = contactRepository.findAll();
         return contacts.stream()
                 .map(contact -> ContactListResponse.builder()
@@ -48,7 +53,10 @@ public class ContactService {
                 .collect(Collectors.toList());
     }
 
-    public ContactResponse readContact(Long contactId) {
+    public ContactResponse readContact(Long contactId, Long memberId) {
+        if (!memberService.checkMember(memberId).isAdmin()) {
+            throw new ApplicationException(ErrorCode.CONTACT_INVALID_PERMISSION);
+        }
         Contact findContact = checkContact(contactId);
         return ContactResponse.builder()
                 .contactType(findContact.getContactType())

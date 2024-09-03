@@ -27,10 +27,7 @@ public class BoardService {
         return BoardToBoardResponse(board);
     }
 
-    public Board findBoardIdByName(String name) {
-        return boardRepository.findByName(name)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
-    }
+
 
     @Transactional
     public Long addBoard(BoardCreateRequest req, Long memberId) {

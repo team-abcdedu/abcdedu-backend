@@ -40,13 +40,12 @@ public class PostController {
 
 
     @GetMapping("/")
-    @Operation(summary = "게시글 목록", description = "모든 게시글을 조회합니다.")
+    @Operation(summary = "[미사용] 게시글 목록", description = "모든 게시글을 조회합니다.")
     public Response<List<PostListResponse>> readAllPost() {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
         List<PostListResponse> allPosts = postService.getAllPosts(pageable);
         return Response.success(allPosts);
     }
-
 
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 조회", description = "특정 게시글을 조회합니다. 비밀글은 관리자와 글쓴이만 볼 수 있습니다.")
@@ -54,19 +53,9 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
             @ApiResponse(responseCode = "401", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
     })
-    public Response<PostResponse> findPost(@Valid @PathVariable Long postId,
+    public Response<PostResponse> readPost(@Valid @PathVariable Long postId,
                                            @JwtValidation Long memberId) {
         return Response.success(postService.findPost(postId, memberId));
-    }
-
-    @PostMapping("/")
-    @Operation(summary = "게시글 추가", description = "게시글을 작성합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "공백 불가 : 제목", content = @Content)
-    })
-    public Response<Long> addPost(@Valid @RequestBody PostCreateRequest req,
-                                  @JwtValidation Long memberId) {
-        return Response.success(postService.createPost(req, memberId,""));
     }
 
     @DeleteMapping("/{postId}")
@@ -92,7 +81,7 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "해당 포스트/멤버가 없습니다.", content = @Content)
     })
-    public Response<Void> create(@PathVariable Long postId, @JwtValidation Long memberId, CommentCreateRequest createRequest) {
+    public Response<Void> createComment(@PathVariable Long postId, @JwtValidation Long memberId, CommentCreateRequest createRequest) {
         commentService.CreateComment(postId, memberId, createRequest);
         return Response.success();
     }
@@ -102,7 +91,7 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content)
     })
-    public Response<List<CommentResponse>> read(@PathVariable Long postId) {
+    public Response<List<CommentResponse>> readComment(@PathVariable Long postId) {
         List<CommentResponse> commentResponses = commentService.readComments(postId);
         return Response.success(commentResponses);
     }
@@ -112,8 +101,8 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "해당 사용자/댓글을 찾을 수 없습니다.", content = @Content),
             @ApiResponse(responseCode = "401", description = "해당 기능은 관리자/작성자만 사용가능합니다.", content = @Content)
     })
-    @DeleteMapping("/{postId}/{commentId}")
-    public Response<Void> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @JwtValidation Long memberId) {
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    public Response<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @JwtValidation Long memberId) {
         commentService.deleteComment(postId, commentId, memberId);
         return Response.success();
     }

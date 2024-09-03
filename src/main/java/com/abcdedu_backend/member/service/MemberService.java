@@ -107,13 +107,6 @@ public class MemberService {
         findMember.updateProfile(request.name(), uploadImageUrl, request.school(), request.studentId());
     }
 
-    // ToDo : 관리자 역할 바꾸기 위한 test용 기능
-    @Transactional
-    public void updateMemberRole(Long memberId, MemberRole memberRole) {
-        Member findMember = checkMember(memberId);
-        findMember.updateRole(memberRole);
-    }
-
     public Member checkMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
@@ -127,11 +120,6 @@ public class MemberService {
                 .role(MemberRole.BASIC)
                 .build();
         return signUpMember;
-    }
-
-    public boolean isAdmin(Long memberId) {
-        Member findMember = checkMember(memberId);
-        return findMember.getRole().equals(MemberRole.ADMIN);
     }
 
     public MemberShortInfoResponse getMemberShortInfo(Long memberId) {

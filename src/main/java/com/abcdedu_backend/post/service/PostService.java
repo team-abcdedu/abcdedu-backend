@@ -30,7 +30,7 @@ public class PostService {
     private final MemberService memberService;
 
     public List<PostListResponse> getAllPosts(Pageable pageable, String boardName) {
-        Board findBoard = boardService.findBoardIdByName(boardName);
+        Board findBoard = boardService.checkBoard(boardName);
         Page<Post> findPostList = postReposiroty.findAllByBoardId(pageable, findBoard.getId());
         return findPostList.stream()
                 .map(post -> PostToPostListResponse(post))
@@ -83,7 +83,7 @@ public class PostService {
     }
     // role이 학생 이상인지
     private void checkMemberGradeHigherThanBasic(Member member) {
-        if (member.getRole().equals(MemberRole.BASIC)) {
+        if (member.isStudent()) {
             throw new ApplicationException(ErrorCode.ROLE_INVALID_PERMISSION);
         }
     }
