@@ -18,6 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,17 +29,29 @@ public class PostService {
     private final BoardService boardService;
     private final MemberService memberService;
 
-    public Page<PostListResponse> getAllPosts(Pageable pageable) {
-        return postReposiroty.findAllWithMemberAndComment(pageable)
-                .map(post -> PostToPostListResponse(post));
+    public List<PostListResponse> getAllPosts(Pageable pageable, String boardName) {
+        Board findBoard = boardService.findBoardIdByName(boardName);
+        Page<Post> findPostList = postReposiroty.findAllByBoardId(pageable, findBoard.getId());
+        return findPostList.stream()
+                .map(post -> PostToPostListResponse(post))
+                .collect(Collectors.toList());
+    }
+
+    public List<PostListResponse> getAllPosts(Pageable pageable) {
+        Page<Post> findPostList = postReposiroty.findAll(pageable);
+        return findPostList.stream()
+                .map(post -> PostToPostListResponse(post))
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Long createPost(PostCreateRequest req, Long memberId) {
-        Board findBoard = boardService.checkBoard(req.boardName());
+    public Long createPost(PostCreateRequest req, Long memberId, String boardName) {
+        Board findBoard = boardService.checkBoard(boardName);
         Member findMember = memberService.checkMember(memberId);
-        Post post = of(findMember, findBoard, req);
+        checkMemberGradeHigherThanBasic(findMember);
+        Post post = dtoToEntity(findMember, findBoard, req);
         postReposiroty.save(post);
+        boardService.addPostToBoard(findBoard, post);
         return post.getId();
     }
 
@@ -59,10 +74,17 @@ public class PostService {
         return postReposiroty.findById(postId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_FOUND));
     }
+
     // post 게시자 본인과 관리자만 할 수 있는 기능에 추가
     private void checkPermission(Member member, Post post) {
         if (!member.getRole().equals(MemberRole.ADMIN) && !member.getId().equals(post.getMember().getId())) {
             throw new ApplicationException(ErrorCode.POST_INVALID_PERMISSION);
+        }
+    }
+    // role이 학생 이상인지
+    private void checkMemberGradeHigherThanBasic(Member member) {
+        if (member.getRole().equals(MemberRole.BASIC)) {
+            throw new ApplicationException(ErrorCode.ROLE_INVALID_PERMISSION);
         }
     }
 
@@ -70,12 +92,12 @@ public class PostService {
     // 다건 조회
     private PostListResponse PostToPostListResponse(Post post) {
         return PostListResponse.builder()
-                .title(post.getTitle())
-                .writer(post.getMember().getName())
-                .viewCount(post.getViewCount())
-                .commentCount((long) post.getComments().size())
-                .updatedAt(post.getUpdatedAt())
-                .build();
+                        .title(post.getTitle())
+                        .writer(post.getMember().getName())
+                        .viewCount(post.getViewCount())
+                        .commentCount(post.getCommentCount())
+                        .updatedAt(post.getUpdatedAt())
+                        .build();
     }
 
     // 단건 조회
@@ -91,12 +113,13 @@ public class PostService {
                 .build();
     }
 
-    public Post of(Member member, Board board, PostCreateRequest req) {
+    public Post dtoToEntity(Member member, Board board, PostCreateRequest req) {
         return Post.builder()
                 .board(board)
                 .member(member)
                 .title(req.title())
                 .viewCount(req.viewCount())
+                .commentCount(req.commentCount())
                 .content(req.content())
                 .secret(req.secret())
                 .commentAllow(req.commentAllow())

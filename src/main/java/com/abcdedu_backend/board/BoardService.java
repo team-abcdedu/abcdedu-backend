@@ -7,6 +7,7 @@ import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,11 @@ public class BoardService {
         return BoardToBoardResponse(board);
     }
 
+    public Board findBoardIdByName(String name) {
+        return boardRepository.findByName(name)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
+    }
+
     @Transactional
     public Long addBoard(BoardCreateRequest req, Long memberId) {
         Member findMember = memberService.checkMember(memberId);
@@ -41,6 +47,13 @@ public class BoardService {
         checkPermission(findMember);
         Board findBoard = boardRepository.findById(boardId).orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
         boardRepository.delete(findBoard);
+    }
+
+
+    @Transactional
+    public void addPostToBoard(Board board, Post post) {
+        board.getPosts().add(post);
+        boardRepository.save(board);
     }
 
     // ======== 유효성 검사, 서비스 로직
