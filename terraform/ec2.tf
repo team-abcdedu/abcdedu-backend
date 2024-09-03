@@ -9,6 +9,6 @@ resource "aws_instance" "ec2" {
     prevent_destroy = true
   }
   tags = {
-    Name = "abcdedu-ec2-dev"
+    Name = "abcdedu-ec2-${var.environment}"
   }
 }
