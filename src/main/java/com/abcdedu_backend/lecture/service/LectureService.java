@@ -12,8 +12,7 @@ import com.abcdedu_backend.lecture.dto.response.GetClassResponse;
 import com.abcdedu_backend.lecture.entity.*;
 import com.abcdedu_backend.lecture.repository.*;
 import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.repository.MemberRepository;
+import com.abcdedu_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,8 +27,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LectureService {
 
+    private final MemberService memberService;
+
     private final LectureRepository lectureRepository;
-    private final MemberRepository memberRepository;
     private final SubLectureRepository subLectureRepository;
     private final AssignmentRepository assignmentRepository;
     private final AssignmentQuestionRepository assignmentQuestionRepository;
@@ -37,16 +37,16 @@ public class LectureService {
 
     @Transactional
     public void createLecture(Long memberId, CreateLectureRequest request) {
-        Member findMember = findMember(memberId);
-        checkPermission(findMember);
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
         Lecture lecture = createLecture(request);
         lectureRepository.save(lecture);
     }
 
     @Transactional
     public void createSubLecture(Long lectureId, Long memberId, CreateSubLectureRequest request) {
-        Member findMember = findMember(memberId);
-        checkPermission(findMember);
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
         Lecture findLecture = findLecture(lectureId);
         SubLecture subLecture = createSubLecture(findLecture, request);
         subLectureRepository.save(subLecture);
@@ -59,8 +59,8 @@ public class LectureService {
 
     @Transactional
     public void createAssignments(Long subLectureId, Long memberId, CreateAssignmentRequest request) {
-        Member findMember = findMember(memberId);
-        checkPermission(findMember);
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
         SubLecture subLecture = findSubLecture(subLectureId);
         Assignment assignment = createAssignment(request, subLecture);
         List<QuestionsDto> questions = request.questions();
@@ -74,8 +74,8 @@ public class LectureService {
 
     @Transactional
     public void createAssignmentsAnswer(Long assignmentId, Long memberId, CreateAssignmentAnswerRequest createAssignmentAnswerRequest) {
-        Member findMember = findMember(memberId);
-        checkPermission(findMember);
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
         Assignment assignment = findAssignment(assignmentId);
         List<AssignmentQuestion> questions = assignment.getAssignmentQuestions();
         List<CreateAssignmentAnswerDto> answers = createAssignmentAnswerRequest.answers();
@@ -157,14 +157,8 @@ public class LectureService {
                 .build();
     }
 
-    private Member findMember(Long memberId) {
-        Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
-        return findMember;
-    }
-
-    private void checkPermission(Member findMember) {
-        if (findMember.getRole() != MemberRole.ADMIN){
+    private void checkAdminPermission(Member findMember) {
+        if (!findMember.isAdmin()){
             throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
     }
