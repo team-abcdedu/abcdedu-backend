@@ -48,7 +48,8 @@ public class PostService {
     public Long createPost(PostCreateRequest req, Long memberId, String boardName) {
         Board findBoard = boardService.checkBoard(boardName);
         Member findMember = memberService.checkMember(memberId);
-        checkMemberGradeHigherThanBasic(findMember);
+        // rating (등업 게시판)이 아니면 글 작성은 학생 이상만 가능하다.
+        if (!boardName.equals("rating")) checkMemberGradeHigherThanBasic(findMember);
         Post post = dtoToEntity(findMember, findBoard, req);
         postReposiroty.save(post);
         boardService.addPostToBoard(findBoard, post);
@@ -83,7 +84,7 @@ public class PostService {
     }
     // role이 학생 이상인지
     private void checkMemberGradeHigherThanBasic(Member member) {
-        if (member.isStudent()) {
+        if (!member.isStudent() && !member.isAdmin()) {
             throw new ApplicationException(ErrorCode.ROLE_INVALID_PERMISSION);
         }
     }
