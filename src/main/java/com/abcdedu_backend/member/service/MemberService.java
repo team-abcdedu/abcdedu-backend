@@ -161,4 +161,20 @@ public class MemberService {
         Member findMember = checkMember(memberId);
         return findMember.getRole().equals(MemberRole.ADMIN);
     }
+
+
+    public MemberShortInfoResponse getMemberShortInfo(Long memberId) {
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        return MemberShortInfoResponse.builder()
+                .name(findMember.getName())
+                .role(findMember.getRole().getName())
+                .build();
+    }
+
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenRepository.deleteById(refreshToken);
+    }
 }
