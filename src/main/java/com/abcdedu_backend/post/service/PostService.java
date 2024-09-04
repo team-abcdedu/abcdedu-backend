@@ -6,6 +6,7 @@ import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.response.PostResponse;
@@ -29,34 +30,15 @@ public class PostService {
     private final BoardService boardService;
     private final MemberService memberService;
 
-    public List<PostListResponse> getAllPosts(Pageable pageable, String boardName) {
-        Board findBoard = boardService.checkBoard(boardName);
-        Page<Post> findPostList = postReposiroty.findAllByBoardId(pageable, findBoard.getId());
+
+    public List<PostListResponse> readPostList(Long boardId, Pageable pageable) {
+        Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable);
         return findPostList.stream()
                 .map(post -> PostToPostListResponse(post))
                 .collect(Collectors.toList());
     }
 
-    public List<PostListResponse> getAllPosts(Pageable pageable) {
-        Page<Post> findPostList = postReposiroty.findAll(pageable);
-        return findPostList.stream()
-                .map(post -> PostToPostListResponse(post))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public Long createPost(PostCreateRequest req, Long memberId, String boardName) {
-        Board findBoard = boardService.checkBoard(boardName);
-        Member findMember = memberService.checkMember(memberId);
-        // rating (등업 게시판)이 아니면 글 작성은 학생 이상만 가능하다.
-        if (!boardName.equals("rating")) checkMemberGradeHigherThanBasic(findMember);
-        Post post = dtoToEntity(findMember, findBoard, req);
-        postReposiroty.save(post);
-        boardService.addPostToBoard(findBoard, post);
-        return post.getId();
-    }
-
-    public PostResponse findPost(Long postId, Long memberId) {
+    public PostResponse getPostById(Long postId, Long memberId) {
         Post findPost = checkPost(postId);
         Member findMember = memberService.checkMember(memberId);
         checkPermission(findMember, findPost);
@@ -64,11 +46,33 @@ public class PostService {
     }
 
     @Transactional
+    public Long createPost(PostCreateRequest req, Long memberId) {
+        Board findBoard = boardService.checkBoard(req.boardId());
+        Member findMember = memberService.checkMember(memberId);
+        if (hasPostingRestrictedByRole(findBoard)) checkMemberGradeHigherThanBasic(findMember);
+        Post post = of(findMember, findBoard, req);
+        postReposiroty.save(post);
+        boardService.addPostToBoard(findBoard, post);
+        return post.getId();
+    }
+
+
+    @Transactional
     public void removePost(Long postId, Long memberId) {
         Member findMember = memberService.checkMember(memberId);
         Post findPost = checkPost(postId);
         checkPermission(findMember, findPost);
         postReposiroty.delete(findPost);
+    }
+
+    @Transactional
+    public Long updatePost(Long postId, Long memberId, PostUpdateRequest updateRequest) {
+        Member findMember = memberService.checkMember(memberId);
+        Post findPost = checkPost(postId);
+        checkPermission(findMember, findPost);
+        findPost.updatePost(updateRequest);
+        postReposiroty.save(findPost);
+        return findPost.getId();
     }
 
     public Post checkPost(Long postId) {
@@ -88,11 +92,18 @@ public class PostService {
             throw new ApplicationException(ErrorCode.ROLE_INVALID_PERMISSION);
         }
     }
+    private boolean hasPostingRestrictedByRole(Board board) {
+        return !boardIdToName(board.getId()).equals("rating");
+    }
 
+    private String boardIdToName(Long boardId) {
+        return boardService.boardIdToName(boardId);
+    }
     // ====== DTO, Entity 변환 =======
     // 다건 조회
     private PostListResponse PostToPostListResponse(Post post) {
         return PostListResponse.builder()
+                        .postId(post.getId())
                         .title(post.getTitle())
                         .writer(post.getMember().getName())
                         .viewCount(post.getViewCount())
@@ -109,12 +120,11 @@ public class PostService {
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .viewCount(post.getViewCount())
-                .commentCount((long) post.getComments().size())  // 댓글 수
-                .comments(post.getComments())  // 댓글 리스트
+                .commentCount(post.getCommentCount())  // 댓글 수
                 .build();
     }
 
-    public Post dtoToEntity(Member member, Board board, PostCreateRequest req) {
+    public Post of(Member member, Board board, PostCreateRequest req) {
         return Post.builder()
                 .board(board)
                 .member(member)

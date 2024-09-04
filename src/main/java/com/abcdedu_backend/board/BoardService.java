@@ -68,9 +68,13 @@ public class BoardService {
         }
     }
 
-    public Board checkBoard(String boardName) {
-        return boardRepository.findByName(boardName)
+    public Board checkBoard(Long boardId) {
+        return boardRepository.findById(boardId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
+    }
+
+    public String boardIdToName(Long boardId) {
+        return checkBoard(boardId).getName();
     }
 
     // ======= DTO 변환 메서드들

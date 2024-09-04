@@ -1,6 +1,7 @@
 package com.abcdedu_backend.post.entity;
 
 import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import com.abcdedu_backend.board.Board;
 import jakarta.persistence.*;
@@ -62,6 +63,12 @@ public class Post extends BaseTimeEntity {
     private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
 
 
+    public void updatePost(PostUpdateRequest request) {
+        this.title = request.title();
+        this.content = request.content();
+        this.secret = request.secret();
+        this.commentAllow = request.commentAllow();
+    }
     public void incrementCommentCount() {
         this.commentCount++;
     }
