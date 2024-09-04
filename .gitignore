@@ -56,3 +56,6 @@ application-prod.yaml
 *.tfvars.json
 # Lock file
 .terraform.lock.hcl
+
+# data
+data.sql
