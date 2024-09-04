@@ -7,6 +7,7 @@ import com.abcdedu_backend.lecture.dto.request.CreateAssignmentAnswerRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateLectureRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateSubLectureRequest;
+import com.abcdedu_backend.lecture.dto.response.GetAssignmentAnswerResponse;
 import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponse;
 import com.abcdedu_backend.lecture.dto.response.GetClassResponse;
 import com.abcdedu_backend.lecture.entity.*;
@@ -15,6 +16,8 @@ import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,7 @@ public class LectureService {
     private final AssignmentRepository assignmentRepository;
     private final AssignmentQuestionRepository assignmentQuestionRepository;
     private final AssignmentAnswerRepository assignmentAnswerRepository;
+    private final AssignmentSubmissionRepository assignmentSubmissionRepository;
 
     @Transactional
     public void createLecture(Long memberId, CreateLectureRequest request) {
@@ -79,11 +83,20 @@ public class LectureService {
         Assignment assignment = findAssignment(assignmentId);
         List<AssignmentQuestion> questions = assignment.getAssignmentQuestions();
         List<CreateAssignmentAnswerDto> answers = createAssignmentAnswerRequest.answers();
+        AssignmentSubmission assignmentSubmission = createAssignmentSubmission(assignment, findMember);
+        assignmentSubmissionRepository.save(assignmentSubmission);
         for (int i = 0; i < questions.size(); i++){
             AssignmentQuestion assignmentQuestion = questions.get(i);
-            AssignmentAnswer assignmentAnswer = createAssignmentAnswer(assignment, assignmentQuestion, findMember, answers, i);
+            AssignmentAnswer assignmentAnswer = createAssignmentAnswer(assignmentSubmission, assignmentQuestion, answers, i);
             assignmentAnswerRepository.save(assignmentAnswer);
         }
+    }
+
+    private AssignmentSubmission createAssignmentSubmission(Assignment assignment, Member findMember) {
+        return AssignmentSubmission.builder()
+                .assignment(assignment)
+                .member(findMember)
+                .build();
     }
 
     public List<GetClassResponse> getLectures() {
@@ -103,11 +116,10 @@ public class LectureService {
         return GetAssignmentResponse.of(assignment.getTitle(), assignment.getBody(), questionsDto);
     }
 
-    private AssignmentAnswer createAssignmentAnswer(Assignment assignment, AssignmentQuestion assignmentQuestion, Member findMember, List<CreateAssignmentAnswerDto> answers, int i) {
+    private AssignmentAnswer createAssignmentAnswer(AssignmentSubmission assignmentSubmission, AssignmentQuestion assignmentQuestion, List<CreateAssignmentAnswerDto> answers, int i) {
         return AssignmentAnswer.builder()
-                .assignment(assignment)
+                .assignmentSubmission(assignmentSubmission)
                 .assignmentQuestion(assignmentQuestion)
-                .member(findMember)
                 .body(answers.get(i).body())
                 .build();
     }
@@ -202,4 +214,22 @@ public class LectureService {
                 .build();
     }
 
+    public List<GetAssignmentAnswerResponse> getAssignmentAnswers(Pageable pageable, Long memberId) {
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
+        Page<AssignmentSubmission> assignmentSubmissions = assignmentSubmissionRepository.findAllWithMemberAndAssignmentAndSubLecture(pageable);
+        return assignmentSubmissions.stream()
+                .map(submission -> createGetAssignmentAnswerResponse(submission)
+                ).collect(Collectors.toUnmodifiableList());
+    }
+
+    private GetAssignmentAnswerResponse createGetAssignmentAnswerResponse(AssignmentSubmission submission) {
+        return GetAssignmentAnswerResponse.builder()
+                .assignmentId(submission.getAssignment().getId())
+                .updatedAt(submission.getUpdatedAt())
+                .subClassName(submission.getAssignment().getSubLecture().getTitle())
+                .userName(submission.getMember().getName())
+                .subClassId(submission.getAssignment().getSubLecture().getId())
+                .build();
+    }
 }
