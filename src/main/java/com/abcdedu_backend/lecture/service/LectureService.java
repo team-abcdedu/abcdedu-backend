@@ -7,6 +7,7 @@ import com.abcdedu_backend.lecture.dto.request.CreateAssignmentAnswerRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateLectureRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateSubLectureRequest;
+import com.abcdedu_backend.lecture.dto.response.GetAssignmentAnswerDetailResponse;
 import com.abcdedu_backend.lecture.dto.response.GetAssignmentAnswerResponse;
 import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponse;
 import com.abcdedu_backend.lecture.dto.response.GetClassResponse;
@@ -230,6 +231,7 @@ public class LectureService {
                 .subClassName(submission.getAssignment().getSubLecture().getTitle())
                 .userName(submission.getMember().getName())
                 .subClassId(submission.getAssignment().getSubLecture().getId())
+                .submissionId(submission.getId())
                 .build();
     }
 }

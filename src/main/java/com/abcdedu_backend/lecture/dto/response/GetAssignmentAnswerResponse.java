@@ -10,6 +10,7 @@ public record GetAssignmentAnswerResponse (
         Long subClassId,
         String subClassName,
         LocalDateTime updatedAt,
-        String userName
+        String userName,
+        Long submissionId
 ){
 }

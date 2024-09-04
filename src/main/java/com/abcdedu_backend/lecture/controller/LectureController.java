@@ -5,6 +5,7 @@ import com.abcdedu_backend.lecture.dto.request.CreateAssignmentAnswerRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateLectureRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateSubLectureRequest;
+import com.abcdedu_backend.lecture.dto.response.GetAssignmentAnswerDetailResponse;
 import com.abcdedu_backend.lecture.dto.response.GetAssignmentAnswerResponse;
 import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponse;
 import com.abcdedu_backend.lecture.dto.response.GetClassResponse;
@@ -86,8 +87,8 @@ public class LectureController {
         return Response.success(response);
     }
 
-    @Operation(summary = "시험 제출 목록 조회 (admin)", description = "과제를 제출 목록을 조회합니다.")
-    @GetMapping("/assignments/answers")
+    @Operation(summary = "시험 제출 목록 조회 (admin)", description = "시험 제출 목록을 조회합니다.")
+    @GetMapping("/assignments/submissions")
     public Response<List<GetAssignmentAnswerResponse>> getAssignmentAnswers(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC) Pageable pageable, @JwtValidation Long memberId){
         List<GetAssignmentAnswerResponse> response = lectureService.getAssignmentAnswers(pageable, memberId);
         return Response.success(response);
