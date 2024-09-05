@@ -128,13 +128,6 @@ public class MemberService {
         return createMember(request, MemberRole.BASIC);
     }
 
-    // ToDo : 관리자 역할 바꾸기 위한 test용 기능
-    @Transactional
-    public void updateMemberRole(Long memberId, MemberRole memberRole) {
-        Member findMember = checkMember(memberId);
-        findMember.updateRole(memberRole);
-    }
-
     public Member checkMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
@@ -157,10 +150,7 @@ public class MemberService {
             throw new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
     }
-    public boolean isAdmin(Long memberId) {
-        Member findMember = checkMember(memberId);
-        return findMember.getRole().equals(MemberRole.ADMIN);
-    }
+
     @Transactional
     public void logout(String refreshToken) {
         refreshTokenRepository.deleteById(refreshToken);
