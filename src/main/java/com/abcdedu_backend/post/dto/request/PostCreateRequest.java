@@ -9,20 +9,15 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public record PostCreateRequest (
+        @NotNull
+        Long boardId,
         @NotBlank
         String title,
         @NotNull
         String content,
-        Long viewCount,
         @NotNull
         Boolean secret,
         @NotNull
-        Boolean commentAllow,
-        @NotBlank
-        String boardName
+        Boolean commentAllow
 ){
-        // 기본 설정 값 뺀 필드들을 파라미터로 받아 객체 생성
-        public PostCreateRequest(String title, String content, Boolean secret, Boolean commentAllow, String boardName) {
-                this(title, content, 0L, secret, commentAllow, boardName);
-        }
 }

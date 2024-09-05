@@ -32,14 +32,16 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, Long memberId) {
-        Comment comment = checkVaildation(commentId, memberId);
+    public void deleteComment(Long postId, Long commentId, Long memberId) {
+        Comment findComment = checkVaildation(commentId, memberId);
+        postService.checkPost(postId).decrementCommentCount();
         commentRepository.deleteById(commentId);
     }
 
 
     public List<CommentResponse> readComments(Long postId) {
         Post findpost = postService.checkPost(postId);
+        CheckPostAllowedComment(findpost);
         List<Comment> comments = findpost.getComments();
         List<CommentResponse> commentResponses = comments.stream()
                 .map(comment -> CommentResponse.builder()
@@ -53,12 +55,13 @@ public class CommentService {
     @Transactional
     public void CreateComment(Long postId, Long memberId, CommentCreateRequest createRequest) {
         Post findpost = postService.checkPost(postId);
+        CheckPostAllowedComment(findpost);
+        findpost.incrementCommentCount();
         Member findMember = memberService.checkMember(memberId);
         Comment comment = Comment.builder()
                 .post(findpost)
                 .member(findMember)
                 .content(createRequest.content())
-                //.secret(createRequest.secret())
                 .build();
         commentRepository.save(comment);
     }
@@ -66,6 +69,13 @@ public class CommentService {
     public Long countCommentsByMember(Long memberId) {
         Member member = memberService.checkMember(memberId);
         return (long) member.getComments().size();
+    }
+
+    private Post CheckPostAllowedComment(Post post) {
+        if (!post.getCommentAllow()) {
+            throw new ApplicationException(ErrorCode.POST_NOT_ALLOWED_COMMENT);
+        }
+        return post;
     }
 
     // ======== DTO 변환

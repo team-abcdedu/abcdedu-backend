@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
  */
 @Builder
 public record PostListResponse (
+        Long postId,
         String title,
         String writer,
         Long viewCount,
