@@ -134,4 +134,11 @@ public class LectureController {
         GetAssignmentFileUrlResponse response = lectureService.getAssignmentFileUrl(memberId, assignmentFileId);
         return Response.success(response);
     }
+
+    @Operation(summary = "평가 파일 (시험/실습/프로젝트/이론) 문제지 조회", description = "평가 파일(시험/실습/프로젝트/이론) 문제지를 조회합니다.")
+    @GetMapping("/answer-file/{assignmentAnswerFileId}")
+    public Response<GetAssignmentAnswerFileUrlResponse> getAssignmentAnswerFileUrl(@PathVariable Long assignmentAnswerFileId, @JwtValidation Long memberId){
+        GetAssignmentAnswerFileUrlResponse response = lectureService.getAssignmentAnswerFileUrl(memberId, assignmentAnswerFileId);
+        return Response.success(response);
+    }
 }

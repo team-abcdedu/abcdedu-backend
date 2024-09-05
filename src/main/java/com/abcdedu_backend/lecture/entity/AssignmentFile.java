@@ -25,6 +25,9 @@ public class AssignmentFile {
     @Enumerated(EnumType.STRING)
     private AssignmentType assignmentType;
 
+    @OneToOne(mappedBy = "assignmentFile")
+    private AssignmentAnswerFile assignmentAnswerFile;
+
     @Column(length=100)
     private String objectKey;
 

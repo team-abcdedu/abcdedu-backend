@@ -269,7 +269,12 @@ public class LectureService {
         checkBasicPermission(findMember);
         String objectKey = assignmentFile.getObjectKey();
         String presignedUrl = fileHandler.getPresignedUrl(objectKey);
-        return new GetAssignmentFileUrlResponse(presignedUrl);
+        if (assignmentFile.getAssignmentAnswerFile() == null){
+            return GetAssignmentFileUrlResponse.builder()
+                    .filePresignedUrl(presignedUrl)
+                    .build();
+        }
+        return new GetAssignmentFileUrlResponse(presignedUrl, assignmentFile.getAssignmentAnswerFile().getId());
     }
 
     private AssignmentFile findAssignmentFile(Long assignmentFileId) {
@@ -293,11 +298,11 @@ public class LectureService {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
-
-
+        
+        
         String objectKey = fileHandler.upload(
-                file,
-                FileDirectory.of(assignmentFile.getAssignmentType().getType()),
+                file, 
+                FileDirectory.of(assignmentFile.getAssignmentType().getType()), 
                 "answer/"+assignmentFile.getSubLecture().getSubLectureName());
 
         AssignmentAnswerFile assignmentAnswerFile = AssignmentAnswerFile.builder()
@@ -306,5 +311,19 @@ public class LectureService {
                 .build();
 
         assignmentAnswerFileRepository.save(assignmentAnswerFile);
+    }
+
+    public GetAssignmentAnswerFileUrlResponse getAssignmentAnswerFileUrl(Long memberId, Long assignmentAnswerFileId) {
+        Member findMember = memberService.checkMember(memberId);
+        AssignmentAnswerFile assignmentAnswerFile = findAssignmentAnswerFile(assignmentAnswerFileId);
+        checkBasicPermission(findMember);
+        String objectKey = assignmentAnswerFile.getObjectKey();
+        String presignedUrl = fileHandler.getPresignedUrl(objectKey);
+        return new GetAssignmentAnswerFileUrlResponse(presignedUrl);
+    }
+
+    private AssignmentAnswerFile findAssignmentAnswerFile(Long assignmentAnswerFileId) {
+        return assignmentAnswerFileRepository.findById(assignmentAnswerFileId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_ANSWER_FILE_NOT_FOUND));
     }
 }

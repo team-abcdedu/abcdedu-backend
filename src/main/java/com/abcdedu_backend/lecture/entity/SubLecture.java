@@ -37,7 +37,7 @@ public class SubLecture {
     private List<AssignmentFile> assignmentFiles;
 
     public String getSubLectureName() {
-        return lecture.getType() + this.orderNumber.toString();
+        return lecture.getType() + "-" + this.orderNumber.toString();
     }
 
 }

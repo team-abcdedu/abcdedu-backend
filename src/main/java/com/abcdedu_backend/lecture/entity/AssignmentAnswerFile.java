@@ -18,7 +18,7 @@ public class AssignmentAnswerFile {
     @Id
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignment_file_id", nullable = false)
     private AssignmentFile assignmentFile;
 

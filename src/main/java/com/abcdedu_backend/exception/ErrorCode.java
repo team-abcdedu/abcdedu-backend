@@ -53,7 +53,8 @@ public enum ErrorCode {
     S3_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3 업로드에서 에러가 발생했습니다."),
     S3_OBJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "s3 오브젝트를 찾을 수 없습니다."),
     S3_DIRECTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "s3 파일 디렉토리를 찾을 수 없습니다."),
-    ASSIGNMENT_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다.");
+    ASSIGNMENT_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
+    ASSIGNMENT_ANSWER_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "문제지 파일을 찾을 수 없습니다.");
 
 
     private HttpStatus status;
