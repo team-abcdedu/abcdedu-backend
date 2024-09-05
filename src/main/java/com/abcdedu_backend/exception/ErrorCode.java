@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "사용자가 권한이 없습니다."),
+    ADMIN_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "관리자만 가능한 기능 입니다."),
+    BASIC_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "학생 이상만 가능한 기능 입니다."),
     // 상담
     CONTACT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상담이 없습니다."),
     CONTACT_INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "본인과 관리자만 가능한 기능입니다."),
@@ -50,7 +52,8 @@ public enum ErrorCode {
     //S3
     S3_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3 업로드에서 에러가 발생했습니다."),
     S3_OBJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "s3 오브젝트를 찾을 수 없습니다."),
-    S3_DIRECTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "s3 파일 디렉토리를 찾을 수 없습니다.");
+    S3_DIRECTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "s3 파일 디렉토리를 찾을 수 없습니다."),
+    ASSIGNMENT_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다.");
 
 
     private HttpStatus status;

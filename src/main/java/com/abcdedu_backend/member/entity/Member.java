@@ -54,6 +54,10 @@ public class Member extends BaseTimeEntity {
         return this.role == MemberRole.ADMIN;
     }
 
+    public boolean isBasic(){
+        return this.role == MemberRole.BASIC;
+    }
+
     public void updateProfile(String name, String imageUrl, String school, Long studentId){
         this.name = name;
         this.imageUrl = imageUrl;

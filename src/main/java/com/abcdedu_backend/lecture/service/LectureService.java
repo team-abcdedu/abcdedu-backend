@@ -4,15 +4,12 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.infra.file.FileDirectory;
 import com.abcdedu_backend.infra.file.FileHandler;
-import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponseV1;
+import com.abcdedu_backend.lecture.dto.response.*;
 import com.abcdedu_backend.lecture.dto.*;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentAnswerRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateLectureRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateSubLectureRequest;
-import com.abcdedu_backend.lecture.dto.response.GetAssignmentAnswerResponse;
-import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponseV2;
-import com.abcdedu_backend.lecture.dto.response.GetClassResponse;
 import com.abcdedu_backend.lecture.entity.*;
 import com.abcdedu_backend.lecture.repository.*;
 import com.abcdedu_backend.member.entity.Member;
@@ -262,5 +259,28 @@ public class LectureService {
         return findSublecture.getAssignmentFiles().stream()
                 .map(assignmentFile -> new GetAssignmentResponseV1(assignmentFile.getAssignmentType().getType(), assignmentFile.getId()))
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    public GetAssignmentFileUrlResponse getAssignmentFileUrl(Long memberId, Long assignmentFileId) {
+        Member findMember = memberService.checkMember(memberId);
+        AssignmentFile assignmentFile = assignmentFileRepository.findById(assignmentFileId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_FILE_NOT_FOUND));
+        checkTheoryPermission(assignmentFile, findMember);
+        checkBasicPermission(findMember);
+        String objectKey = assignmentFile.getObjectKey();
+        String presignedUrl = fileHandler.getPresignedUrl(objectKey);
+        return new GetAssignmentFileUrlResponse(presignedUrl);
+    }
+
+    private static void checkTheoryPermission(AssignmentFile assignmentFile, Member findMember) {
+        if (assignmentFile.getAssignmentType() == AssignmentType.Theory && !findMember.isAdmin()){
+            throw new ApplicationException(ErrorCode.ADMIN_INVALID_PERMISSION);
+        }
+    }
+
+    private static void checkBasicPermission(Member findMember) {
+        if (findMember.isBasic()){
+            throw new ApplicationException(ErrorCode.BASIC_INVALID_PERMISSION);
+        }
     }
 }
