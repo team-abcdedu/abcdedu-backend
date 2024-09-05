@@ -55,8 +55,8 @@ public class MemberInfoController {
 
     @Operation(summary = "프로필 이름, 역할 정보 조회", description = "프로필 이름, 역할을 조회합니다.")
     @GetMapping("/info/name-and-role")
-    public Response<MemberShortInfoResponse> getMemberShortInfo(@JwtValidation Long memberId){
-        MemberShortInfoResponse memberShortInfoResponse = memberService.getMemberShortInfo(memberId);
+    public Response<MemberShortInfoResponse> getMemberNameAndRoleInfo(@JwtValidation Long memberId){
+        MemberShortInfoResponse memberShortInfoResponse = memberService.getMemberNameAndRoleInfo(memberId);
         return Response.success(memberShortInfoResponse);
     }
 }

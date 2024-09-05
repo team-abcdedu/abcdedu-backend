@@ -50,6 +50,9 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<Comment> comments;
 
+    public boolean isAdmin(){
+        return this.role == MemberRole.ADMIN;
+    }
 
     public void updateProfile(String name, String imageUrl, String school, Long studentId){
         this.name = name;

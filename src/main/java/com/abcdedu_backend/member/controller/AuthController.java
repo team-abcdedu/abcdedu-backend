@@ -52,6 +52,16 @@ public class AuthController {
         return Response.success();
     }
 
+    @Operation(summary = "관리자 회원 가입", description = "관리자 회원가입을 합니다.")
+    @ApiResponses(value ={
+            @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일입니다.", content = @Content),
+    })
+    @PostMapping("/signup/admin")
+    public Response<Void> adminSignUp(@Valid @RequestBody SignUpRequest signUpRequest){
+        memberService.adminSignUp(signUpRequest);
+        return Response.success();
+    }
+
     @Operation(summary = "로그인", description = "로그인을 합니다.")
     @ApiResponses(value ={
             @ApiResponse(responseCode = "400", description = "존재하지 않는 이메일 또는 패스워드입니다.", content = @Content),
@@ -68,6 +78,21 @@ public class AuthController {
         LoginResponse loginResponse = new LoginResponse(loginTokenDto.accessToken());
         return Response.success(loginResponse);
     }
+    @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
+    @DeleteMapping("/logout")
+    public Response<LoginResponse> logout(HttpServletRequest request, HttpServletResponse response){
+        String refreshToken = parseRefreshToken(request);
+        memberService.logout(refreshToken);
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+        response.setHeader("Set-Cookie", refreshTokenCookie.toString());
+        return Response.success();
+    }
+
+
 
     @Operation(summary = "액세스 토큰 재발급", description = "리프레시 토큰으로 액세스 토큰을 재발급 합니다.")
     @ApiResponses(value ={
@@ -76,13 +101,18 @@ public class AuthController {
     })
     @GetMapping("/reissue")
     public Response<ReissueResponse> reissue(HttpServletRequest request) {
+        String refreshToken = parseRefreshToken(request);
+        ReissueResponse reissueResponse = memberService.reissue(refreshToken);
+        return Response.success(reissueResponse);
+    }
+
+    private String parseRefreshToken(HttpServletRequest request) {
         Cookie refreshTokenCookie = Arrays.stream(request.getCookies())
                 .filter(cookie -> "refreshToken".equals(cookie.getName()))
                 .findFirst()
                 .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
         String refreshToken = refreshTokenCookie.getValue();
-        ReissueResponse reissueResponse = memberService.reissue(refreshToken);
-        return Response.success(reissueResponse);
+        return refreshToken;
     }
 
 }

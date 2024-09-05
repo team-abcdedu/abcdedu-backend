@@ -1,12 +1,12 @@
 # RDS 인스턴스 생성
 resource "aws_db_instance" "abcdedu_db" {
-  identifier        = "abcdedurdsdev"
+  identifier        = "abcdedurds${var.environment}"
   instance_class    = "db.t3.micro"
   engine            = "mysql"
   engine_version    = "8.0"
   username          = var.db_username
   password          = var.db_password
-  db_name           = "abcdeduDev"
+  db_name           = "${var.db_name}"
   allocated_storage = 20
   storage_type      = "gp2"
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
