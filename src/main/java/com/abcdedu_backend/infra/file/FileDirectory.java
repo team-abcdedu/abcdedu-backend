@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum FileDirectory {
 
-    PROFILE_IMAGE("abcdedu/profile/");
+    PROFILE_IMAGE("abcdedu/profile/"),
+    POST_ATTACHMENT("abcdedu/post/attachment/");
 
     private final String directoryName;
 }

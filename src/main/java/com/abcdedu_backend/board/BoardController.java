@@ -3,6 +3,8 @@ package com.abcdedu_backend.board;
 import com.abcdedu_backend.board.dto.request.BoardCreateRequest;
 import com.abcdedu_backend.board.dto.response.BoardResponse;
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.post.dto.response.PostListResponse;
+import com.abcdedu_backend.post.service.PostService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +35,8 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final PostService postService;
+
     @Operation(summary = "게시판 카테고리 추가", description = "카테고리를 추가합니다. 관리자 이상만 가능합니다.")
     @PostMapping("/")
     public Response<Long> addBoard(@Valid @RequestBody BoardCreateRequest req, @JwtValidation Long memberId) {
@@ -53,6 +60,14 @@ public class BoardController {
     @GetMapping("/{boardId}")
     public Response<BoardResponse> findBoard(@PathVariable Long boardId) {
         return Response.success(boardService.findBoard(boardId));
+    }
+
+    @GetMapping("/{boardId}/posts")
+    @Operation(summary = "카테고리별 게시글 목록", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다.")
+    public Response<List<PostListResponse>> getPostList(@PathVariable Long boardId) {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+        List<PostListResponse> allPosts = postService.readPostList(boardId, pageable);
+        return Response.success(allPosts);
     }
 
 }
