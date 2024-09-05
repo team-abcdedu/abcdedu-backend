@@ -41,6 +41,7 @@ public class CommentService {
 
     public List<CommentResponse> readComments(Long postId) {
         Post findpost = postService.checkPost(postId);
+        CheckPostAllowedComment(findpost);
         List<Comment> comments = findpost.getComments();
         List<CommentResponse> commentResponses = comments.stream()
                 .map(comment -> CommentResponse.builder()
@@ -54,6 +55,7 @@ public class CommentService {
     @Transactional
     public void CreateComment(Long postId, Long memberId, CommentCreateRequest createRequest) {
         Post findpost = postService.checkPost(postId);
+        CheckPostAllowedComment(findpost);
         findpost.incrementCommentCount();
         Member findMember = memberService.checkMember(memberId);
         Comment comment = Comment.builder()
@@ -67,6 +69,13 @@ public class CommentService {
     public Long countCommentsByMember(Long memberId) {
         Member member = memberService.checkMember(memberId);
         return (long) member.getComments().size();
+    }
+
+    private Post CheckPostAllowedComment(Post post) {
+        if (!post.getCommentAllow()) {
+            throw new ApplicationException(ErrorCode.POST_NOT_ALLOWED_COMMENT);
+        }
+        return post;
     }
 
     // ======== DTO 변환

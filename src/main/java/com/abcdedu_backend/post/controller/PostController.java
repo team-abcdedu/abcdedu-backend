@@ -88,7 +88,8 @@ public class PostController {
     @Operation(summary = "게시글에 댓글 생성", description = "게시글에 댓글을 작성합니다.")
     @PostMapping("/{postId}/comments")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "해당 포스트/멤버가 없습니다.", content = @Content)
+            @ApiResponse(responseCode = "404", description = "해당 포스트/멤버가 없습니다.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "댓글 불가 게시글입니다.", content = @Content)
     })
     public Response<Void> createComment(@PathVariable Long postId, @JwtValidation Long memberId, CommentCreateRequest createRequest) {
         commentService.CreateComment(postId, memberId, createRequest);
@@ -98,7 +99,8 @@ public class PostController {
     @Operation(summary = "게시글 댓글 목록 조회", description = "게시글 id에 따라 댓글이 조회됩니다")
     @GetMapping("/{postId}/comments")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content)
+            @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "댓글 불가 게시글입니다.", content = @Content)
     })
     public Response<List<CommentResponse>> readComment(@PathVariable Long postId) {
         List<CommentResponse> commentResponses = commentService.readComments(postId);
