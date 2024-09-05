@@ -91,13 +91,13 @@ public class PostService {
     // post 게시자 본인과 관리자만 할 수 있는 기능에 추가
     private void checkPermission(Member member, Post post) {
         if (!member.getRole().equals(MemberRole.ADMIN) && !member.getId().equals(post.getMember().getId())) {
-            throw new ApplicationException(ErrorCode.POST_INVALID_PERMISSION);
+            throw new ApplicationException(ErrorCode.ADMIN_OR_WRITER_PERMISSION);
         }
     }
     // role이 학생 이상인지
     private void checkMemberGradeHigherThanBasic(Member member) {
         if (!member.isStudent() && !member.isAdmin()) {
-            throw new ApplicationException(ErrorCode.ROLE_INVALID_PERMISSION);
+            throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
         }
     }
     private boolean hasPostingRestrictedByRole(Board board) {

@@ -58,7 +58,7 @@ public class BoardService {
     // 카테고리 수정은 관리자만 가능하다.
     private void checkPermission(Member member) {
         if (!member.getRole().equals(MemberRole.ADMIN)) {
-            throw new ApplicationException(ErrorCode.BOARD_INVALID_PERMISSION);
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
     }
     // 이미 존재하는 카테고리면 오류 던져짐
