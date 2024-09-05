@@ -32,7 +32,7 @@ public class PostService {
     private final PostReposiroty postReposiroty;
     private final BoardService boardService;
     private final MemberService memberService;
-    private final FileHandler localFileHandler;
+    private final FileHandler fileHandler;
 
 
     public List<PostListResponse> readPostList(Long boardId, Pageable pageable) {
@@ -55,7 +55,7 @@ public class PostService {
         Member findMember = memberService.checkMember(memberId);
         if (hasPostingRestrictedByRole(findBoard)) checkMemberGradeHigherThanBasic(findMember);
         String fileUrl = "";
-        if (hasFile(file)) fileUrl = localFileHandler.upload(file, FileDirectory.POST_ATTACHMENT);
+        if (hasFile(file)) fileUrl = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT);
         Post post = Post.of(findMember, findBoard, req, fileUrl);
         postReposiroty.save(post);
         boardService.addPostToBoard(findBoard, post);
@@ -77,7 +77,7 @@ public class PostService {
         Post findPost = checkPost(postId);
         checkPermission(findMember, findPost);
         String fileUrl = "";
-        if (hasFile(file)) fileUrl = localFileHandler.upload(file, FileDirectory.POST_ATTACHMENT);
+        if (hasFile(file)) fileUrl = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT);
         findPost.updatePost(updateRequest, fileUrl);
         postReposiroty.save(findPost);
         return findPost.getId();
