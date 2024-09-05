@@ -88,7 +88,7 @@ public class CommentService {
         Member member = memberService.checkMember(memberId);
         Comment comment = checkComment(commentId);
         if (!member.getId().equals(comment.getMember().getId()) && !member.getRole().equals(MemberRole.ADMIN)) {
-            throw new ApplicationException(ErrorCode.COMMENT_INVALID_PERMISSION);
+            throw new ApplicationException(ErrorCode.ADMIN_OR_WRITER_PERMISSION);
         }
         return comment;
     }

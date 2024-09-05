@@ -40,7 +40,7 @@ public class ContactService {
 
     public List<ContactListResponse> readListContact(Long memberId) {
         if (!memberService.checkMember(memberId).isAdmin()) {
-            throw new ApplicationException(ErrorCode.CONTACT_INVALID_PERMISSION);
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
         List<Contact> contacts = contactRepository.findAll();
         return contacts.stream()
@@ -55,7 +55,7 @@ public class ContactService {
 
     public ContactResponse readContact(Long contactId, Long memberId) {
         if (!memberService.checkMember(memberId).isAdmin()) {
-            throw new ApplicationException(ErrorCode.CONTACT_INVALID_PERMISSION);
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
         Contact findContact = checkContact(contactId);
         return ContactResponse.builder()

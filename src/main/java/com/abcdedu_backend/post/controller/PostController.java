@@ -51,7 +51,8 @@ public class PostController {
     @PostMapping("/")
     @Operation(summary = "게시글 생성", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content)
+            @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content),
+            @ApiResponse(responseCode = "403", description = "학생 등급 이하가 기능을 요청할 때 발생합니다.", content = @Content)
     })
     public Response<Long> createPost(@Valid @RequestPart("data") PostCreateRequest req,
                                      @RequestPart(value = "file", required = false) MultipartFile file,

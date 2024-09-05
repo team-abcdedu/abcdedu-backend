@@ -159,7 +159,7 @@ public class LectureService {
 
     private void checkAdminPermission(Member member) {
         if (!member.isAdmin()){
-            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
     }
 
