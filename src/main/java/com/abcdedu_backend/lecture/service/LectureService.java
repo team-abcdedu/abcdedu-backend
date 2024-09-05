@@ -42,6 +42,7 @@ public class LectureService {
     private final AssignmentAnswerRepository assignmentAnswerRepository;
     private final AssignmentSubmissionRepository assignmentSubmissionRepository;
     private final AssignmentFileRepository assignmentFileRepository;
+    private final AssignmentAnswerFileRepository assignmentAnswerFileRepository;
 
     @Transactional
     public void createLecture(Long memberId, CreateLectureRequest request) {
@@ -263,13 +264,17 @@ public class LectureService {
 
     public GetAssignmentFileUrlResponse getAssignmentFileUrl(Long memberId, Long assignmentFileId) {
         Member findMember = memberService.checkMember(memberId);
-        AssignmentFile assignmentFile = assignmentFileRepository.findById(assignmentFileId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_FILE_NOT_FOUND));
+        AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
         checkTheoryPermission(assignmentFile, findMember);
         checkBasicPermission(findMember);
         String objectKey = assignmentFile.getObjectKey();
         String presignedUrl = fileHandler.getPresignedUrl(objectKey);
         return new GetAssignmentFileUrlResponse(presignedUrl);
+    }
+
+    private AssignmentFile findAssignmentFile(Long assignmentFileId) {
+        return assignmentFileRepository.findById(assignmentFileId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_FILE_NOT_FOUND));
     }
 
     private static void checkTheoryPermission(AssignmentFile assignmentFile, Member findMember) {
@@ -282,5 +287,24 @@ public class LectureService {
         if (findMember.isBasic()){
             throw new ApplicationException(ErrorCode.BASIC_INVALID_PERMISSION);
         }
+    }
+
+    public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, MultipartFile file) {
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
+        AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
+
+
+        String objectKey = fileHandler.upload(
+                file,
+                FileDirectory.of(assignmentFile.getAssignmentType().getType()),
+                "answer/"+assignmentFile.getSubLecture().getSubLectureName());
+
+        AssignmentAnswerFile assignmentAnswerFile = AssignmentAnswerFile.builder()
+                .objectKey(objectKey)
+                .assignmentFile(assignmentFile)
+                .build();
+
+        assignmentAnswerFileRepository.save(assignmentAnswerFile);
     }
 }
