@@ -1,9 +1,11 @@
 package com.abcdedu_backend.infra.file;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
+@Primary
 public class LocalFileHandler implements FileHandler{
 
     @Override
