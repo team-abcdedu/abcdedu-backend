@@ -15,16 +15,9 @@ public record PostCreateRequest (
         String title,
         @NotNull
         String content,
-        // MultipartFile file, //  첨부파일
-        Long viewCount,
-        Long commentCount,
         @NotNull
         Boolean secret,
         @NotNull
         Boolean commentAllow
 ){
-        // 기본 설정 값 뺀 필드들을 파라미터로 받아 객체 생성
-        public PostCreateRequest(Long boardId, String title, String content, Boolean secret, Boolean commentAllow) {
-                this(boardId, title, content, 0L, 0L,secret, commentAllow);
-        }
 }
