@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -44,7 +45,8 @@ public class LectureController {
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @Operation(summary = "클래스등록", description = "클래스(A, B, C, D)를 등록합니다.")
     @PostMapping
-    public Response<Void> createLecture(@JwtValidation Long memberId, @Valid @RequestBody CreateLectureRequest createLectureRequest){
+    public Response<Void> createLecture(@JwtValidation Long memberId,
+                                        @Valid @RequestBody CreateLectureRequest createLectureRequest){
         lectureService.createLecture(memberId, createLectureRequest);
         return Response.success();
     }
@@ -59,22 +61,28 @@ public class LectureController {
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @Operation(summary = "서브 클래스 등록", description = "서브 클래스를 등록합니다.")
     @PostMapping("/{lectureId}")
-    public Response<Void> createSubLecture(@PathVariable Long lectureId, @JwtValidation Long memberId, @Valid @RequestBody CreateSubLectureRequest createSubLectureRequest){
+    public Response<Void> createSubLecture(@PathVariable Long lectureId,
+                                           @JwtValidation Long memberId,
+                                           @Valid @RequestBody CreateSubLectureRequest createSubLectureRequest){
         lectureService.createSubLecture(lectureId, memberId, createSubLectureRequest);
         return Response.success();
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
-    @Operation(summary = "사험 등록", description = "클래스 시험을 등록합니다.")
+    @Operation(summary = "시험 등록", description = "클래스 시험을 등록합니다.")
     @PostMapping("/{subLectureId}/assignments")
-    public Response<Void> createAssignments(@PathVariable Long subLectureId, @JwtValidation Long memberId, @Valid @RequestBody CreateAssignmentRequest createAssignmentRequest){
+    public Response<Void> createAssignments(@PathVariable Long subLectureId,
+                                            @JwtValidation Long memberId,
+                                            @Valid @RequestBody CreateAssignmentRequest createAssignmentRequest){
         lectureService.createAssignments(subLectureId, memberId, createAssignmentRequest);
         return Response.success();
     }
 
     @Operation(summary = "시험 제출", description = "시험을 제출합니다.")
     @PostMapping("/assignments/{assignmentId}")
-    public Response<Void> saveAssignmentAnswer(@PathVariable Long assignmentId, @JwtValidation Long memberId, @Valid @RequestBody CreateAssignmentAnswerRequest createAssignmentAnswerRequest){
+    public Response<Void> saveAssignmentAnswer(@PathVariable Long assignmentId,
+                                               @JwtValidation Long memberId,
+                                               @Valid @RequestBody CreateAssignmentAnswerRequest createAssignmentAnswerRequest){
         lectureService.createAssignmentsAnswer(assignmentId, memberId, createAssignmentAnswerRequest);
         return Response.success();
     }
@@ -88,8 +96,20 @@ public class LectureController {
 
     @Operation(summary = "시험 제출 목록 조회 (admin)", description = "시험 제출 목록을 조회합니다.")
     @GetMapping("/assignments/submissions")
-    public Response<List<GetAssignmentAnswerResponse>> getAssignmentAnswers(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC) Pageable pageable, @JwtValidation Long memberId){
+    public Response<List<GetAssignmentAnswerResponse>> getAssignmentAnswers(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC) Pageable pageable,
+                                                                            @JwtValidation Long memberId){
         List<GetAssignmentAnswerResponse> response = lectureService.getAssignmentAnswers(pageable, memberId);
         return Response.success(response);
+    }
+
+    @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
+    @Operation(summary = "평가 파일 (시험/실습/프로젝트/이론) 등록 (admin)", description = "평가 파일(시험/실습/프로젝트/이론)을 등록합니다.")
+    @PostMapping("/sub-lecture/{subLectureId}/file")
+    public Response<Void> createAssignmentFile(@PathVariable Long subLectureId,
+                                               @JwtValidation Long memberId,
+                                               @RequestParam String assignmentType,
+                                               @RequestPart("file") MultipartFile file){
+        lectureService.createAssignmentsFile(subLectureId, memberId, assignmentType, file);
+        return Response.success();
     }
 }

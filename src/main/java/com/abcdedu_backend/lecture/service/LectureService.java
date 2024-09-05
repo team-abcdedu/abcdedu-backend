@@ -2,6 +2,8 @@ package com.abcdedu_backend.lecture.service;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
+import com.abcdedu_backend.infra.file.FileDirectory;
+import com.abcdedu_backend.infra.file.FileHandler;
 import com.abcdedu_backend.lecture.dto.*;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentAnswerRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentRequest;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LectureService {
 
+    private final FileHandler fileHandler;
+
     private final MemberService memberService;
 
     private final LectureRepository lectureRepository;
@@ -38,6 +43,7 @@ public class LectureService {
     private final AssignmentQuestionRepository assignmentQuestionRepository;
     private final AssignmentAnswerRepository assignmentAnswerRepository;
     private final AssignmentSubmissionRepository assignmentSubmissionRepository;
+    private final AssignmentFileRepository assignmentFileRepository;
 
     @Transactional
     public void createLecture(Long memberId, CreateLectureRequest request) {
@@ -232,5 +238,22 @@ public class LectureService {
                 .subClassId(submission.getAssignment().getSubLecture().getId())
                 .submissionId(submission.getId())
                 .build();
+    }
+
+    @Transactional
+    public void createAssignmentsFile(Long subLectureId, Long memberId, String assignmentType, MultipartFile file) {
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
+        SubLecture findSubLecture = findSubLecture(subLectureId);
+        String objectKey = fileHandler.upload(file, FileDirectory.of(assignmentType), findSubLecture.getSubLectureName());
+
+        AssignmentFile assignmentFile = AssignmentFile.builder()
+                .objectKey(objectKey)
+                .subLecture(findSubLecture)
+                .assignmentType(AssignmentType.of(assignmentType))
+                .build();
+
+        assignmentFileRepository.save(assignmentFile);
+
     }
 }

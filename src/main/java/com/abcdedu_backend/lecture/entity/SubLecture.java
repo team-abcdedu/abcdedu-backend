@@ -31,4 +31,8 @@ public class SubLecture {
     @Column(nullable = false, length = 200)
     private String description;
 
+    public String getSubLectureName() {
+        return lecture.getType() + this.orderNumber.toString();
+    }
+
 }
