@@ -6,7 +6,6 @@ public record PostUpdateRequest (
         @NotBlank
         String title,
         String content,
-        // MultipartFile file, //  첨부파일
         Boolean secret,
         Boolean commentAllow
 ) {

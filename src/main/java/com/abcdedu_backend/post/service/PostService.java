@@ -3,6 +3,8 @@ import com.abcdedu_backend.board.Board;
 import com.abcdedu_backend.board.BoardService;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
+import com.abcdedu_backend.infra.file.FileDirectory;
+import com.abcdedu_backend.infra.file.FileHandler;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +32,7 @@ public class PostService {
     private final PostReposiroty postReposiroty;
     private final BoardService boardService;
     private final MemberService memberService;
+    private final FileHandler localFileHandler;
 
 
     public List<PostListResponse> readPostList(Long boardId, Pageable pageable) {
@@ -46,11 +50,13 @@ public class PostService {
     }
 
     @Transactional
-    public Long createPost(PostCreateRequest req, Long memberId) {
+    public Long createPost(PostCreateRequest req, Long memberId, MultipartFile file) {
         Board findBoard = boardService.checkBoard(req.boardId());
         Member findMember = memberService.checkMember(memberId);
         if (hasPostingRestrictedByRole(findBoard)) checkMemberGradeHigherThanBasic(findMember);
-        Post post = of(findMember, findBoard, req);
+        String fileUrl = "";
+        if (hasFile(file)) fileUrl = localFileHandler.upload(file, FileDirectory.POST_ATTACHMENT);
+        Post post = Post.of(findMember, findBoard, req, fileUrl);
         postReposiroty.save(post);
         boardService.addPostToBoard(findBoard, post);
         return post.getId();
@@ -66,11 +72,13 @@ public class PostService {
     }
 
     @Transactional
-    public Long updatePost(Long postId, Long memberId, PostUpdateRequest updateRequest) {
+    public Long updatePost(Long postId, Long memberId, PostUpdateRequest updateRequest, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         Post findPost = checkPost(postId);
         checkPermission(findMember, findPost);
-        findPost.updatePost(updateRequest);
+        String fileUrl = "";
+        if (hasFile(file)) fileUrl = localFileHandler.upload(file, FileDirectory.POST_ATTACHMENT);
+        findPost.updatePost(updateRequest, fileUrl);
         postReposiroty.save(findPost);
         return findPost.getId();
     }
@@ -99,6 +107,10 @@ public class PostService {
     private String boardIdToName(Long boardId) {
         return boardService.boardIdToName(boardId);
     }
+
+    private boolean hasFile(MultipartFile file) {
+        return (file != null) && (!file.isEmpty());
+    }
     // ====== DTO, Entity 변환 =======
     // 다건 조회
     private PostListResponse PostToPostListResponse(Post post) {
@@ -124,18 +136,7 @@ public class PostService {
                 .build();
     }
 
-    public Post of(Member member, Board board, PostCreateRequest req) {
-        return Post.builder()
-                .board(board)
-                .member(member)
-                .title(req.title())
-                .viewCount(req.viewCount())
-                .commentCount(req.commentCount())
-                .content(req.content())
-                .secret(req.secret())
-                .commentAllow(req.commentAllow())
-                .build();
-    }
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.abcdedu_backend.post.entity;
 
 import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import com.abcdedu_backend.board.Board;
@@ -41,9 +42,6 @@ public class Post extends BaseTimeEntity {
     @Column(name = "comment_count")  // 댓글이 생성되거나 삭제될 때 마다 업데이트 해줘야 하는 필드
     private Long commentCount;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Attachment> attachments;
-
     @Column(name = "title", length = 20, nullable = false)
     private String title;
 
@@ -62,12 +60,29 @@ public class Post extends BaseTimeEntity {
     @Column(name = "deleted")
     private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
 
+    @Column(name = "file_url")
+    private String fileUrl;
 
-    public void updatePost(PostUpdateRequest request) {
+    public void updatePost(PostUpdateRequest request, String fileUrl) {
         this.title = request.title();
         this.content = request.content();
         this.secret = request.secret();
         this.commentAllow = request.commentAllow();
+        this.fileUrl = fileUrl;
+    }
+
+    public static Post of(Member member, Board board, PostCreateRequest req, String fileUrl) {
+        return Post.builder()
+                .board(board)
+                .member(member)
+                .title(req.title())
+                .viewCount(req.viewCount())
+                .commentCount(req.commentCount())
+                .content(req.content())
+                .secret(req.secret())
+                .commentAllow(req.commentAllow())
+                .fileUrl(fileUrl)
+                .build();
     }
     public void incrementCommentCount() {
         this.commentCount++;

@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -52,9 +53,10 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content)
     })
-    public Response<Long> createPost(@Valid @RequestBody PostCreateRequest req,
+    public Response<Long> createPost(@Valid @RequestPart("data") PostCreateRequest req,
+                                     @RequestPart(value = "file", required = false) MultipartFile file,
                                      @JwtValidation Long memberId) {
-        return Response.success(postService.createPost(req, memberId));
+        return Response.success(postService.createPost(req, memberId, file));
     }
 
     @DeleteMapping("/{postId}")
@@ -74,9 +76,11 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
             @ApiResponse(responseCode = "401", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
     })
-    public Response<Long> updatePost(@PathVariable Long postId, @RequestBody PostUpdateRequest postUpdateRequest,
+    public Response<Long> updatePost(@PathVariable Long postId,
+                                     @RequestPart("data") PostUpdateRequest postUpdateRequest,
+                                     @RequestPart(value = "file", required = false) MultipartFile file,
                                      @JwtValidation Long memberId) {
-        return Response.success(postService.updatePost(postId, memberId,postUpdateRequest));
+        return Response.success(postService.updatePost(postId, memberId,postUpdateRequest, file));
     }
 
 
