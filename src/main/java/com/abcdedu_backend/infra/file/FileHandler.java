@@ -6,7 +6,8 @@ import java.io.IOException;
 
 public interface FileHandler {
 
-    String upload(MultipartFile file, FileDirectory directory);
-    void delete(String imageUrl);
+    String upload(MultipartFile file, FileDirectory directory, String fileName);
+    String getPresignedUrl(String objectKey);
+    void delete(String objectKey);
 
 }
