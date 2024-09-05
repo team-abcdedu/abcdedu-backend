@@ -5,9 +5,7 @@ import com.abcdedu_backend.lecture.dto.request.CreateAssignmentAnswerRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateLectureRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateSubLectureRequest;
-import com.abcdedu_backend.lecture.dto.response.GetAssignmentAnswerResponse;
-import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponse;
-import com.abcdedu_backend.lecture.dto.response.GetClassResponse;
+import com.abcdedu_backend.lecture.dto.response.*;
 import com.abcdedu_backend.lecture.service.LectureService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -89,8 +87,8 @@ public class LectureController {
 
     @Operation(summary = "시험 조회", description = "시험을 조회합니다.")
     @GetMapping("/assignments/{assignmentId}")
-    public Response<GetAssignmentResponse> getAssignment(@PathVariable Long assignmentId){
-        GetAssignmentResponse response = lectureService.getAssignment(assignmentId);
+    public Response<GetAssignmentResponseV2> getAssignment(@PathVariable Long assignmentId){
+        GetAssignmentResponseV2 response = lectureService.getAssignment(assignmentId);
         return Response.success(response);
     }
 
@@ -111,5 +109,12 @@ public class LectureController {
                                                @RequestPart("file") MultipartFile file){
         lectureService.createAssignmentsFile(subLectureId, memberId, assignmentType, file);
         return Response.success();
+    }
+
+    @Operation(summary = "평가 파일 (시험/실습/프로젝트/이론) 조회", description = "평가 파일(시험/실습/프로젝트/이론)을 조회합니다.")
+    @GetMapping("/sub-lecture/{subLectureId}")
+    public Response<List<GetAssignmentResponseV1>> getAssignments(@PathVariable Long subLectureId){
+        List<GetAssignmentResponseV1> response =lectureService.getAssignments(subLectureId);
+        return Response.success(response);
     }
 }

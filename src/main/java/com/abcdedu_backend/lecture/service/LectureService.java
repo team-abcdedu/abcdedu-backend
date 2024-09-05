@@ -4,13 +4,14 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.infra.file.FileDirectory;
 import com.abcdedu_backend.infra.file.FileHandler;
+import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponseV1;
 import com.abcdedu_backend.lecture.dto.*;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentAnswerRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateAssignmentRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateLectureRequest;
 import com.abcdedu_backend.lecture.dto.request.CreateSubLectureRequest;
 import com.abcdedu_backend.lecture.dto.response.GetAssignmentAnswerResponse;
-import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponse;
+import com.abcdedu_backend.lecture.dto.response.GetAssignmentResponseV2;
 import com.abcdedu_backend.lecture.dto.response.GetClassResponse;
 import com.abcdedu_backend.lecture.entity.*;
 import com.abcdedu_backend.lecture.repository.*;
@@ -115,11 +116,11 @@ public class LectureService {
         return getClassesResponse;
     }
 
-    public GetAssignmentResponse getAssignment(Long assignmentId) {
+    public GetAssignmentResponseV2 getAssignment(Long assignmentId) {
         Assignment assignment = findAssignment(assignmentId);
         List<QuestionsDto> questionsDto = convertToQuestionsDtoList(assignment.getAssignmentQuestions());
 
-        return GetAssignmentResponse.of(assignment.getTitle(), assignment.getBody(), questionsDto);
+        return GetAssignmentResponseV2.of(assignment.getTitle(), assignment.getBody(), questionsDto);
     }
 
     private AssignmentAnswer createAssignmentAnswer(AssignmentSubmission assignmentSubmission, AssignmentQuestion assignmentQuestion, List<CreateAssignmentAnswerDto> answers, int i) {
@@ -254,6 +255,12 @@ public class LectureService {
                 .build();
 
         assignmentFileRepository.save(assignmentFile);
+    }
 
+    public List<GetAssignmentResponseV1> getAssignments(Long subLectureId) {
+        SubLecture findSublecture = findSubLecture(subLectureId);
+        return findSublecture.getAssignmentFiles().stream()
+                .map(assignmentFile -> new GetAssignmentResponseV1(assignmentFile.getAssignmentType().getType(), assignmentFile.getId()))
+                .collect(Collectors.toUnmodifiableList());
     }
 }
