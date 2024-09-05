@@ -1,24 +1,61 @@
 package com.abcdedu_backend.infra.file;
 
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-//@Component
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+@Component
+@Profile({"local", "test"})
 public class LocalFileHandler implements FileHandler{
 
-    @Override
-    public String upload(MultipartFile file, FileDirectory directory, String fileName){
-        //Todo s3생성 후 작업 예정
-        return "imageUrl";
-    }
+    private final String UPLOAD_DIR = "./uploads/";
 
+    @Override
+    public String upload(MultipartFile file, FileDirectory directory, String fileName) {
+        try {
+            Path directoryPath = Paths.get(UPLOAD_DIR + directory.getDirectoryName());
+            if (!Files.exists(directoryPath)) {
+                Files.createDirectories(directoryPath);
+            }
+
+            Path filePath = directoryPath.resolve(fileName+getExtension(file));
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            }
+            return filePath.toAbsolutePath().toString();
+        } catch (IOException e) {
+            throw new ApplicationException(ErrorCode.S3_UPLOAD_ERROR);
+        }
+    }
     @Override
     public String getPresignedUrl(String objectKey) {
-        return "";
+        return objectKey;
+    }
+    @Override
+    public void delete(String objectKey) {
+        try {
+            Path filePath = Paths.get(objectKey);
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new ApplicationException(ErrorCode.S3_OBJECT_NOT_FOUND);
+        }
     }
 
-    @Override
-    public void delete(String imageUrl) {
-
+    private String getExtension(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String extension = "";
+        if (originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+        return extension;
     }
 }
