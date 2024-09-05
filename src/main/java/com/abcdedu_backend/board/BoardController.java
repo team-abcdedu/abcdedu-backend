@@ -62,7 +62,7 @@ public class BoardController {
         return Response.success(boardService.findBoard(boardId));
     }
 
-    @GetMapping("/{boardId}")
+    @GetMapping("/{boardId}/posts")
     @Operation(summary = "카테고리별 게시글 목록", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다.")
     public Response<List<PostListResponse>> getPostList(@PathVariable Long boardId) {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
