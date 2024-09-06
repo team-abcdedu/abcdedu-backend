@@ -2,7 +2,7 @@ package com.abcdedu_backend.contact.service;
 
 import com.abcdedu_backend.contact.dto.request.ContactCreateRequest;
 import com.abcdedu_backend.contact.dto.response.ContactListResponse;
-import com.abcdedu_backend.contact.dto.response.ContactResponse;
+import com.abcdedu_backend.contact.dto.response.ContactGetResponse;
 import com.abcdedu_backend.contact.entity.Contact;
 import com.abcdedu_backend.contact.entity.ContactType;
 import com.abcdedu_backend.contact.repository.ContactRepository;
@@ -24,12 +24,12 @@ public class ContactService {
     private final MemberService memberService;
 
     @Transactional
-    public Long createContact(ContactCreateRequest contactCreateRequest, ContactType contactType) {
+    public Long createContact(ContactCreateRequest contactCreateRequest) {
         Contact contact = Contact.builder()
                 .userName(contactCreateRequest.userName())
                 .email(contactCreateRequest.email())
                 .phoneNumber(contactCreateRequest.phoneNumber())
-                .contactType(contactType)
+                .contactType(ContactType.of(contactCreateRequest.type()))
                 .content(contactCreateRequest.content())
                 .title(contactCreateRequest.title())
                 .build();
@@ -39,27 +39,23 @@ public class ContactService {
 
 
     public List<ContactListResponse> readListContact(Long memberId) {
-        if (!memberService.checkMember(memberId).isAdmin()) {
-            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
-        }
+        checkPermission(memberId);
         List<Contact> contacts = contactRepository.findAll();
         return contacts.stream()
                 .map(contact -> ContactListResponse.builder()
                         .createdAt(contact.getCreatedAt())
                         .title(contact.getTitle())
-                        .contactType(contact.getContactType())
+                        .type(contact.getContactType().getType())
                         .userName(contact.getUserName())
                         .build())
                 .collect(Collectors.toList());
     }
 
-    public ContactResponse readContact(Long contactId, Long memberId) {
-        if (!memberService.checkMember(memberId).isAdmin()) {
-            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
-        }
+    public ContactGetResponse readContact(Long contactId, Long memberId) {
+        checkPermission(memberId);
         Contact findContact = checkContact(contactId);
-        return ContactResponse.builder()
-                .contactType(findContact.getContactType())
+        return ContactGetResponse.builder()
+                .type(findContact.getContactType().getType())
                 .title(findContact.getTitle())
                 .userName(findContact.getUserName())
                 .phoneNumber(findContact.getPhoneNumber())
@@ -73,4 +69,11 @@ public class ContactService {
         return contactRepository.findById(contactId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.CONTACT_NOT_FOUND));
     }
+
+    public void checkPermission(Long memberId) {
+        if (!memberService.checkMember(memberId).isAdmin()) {
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
+        }
+    }
+
 }
