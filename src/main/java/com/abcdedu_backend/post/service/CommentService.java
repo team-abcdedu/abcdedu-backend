@@ -71,11 +71,10 @@ public class CommentService {
         return (long) member.getComments().size();
     }
 
-    private Post CheckPostAllowedComment(Post post) {
+    private void CheckPostAllowedComment(Post post) {
         if (!post.getCommentAllow()) {
             throw new ApplicationException(ErrorCode.POST_NOT_ALLOWED_COMMENT);
         }
-        return post;
     }
 
     // ======== DTO 변환

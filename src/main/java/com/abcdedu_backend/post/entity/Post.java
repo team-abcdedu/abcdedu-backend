@@ -71,6 +71,7 @@ public class Post extends BaseTimeEntity {
         this.fileUrl = fileUrl;
     }
 
+
     public static Post of(Member member, Board board, PostCreateRequest req, String fileUrl) {
         return Post.builder()
                 .board(board)
