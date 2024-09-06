@@ -1,15 +1,17 @@
 package com.abcdedu_backend.contact.dto.response;
 
-import com.abcdedu_backend.contact.entity.ContactType;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 @Builder
-public record ContactResponse (
+public record ContactGetResponse(
+         String type,
+         String title,
          String userName,
          String phoneNumber,
          String email,
-         String title,
          String content,
-         ContactType contactType
+         LocalDateTime createdAt
 ) {
 }
