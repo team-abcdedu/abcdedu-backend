@@ -13,14 +13,13 @@ public enum ErrorCode {
 
     // 상담
     CONTACT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상담이 없습니다."),
-
+    CONTACT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 상담 타입입니다."),
     // 게시판
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 포스트가 없습니다."),
     POST_NOT_ALLOWED_COMMENT(HttpStatus.FORBIDDEN, "댓글을 허용하지 않는 게시글 입니다."),
 
     // 댓글
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다."),
-
 
     // 카테고리
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."),
