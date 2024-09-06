@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public enum ContactType {
     TRAINING("training"),
     CLASS("class"),
-    ETC("etx");
+    ETC("etc");
 
     private final String type;
 
