@@ -1,7 +1,5 @@
 package com.abcdedu_backend.survey.entity;
 
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.utils.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
