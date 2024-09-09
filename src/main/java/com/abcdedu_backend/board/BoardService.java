@@ -7,6 +7,7 @@ import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,8 @@ public class BoardService {
         return BoardToBoardResponse(board);
     }
 
+
+
     @Transactional
     public Long addBoard(BoardCreateRequest req, Long memberId) {
         Member findMember = memberService.checkMember(memberId);
@@ -43,12 +46,19 @@ public class BoardService {
         boardRepository.delete(findBoard);
     }
 
+
+    @Transactional
+    public void addPostToBoard(Board board, Post post) {
+        board.getPosts().add(post);
+        boardRepository.save(board);
+    }
+
     // ======== 유효성 검사, 서비스 로직
 
     // 카테고리 수정은 관리자만 가능하다.
     private void checkPermission(Member member) {
         if (!member.getRole().equals(MemberRole.ADMIN)) {
-            throw new ApplicationException(ErrorCode.BOARD_INVALID_PERMISSION);
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
     }
     // 이미 존재하는 카테고리면 오류 던져짐
@@ -58,9 +68,13 @@ public class BoardService {
         }
     }
 
-    public Board checkBoard(String boardName) {
-        return boardRepository.findByName(boardName)
+    public Board checkBoard(Long boardId) {
+        return boardRepository.findById(boardId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
+    }
+
+    public String boardIdToName(Long boardId) {
+        return checkBoard(boardId).getName();
     }
 
     // ======= DTO 변환 메서드들

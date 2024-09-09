@@ -54,8 +54,11 @@ public class Member extends BaseTimeEntity {
         return this.role == MemberRole.ADMIN;
     }
 
-    public boolean isBasic(){
+    public boolean isBasic() {
         return this.role == MemberRole.BASIC;
+    }
+    public boolean isStudent() {
+        return this.role == MemberRole.STUDENT;
     }
 
     public void updateProfile(String name, String imageUrl, String school, Long studentId){
@@ -64,8 +67,5 @@ public class Member extends BaseTimeEntity {
         this.school = school;
         this.studentId = studentId;
     }
-    // ToDo : 관리자 역할 바꾸기 위한 test용 기능
-    public void updateRole(MemberRole memberRole) {
-        this.role = memberRole;
-    }
+
 }
