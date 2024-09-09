@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -17,10 +19,6 @@ public class SurveyQuestion {
     @Id
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "survey_id", nullable = false)
-    private Survey survey;
-
     @Column(nullable = false, length = 100)
     private String content; // 질문 내용
 
@@ -30,6 +28,13 @@ public class SurveyQuestion {
 
     @Column(nullable = false)
     private boolean isAnswerRequired;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "survey_id", nullable = false)
+    private Survey survey;
+
+    @OneToMany(mappedBy = "surveyQuestion", cascade = CascadeType.ALL, orphanRemoval=true)
+    private List<SurveyQuestionChoice> choices;
 
     public void updateSurveyQuestion(String content, boolean isAnswerRequired) {
         this.content = content;

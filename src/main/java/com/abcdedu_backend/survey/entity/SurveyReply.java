@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 @Entity
-@Table(name = "survey_responses")
-public class SurveyResponse extends BaseTimeEntity {
+@Table(name = "survey_replys")
+public class SurveyReply extends BaseTimeEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
