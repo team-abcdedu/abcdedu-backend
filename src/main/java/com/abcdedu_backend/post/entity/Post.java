@@ -60,15 +60,15 @@ public class Post extends BaseTimeEntity {
     @Column(name = "deleted")
     private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
 
-    @Column(name = "file_url")
-    private String fileUrl;
+    @Column(name = "object_key")
+    private String objectKey;
 
-    public void updatePost(PostUpdateRequest request, String fileUrl) {
+    public void updatePost(PostUpdateRequest request, String objectKey) {
         this.title = request.title();
         this.content = request.content();
         this.secret = request.secret();
         this.commentAllow = request.commentAllow();
-        this.fileUrl = fileUrl;
+        this.objectKey = objectKey;
     }
 
 
@@ -85,8 +85,8 @@ public class Post extends BaseTimeEntity {
                 .build();
     }
 
-    public void updateFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
+    public void updateObjectKey(String objectKey) {
+        this.objectKey = objectKey;
     }
     public void incrementCommentCount() {
         this.commentCount++;
