@@ -33,7 +33,7 @@ public class ContactController {
     @PostMapping("/")
     @Operation(summary = "상담 생성", description = "로그인을 하지 않아도 가능한 기능입니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 이메일/제목은 공백이어선 안됩니다. 이메일은 이메일 형식을 맞춰주세요.", content = @Content),
+            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 요청을 공백 없이 모두 채워주세요", content = @Content),
     })
     public Response<Long> createContract(@RequestBody ContactCreateRequest contactCreateRequest) {
         Long contactId = contactService.createContact(contactCreateRequest);
@@ -44,7 +44,6 @@ public class ContactController {
     @GetMapping("/")
     @Operation(summary = "상담 리스트 조회", description = "관리자만 조회 가능 합니다. ")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 핸드폰번호/이메일/제목은 공백이어선 안됩니다.", content = @Content),
             @ApiResponse(responseCode = "403", description = "관리자 전용 기능입니다.", content = @Content),
     })
     public Response<List<ContactListResponse>> readListContact(@JwtValidation Long memberdId) {
