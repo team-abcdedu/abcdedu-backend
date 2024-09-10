@@ -20,7 +20,18 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "http://43.203.25.216:8080", "http://ec2-43-203-25-216.ap-northeast-2.compute.amazonaws.com:8080")
+                .allowedOrigins("http://localhost:3000",
+                        "http://43.203.25.216",
+                        //Swagger 및 블루그린 배포용 COrs설정
+                        "http://localhost:8081",
+                        "http://localhost:8082",
+                        "http://abcdedu.com",
+                        "https://abcdedu.com",
+                        "http://dev.abcdedu.com",
+                        "https://dev.abcdedu.com",
+                        "http://abcdedu-fronted-pages.dev",
+                        "https://abcdedu-fronted-pages.dev"
+                        )
                 .allowedHeaders("*")
                 .allowedMethods(
                         HttpMethod.GET.name(),
@@ -30,7 +41,6 @@ public class WebConfig implements WebMvcConfigurer {
                         HttpMethod.DELETE.name())
                 .allowCredentials(true)
                 .maxAge(3600L);
-
     }
 
     @Override
