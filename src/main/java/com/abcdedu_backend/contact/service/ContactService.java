@@ -43,6 +43,7 @@ public class ContactService {
         List<Contact> contacts = contactRepository.findAll();
         return contacts.stream()
                 .map(contact -> ContactListResponse.builder()
+                        .contactId(contact.getId())
                         .createdAt(contact.getCreatedAt())
                         .title(contact.getTitle())
                         .type(contact.getContactType().getType())
