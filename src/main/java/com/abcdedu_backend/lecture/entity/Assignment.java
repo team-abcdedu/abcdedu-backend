@@ -34,5 +34,5 @@ public class Assignment {
     private List<AssignmentQuestion> assignmentQuestions;
 
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AssignmentAnswer> assignmentAnswers;
+    private List<AssignmentSubmission> assignmentSubmissions;
 }

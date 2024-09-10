@@ -25,10 +25,14 @@ jobs:
     - name: application.yml 생성
       run: |
         cd ./src/main/resources 
-        echo "$APPLICATION_PROD" > ./application.yaml
+        touch ./application.yaml
+        echo "$APPLICATION_PROD_PROFILE" > ./application.yaml
+        touch ./application-prod.yaml
+        echo "$APPLICATION_PROD" > ./application-prod.yaml
         touch ./application-test.yaml
         echo "$APPLICATION_TEST" > ./application-test.yaml
       env:
+        APPLICATION_PROD_PROFILE: ${{ secrets.APPLICATION_PROD_PROFILE }}
         APPLICATION_PROD: ${{ secrets.APPLICATION_PROD }}
         APPLICATION_TEST: ${{ secrets.APPLICATION_TEST }}
 

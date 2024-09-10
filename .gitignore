@@ -57,4 +57,8 @@ application-prod.yaml
 # Lock file
 .terraform.lock.hcl
 
+# data
 data.sql
+
+#localFileUpload용 디렉토리
+/uploads

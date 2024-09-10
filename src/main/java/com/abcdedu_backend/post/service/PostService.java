@@ -54,10 +54,11 @@ public class PostService {
         Board findBoard = boardService.checkBoard(req.boardId());
         Member findMember = memberService.checkMember(memberId);
         if (hasPostingRestrictedByRole(findBoard)) checkMemberGradeHigherThanBasic(findMember);
-        String fileUrl = "";
-        if (hasFile(file)) fileUrl = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT);
-        Post post = Post.of(findMember, findBoard, req, fileUrl);
+        String objectKey = "";
+        Post post = Post.of(findMember, findBoard, req);
         postReposiroty.save(post);
+        if (hasFile(file)) objectKey = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, post.getId().toString());
+        post.updateObjectKey(objectKey);
         boardService.addPostToBoard(findBoard, post);
         return post.getId();
     }
@@ -76,9 +77,9 @@ public class PostService {
         Member findMember = memberService.checkMember(memberId);
         Post findPost = checkPost(postId);
         checkPermission(findMember, findPost);
-        String fileUrl = "";
-        if (hasFile(file)) fileUrl = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT);
-        findPost.updatePost(updateRequest, fileUrl);
+        String objectKey = "";
+        if (hasFile(file)) objectKey = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, postId.toString());
+        findPost.updatePost(updateRequest, objectKey);
         postReposiroty.save(findPost);
         return findPost.getId();
     }
