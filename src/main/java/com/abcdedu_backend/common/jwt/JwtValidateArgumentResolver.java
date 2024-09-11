@@ -2,7 +2,7 @@ package com.abcdedu_backend.common.jwt;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.utils.JwtUtil;
+import com.abcdedu_backend.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;

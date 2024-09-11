@@ -1,4 +1,4 @@
-package com.abcdedu_backend.utils;
+package com.abcdedu_backend.global.jwt;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;

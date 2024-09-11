@@ -8,7 +8,7 @@ import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.RefreshToken;
 import com.abcdedu_backend.member.repository.MemberRepository;
 import com.abcdedu_backend.member.repository.RefreshTokenRepository;
-import com.abcdedu_backend.utils.JwtUtil;
+import com.abcdedu_backend.global.jwt.JwtUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
