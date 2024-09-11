@@ -30,13 +30,16 @@ public class JwtValidateArgumentResolver implements HandlerMethodArgumentResolve
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        String token = webRequest.getHeader(ACCESS_TOKEN_HEADER);
-        if (token == null) {
+        String header = webRequest.getHeader(ACCESS_TOKEN_HEADER);
+        if (header == null) {
             throw new ApplicationException(ErrorCode.TOKEN_NOT_FOUND);
         }
+        if (!header.startsWith("Bearer ")){
+            throw new ApplicationException(ErrorCode.INVALID_ACCESS_TOKEN);
+        }
+        String rawToken = header.substring(7);
 
-        Long memberId = jwtUtil.getMemberIdFromAccessToken(token);
-        return memberId;
+        return jwtUtil.getMemberIdFromAccessToken(rawToken);
     }
 
 }

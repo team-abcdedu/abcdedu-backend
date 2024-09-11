@@ -9,14 +9,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
     private static final String MEMBER_ID_KEY = "memberId";
-    private static final String ROLE_KEY = "role";
+    private static final String IS_ACCESS_TOKEN = "isAccessToken";
 
     private final Long ACCESS_TOKEN_EXPIRED_MS;
     private final Long REFRESH_TOKEN_EXPIRED_MS;
@@ -41,35 +40,51 @@ public class JwtUtil {
 
 
     public String createAccessToken(Long memberId){
-        return createToken(memberId, accessTokenSecretKey, ACCESS_TOKEN_EXPIRED_MS);
-    }
-
-    public String createRefreshToken(Long memberId){
-        return createToken(memberId, refreshTokenSecretKey, REFRESH_TOKEN_EXPIRED_MS);
-    }
-
-    private String createToken(Long memberId, Key secretKey, Long expiredMS){
         return Jwts.builder()
                 .claim(MEMBER_ID_KEY, memberId)
+                .claim(IS_ACCESS_TOKEN, true)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+expiredMS))
-                .signWith(secretKey)
+                .expiration(new Date(System.currentTimeMillis()+ACCESS_TOKEN_EXPIRED_MS))
+                .signWith(accessTokenSecretKey)
                 .compact();
     }
 
-    public Long getMemberIdFromRefreshToken(String token) {
+    public String createRefreshToken(Long memberId){
+        return Jwts.builder()
+                .claim(MEMBER_ID_KEY, memberId)
+                .claim(IS_ACCESS_TOKEN, false)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis()+REFRESH_TOKEN_EXPIRED_MS))
+                .signWith(refreshTokenSecretKey)
+                .compact();
+    }
+
+    public Long getMemberIdFromRefreshToken(String rawToken) {
         try {
-            Claims claims = extractClaims(token, refreshTokenSecretKey);
+            Claims claims = extractClaims(rawToken, refreshTokenSecretKey);
+            Boolean isAccessToken = claims.get(IS_ACCESS_TOKEN, Boolean.class);
+            if (isAccessToken){
+                throw new ApplicationException(ErrorCode.INVALID_REFRESH_TOKEN);
+            }
+            if(claims.getExpiration().before(new Date())){
+                throw new ApplicationException(ErrorCode.INVALID_REFRESH_TOKEN);
+            }
             return claims.get(MEMBER_ID_KEY, Long.class);
         } catch (Exception e){
             throw new ApplicationException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
     }
 
-    public Long getMemberIdFromAccessToken(String token) {
-        token = removeBearerPrefix(token);
+    public Long getMemberIdFromAccessToken(String rawToken) {
         try {
-            Claims claims = extractClaims(token, accessTokenSecretKey);
+            Claims claims = extractClaims(rawToken, accessTokenSecretKey);
+            Boolean isAccessToken = claims.get(IS_ACCESS_TOKEN, Boolean.class);
+            if (!isAccessToken){
+                throw new ApplicationException(ErrorCode.INVALID_ACCESS_TOKEN);
+            }
+            if(claims.getExpiration().before(new Date())){
+                throw new ApplicationException(ErrorCode.INVALID_ACCESS_TOKEN);
+            }
             return claims.get(MEMBER_ID_KEY, Long.class);
         } catch (Exception e){
             throw new ApplicationException(ErrorCode.INVALID_ACCESS_TOKEN);
@@ -84,11 +99,4 @@ public class JwtUtil {
             .getPayload();
     }
 
-    private String removeBearerPrefix(String token){
-        if (!token.startsWith("Bearer ")){
-            throw new ApplicationException(ErrorCode.INVALID_ACCESS_TOKEN);
-        }
-        token = token.substring(7);
-        return token;
-    }
 }
