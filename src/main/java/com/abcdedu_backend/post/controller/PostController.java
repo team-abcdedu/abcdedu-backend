@@ -41,7 +41,7 @@ public class PostController {
     @Operation(summary = "특정 게시글 조회", description = "특정 게시글을 조회합니다. 비밀글은 관리자와 글쓴이만 볼 수 있습니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
-            @ApiResponse(responseCode = "401", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
     })
     public Response<PostResponse> readPost(@Valid @PathVariable Long postId,
                                            @JwtValidation Long memberId) {
@@ -64,7 +64,7 @@ public class PostController {
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다. 작성자 본인과 관리자만 삭제가 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
-            @ApiResponse(responseCode = "401", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
     })
     public Response<Void> deletePost(@PathVariable Long postId, @JwtValidation Long memberId) {
         postService.removePost(postId, memberId);
@@ -75,7 +75,7 @@ public class PostController {
     @Operation(summary = "게시글 수정", description = "게시글을 수정합니다..")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
-            @ApiResponse(responseCode = "401", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
     })
     public Response<Long> updatePost(@PathVariable Long postId,
                                      @RequestPart("data") PostUpdateRequest postUpdateRequest,
@@ -111,7 +111,7 @@ public class PostController {
     @Operation(summary = "게시글 특정 댓글 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "해당 사용자/댓글을 찾을 수 없습니다.", content = @Content),
-            @ApiResponse(responseCode = "401", description = "해당 기능은 관리자/작성자만 사용가능합니다.", content = @Content)
+            @ApiResponse(responseCode = "403", description = "해당 기능은 관리자/작성자만 사용가능합니다.", content = @Content)
     })
     @DeleteMapping("/{postId}/comments/{commentId}")
     public Response<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @JwtValidation Long memberId) {

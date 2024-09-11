@@ -24,11 +24,16 @@ jobs:
         distribution: 'temurin'
     - name: application.yml 생성
       run: |
+        mkdir -p ./src/main/resources
         cd ./src/main/resources 
-        echo "$APPLICATION_DEV" > ./application.yaml
+        touch ./application.yaml
+        echo "$APPLICATION_DEV_PROFILE" > ./application.yaml
+        touch ./application-dev.yaml
+        echo "$APPLICATION_DEV" > ./application-dev.yaml
         touch ./application-test.yaml
         echo "$APPLICATION_TEST" > ./application-test.yaml
       env:
+        APPLICATION_DEV_PROFILE: ${{ secrets.APPLICATION_DEV_PROFILE}}
         APPLICATION_DEV: ${{ secrets.APPLICATION_DEV }}
         APPLICATION_TEST: ${{ secrets.APPLICATION_TEST }}
 

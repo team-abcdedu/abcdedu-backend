@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -30,5 +32,12 @@ public class SubLecture {
 
     @Column(nullable = false, length = 200)
     private String description;
+
+    @OneToMany(mappedBy = "subLecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AssignmentFile> assignmentFiles;
+
+    public String getSubLectureName() {
+        return lecture.getType() + "-" + this.orderNumber.toString();
+    }
 
 }

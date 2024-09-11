@@ -4,11 +4,7 @@ import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.contact.service.ContactService;
 import com.abcdedu_backend.contact.dto.request.ContactCreateRequest;
 import com.abcdedu_backend.contact.dto.response.ContactListResponse;
-import com.abcdedu_backend.contact.dto.response.ContactResponse;
-import com.abcdedu_backend.contact.entity.ContactType;
-import com.abcdedu_backend.exception.ApplicationException;
-import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.contact.dto.response.ContactGetResponse;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,35 +29,14 @@ import java.util.List;
 public class ContactController {
 
     private final ContactService contactService;
-    private final MemberService memberService;
 
-    @PostMapping("/training")
-    @Operation(summary = "상담 생성 - 교사 연수")
+    @PostMapping("/")
+    @Operation(summary = "상담 생성", description = "로그인을 하지 않아도 가능한 기능입니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 핸드폰번호/이메일/제목은 공백이어선 안됩니다.", content = @Content),
+            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 요청을 공백 없이 모두 채워주세요", content = @Content),
     })
-    public Response<Long> createTrainingContract(@RequestBody ContactCreateRequest contactCreateRequest) {
-        Long contactId = contactService.createContact(contactCreateRequest, ContactType.TRAINING);
-        return Response.success(contactId);
-    }
-
-    @PostMapping("/class")
-    @Operation(summary = "상담 생성 - 수업")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 핸드폰번호/이메일/제목은 공백이어선 안됩니다.", content = @Content),
-    })
-    public Response<Long> createClassContract(@RequestBody ContactCreateRequest contactCreateRequest) {
-        Long contactId = contactService.createContact(contactCreateRequest, ContactType.CLASS);
-        return Response.success(contactId);
-    }
-
-    @PostMapping("/etc")
-    @Operation(summary = "상담 생성 - 기타")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 핸드폰번호/이메일/제목은 공백이어선 안됩니다.", content = @Content),
-    })
-    public Response<Long> createEtcContract(@RequestBody ContactCreateRequest contactCreateRequest) {
-        Long contactId = contactService.createContact(contactCreateRequest, ContactType.ETC);
+    public Response<Long> createContract(@RequestBody ContactCreateRequest contactCreateRequest) {
+        Long contactId = contactService.createContact(contactCreateRequest);
         return Response.success(contactId);
     }
 
@@ -69,8 +44,7 @@ public class ContactController {
     @GetMapping("/")
     @Operation(summary = "상담 리스트 조회", description = "관리자만 조회 가능 합니다. ")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 핸드폰번호/이메일/제목은 공백이어선 안됩니다.", content = @Content),
-            @ApiResponse(responseCode = "401", description = "권한 검사 실패 : 관리자 권한만 조회 가능합니다.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "관리자 전용 기능입니다.", content = @Content),
     })
     public Response<List<ContactListResponse>> readListContact(@JwtValidation Long memberdId) {
         List<ContactListResponse> contacts = contactService.readListContact(memberdId);
@@ -80,11 +54,11 @@ public class ContactController {
     @GetMapping("/{contactId}")
     @Operation(summary = "상담 조회", description = "관리자만 조회 가능 합니다. ")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "401", description = "권한 검사 실패 : 관리자 권한만 조회 가능합니다.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "관리자 전용 기능입니다.", content = @Content),
             @ApiResponse(responseCode = "404", description = "해당 id에 해당하는 상담을 찾을 수 없습니다.", content = @Content)
     })
-    public Response<ContactResponse> readContact(@JwtValidation Long memberdId, @PathVariable Long contactId) {
-        ContactResponse contactResponse = contactService.readContact(contactId, memberdId);
+    public Response<ContactGetResponse> readContact(@JwtValidation Long memberdId, @PathVariable Long contactId) {
+        ContactGetResponse contactResponse = contactService.readContact(contactId, memberdId);
         return Response.success(contactResponse);
     }
 
