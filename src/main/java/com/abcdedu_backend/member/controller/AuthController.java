@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,11 @@ import java.util.Arrays;
 })
 @Tag(name = "인증 기능", description = "로그인/회원가입 등 인증 관련 api입니다.")
 public class AuthController {
+
+    @Value("${cookie.same-site}")
+    private String cookieSameSite;
+    @Value("${cookie.secure}")
+    private boolean isCookieHttpSecure;
 
     private final MemberService memberService;
 
@@ -69,27 +75,29 @@ public class AuthController {
     @PostMapping("/login")
     public Response<LoginResponse> login(HttpServletResponse response, @Valid @RequestBody LoginRequest loginRequest){
         LoginTokenDTO loginTokenDto = memberService.login(loginRequest);
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", loginTokenDto.refreshToken())
-                .httpOnly(true)
-                .path("/")
-                .maxAge(Duration.ofDays(14).toSeconds())
-                .build();
-        response.setHeader("Set-Cookie", refreshTokenCookie.toString());
+        setRefreshTokenCookie(response, loginTokenDto.refreshToken(), Duration.ofDays(14).toSeconds());
         LoginResponse loginResponse = new LoginResponse(loginTokenDto.accessToken());
         return Response.success(loginResponse);
     }
+
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
     @DeleteMapping("/logout")
     public Response<LoginResponse> logout(HttpServletRequest request, HttpServletResponse response){
         String refreshToken = parseRefreshToken(request);
         memberService.logout(refreshToken);
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
+        setRefreshTokenCookie(response, "", 0L);
+        return Response.success();
+    }
+
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken, Long maxAge) {
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .path("/")
-                .maxAge(0)
+                .maxAge(maxAge)
+                .sameSite(cookieSameSite)
+                .secure(isCookieHttpSecure)
                 .build();
         response.setHeader("Set-Cookie", refreshTokenCookie.toString());
-        return Response.success();
     }
 
 
