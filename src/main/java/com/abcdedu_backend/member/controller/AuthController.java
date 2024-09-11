@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -115,12 +116,17 @@ public class AuthController {
     }
 
     private String parseRefreshToken(HttpServletRequest request) {
-        Cookie refreshTokenCookie = Arrays.stream(request.getCookies())
-                .filter(cookie -> "refreshToken".equals(cookie.getName()))
-                .findFirst()
-                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
-        String refreshToken = refreshTokenCookie.getValue();
-        return refreshToken;
+        try {
+            Cookie[] cookies = request.getCookies();
+            Cookie refreshTokenCookie = Arrays.stream(cookies)
+                    .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                    .findFirst()
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+            String refreshToken = refreshTokenCookie.getValue();
+            return refreshToken;
+        } catch (Exception e){
+            throw new ApplicationException(ErrorCode.TOKEN_NOT_FOUND);
+        }
     }
 
 }
