@@ -40,6 +40,7 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final RoleQueryFilter roleQueryFilter;
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
 
@@ -85,7 +86,7 @@ public class SecurityConfig {
                 "/health"
             ).permitAll()
             .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name()) // ADMIN 권한만 접근 가능
-            .anyRequest().permitAll() // TODO: authenticated() 설정 필요
+            .anyRequest().permitAll() // TODO
         );
 
         /**
@@ -111,7 +112,7 @@ public class SecurityConfig {
          * JwtProvider은 JwtAuthenticationToken을 통해 인증을 시도한다.
          */
         http.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class);
-//        http.addFilterAfter(AuthorizationJwtHeaderFilter.class, );
+        http.addFilterAfter(roleQueryFilter, AuthorizationJwtHeaderFilter.class);
 
         return http.build();
     }
