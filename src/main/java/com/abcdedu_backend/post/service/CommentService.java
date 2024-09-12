@@ -12,11 +12,11 @@ import com.abcdedu_backend.post.entity.Comment;
 import com.abcdedu_backend.post.entity.Post;
 import com.abcdedu_backend.post.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,23 +33,22 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long postId, Long commentId, Long memberId) {
-        Comment findComment = checkVaildation(commentId, memberId);
+         checkVaildation(commentId, memberId);
         postService.checkPost(postId).decrementCommentCount();
         commentRepository.deleteById(commentId);
     }
 
 
-    public List<CommentResponse> readComments(Long postId) {
+    public Page<CommentResponse> readComments(Long postId, Pageable pageable) {
         Post findpost = postService.checkPost(postId);
         CheckPostAllowedComment(findpost);
-        List<Comment> comments = findpost.getComments();
-        List<CommentResponse> commentResponses = comments.stream()
+        Page<Comment> comments = commentRepository.findByPost(findpost, pageable);
+        return comments
                 .map(comment -> CommentResponse.builder()
                         .content(comment.getContent())
                         .writerName(comment.getMember().getName())
-                        .build())
-                .collect(Collectors.toList());
-        return commentResponses;
+                        .createdAt(comment.getCreatedAt())
+                        .build());
     }
 
     @Transactional
