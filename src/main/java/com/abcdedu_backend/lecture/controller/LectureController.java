@@ -40,7 +40,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
-    @Operation(summary = "평가 파일 (시험/실습/프로젝트/이론) 등록 (admin)", description = "평가 파일(시험/실습/프로젝트/이론)을 등록합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/과제) 등록 (admin)", description = "평가 파일 (이론/시험/과제)를 등록합니다.")
     @PostMapping("/sub-lecture/{subLectureId}/file")
     public Response<Void> createAssignmentFile(@PathVariable Long subLectureId,
                                                @JwtValidation Long memberId,
@@ -51,7 +51,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
-    @Operation(summary = "평가 파일 (시험/실습/프로젝트/이론) 문제지 등록 (admin)", description = "평가 파일(시험/실습/프로젝트/이론) 문제지를 등록합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/과제) 문제지 등록 (admin)", description = "평가 파일 (이론/시험/과제) 문제지를 등록합니다.")
     @PostMapping("/assignment-file/{assignmentFileId}/answer")
     public Response<Void> createAssignmentAnswerFile(@PathVariable Long assignmentFileId,
                                                @JwtValidation Long memberId,
@@ -60,7 +60,7 @@ public class LectureController {
         return Response.success();
     }
 
-    @Operation(summary = "평가 파일(시험/실습/프로젝트/이론) 리스트 조회", description = "평가 파일(시험/실습/프로젝트/이론) 리스트를 조회합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/과제) 리스트 조회", description = "평가 파일 (이론/시험/과제) 리스트를 조회합니다.")
     @GetMapping("/sub-lecture/{subLectureId}")
     public Response<List<GetAssignmentResponseV1>> getAssignments(@PathVariable Long subLectureId){
         List<GetAssignmentResponseV1> response =lectureService.getAssignments(subLectureId);
@@ -68,7 +68,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (시험/실습/프로젝트/이론) 조회", description = "평가 파일(시험/실습/프로젝트/이론)을 조회합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/과제) 조회", description = "평가 파일 (이론/시험/과제)를 조회합니다.")
     @GetMapping("/file/{assignmentFileId}")
     public Response<GetAssignmentFileUrlResponse> getAssignmentFileUrl(@PathVariable Long assignmentFileId, @JwtValidation Long memberId){
         GetAssignmentFileUrlResponse response = lectureService.getAssignmentFileUrl(memberId, assignmentFileId);
@@ -76,7 +76,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (시험/실습/프로젝트/이론) 문제지 조회", description = "평가 파일(시험/실습/프로젝트/이론) 문제지를 조회합니다.")
+    @Operation(summary = "평가 파일 (시험) 문제지 조회", description = "평가 파일(시험) 문제지를 조회합니다.")
     @GetMapping("/answer-file/{assignmentAnswerFileId}")
     public Response<GetAssignmentAnswerFileUrlResponse> getAssignmentAnswerFileUrl(@PathVariable Long assignmentAnswerFileId, @JwtValidation Long memberId){
         GetAssignmentAnswerFileUrlResponse response = lectureService.getAssignmentAnswerFileUrl(memberId, assignmentAnswerFileId);
