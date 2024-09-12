@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/homeworks")
-@Tag(name = "공통 과제 제출", description = "공통 과제 제출 관련 API")
+@Tag(name = "공통 과제", description = "공통 과제 관련 API")
 public class HomeworkReplyController {
 
     @Operation(summary = "사용자 과제 답안 조회", description = "사용자 자신이 제출한 과제 답안 기록을 조회합니다.")
@@ -31,7 +31,9 @@ public class HomeworkReplyController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{homeworkId}/replies")
-    @Operation(summary = "과제 답안 제출 UPSERT", description = "과제 답안을 [제출 혹은 수정] 합니다.")
+    @Operation(summary = "과제 답안 제출 UPSERT", description = """
+        과제 답안을 [제출 혹은 수정] 합니다.
+        `questionId`를 제외한 나머지 필드는 반드시 하나만 존재해야하며, question의 type에 맞는 필드를 사용합니다.""")
     public Response<Void> createHomeworkReplies(
         @PathVariable Long homeworkId,
         @RequestBody HomeworkReplyReq.UpsertMany req

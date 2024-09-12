@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/homeworks")
-@Tag(name = "공통 과제 조회", description = "공통 과제 조회 관련 API")
+@Tag(name = "공통 과제", description = "공통 과제 관련 API")
 public class HomeworkQueryController {
 
     @GetMapping
