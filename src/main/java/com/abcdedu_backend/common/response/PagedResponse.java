@@ -27,7 +27,7 @@ public class PagedResponse<T> {
     public static <T> PagedResponse<T> from(Page<T> target) {
         return new PagedResponse<>(
                 target.getContent(),
-                target.getNumber(),
+                target.getNumber() + 1,
                 target.getSize(),
                 target.getTotalElements(),
                 target.getTotalPages(),
