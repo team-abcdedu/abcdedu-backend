@@ -59,6 +59,9 @@ dependencies {
 
     // 모니터링 actuator 추가
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    //AWS S3 의존성 추가
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.619'
 }
 
 tasks.named('test') {

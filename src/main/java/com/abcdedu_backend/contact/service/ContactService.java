@@ -10,11 +10,11 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,17 +38,16 @@ public class ContactService {
     }
 
 
-    public List<ContactListResponse> readListContact(Long memberId) {
+    public Page<ContactListResponse> readListContact(Long memberId, Pageable pageable) {
         checkPermission(memberId);
-        List<Contact> contacts = contactRepository.findAll();
-        return contacts.stream()
-                .map(contact -> ContactListResponse.builder()
+        Page<Contact> contacts = contactRepository.findAll(pageable);
+        return contacts.map(contact -> ContactListResponse.builder()
+                        .contactId(contact.getId())
                         .createdAt(contact.getCreatedAt())
                         .title(contact.getTitle())
                         .type(contact.getContactType().getType())
                         .userName(contact.getUserName())
-                        .build())
-                .collect(Collectors.toList());
+                        .build());
     }
 
     public ContactGetResponse readContact(Long contactId, Long memberId) {
@@ -61,6 +60,7 @@ public class ContactService {
                 .phoneNumber(findContact.getPhoneNumber())
                 .email(findContact.getEmail())
                 .content(findContact.getContent())
+                .createdAt(findContact.getCreatedAt())
                 .build();
     }
 

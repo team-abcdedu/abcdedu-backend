@@ -54,6 +54,9 @@ public class Member extends BaseTimeEntity {
         return this.role == MemberRole.ADMIN;
     }
 
+    public boolean isBasic() {
+        return this.role == MemberRole.BASIC;
+    }
     public boolean isStudent() {
         return this.role == MemberRole.STUDENT;
     }

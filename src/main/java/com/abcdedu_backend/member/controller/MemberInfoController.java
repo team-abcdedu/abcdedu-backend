@@ -4,7 +4,6 @@ import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberShortInfoResponse;
-import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;

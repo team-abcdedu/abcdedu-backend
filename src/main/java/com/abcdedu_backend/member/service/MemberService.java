@@ -16,7 +16,7 @@ import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.entity.RefreshToken;
 import com.abcdedu_backend.member.repository.MemberRepository;
 import com.abcdedu_backend.member.repository.RefreshTokenRepository;
-import com.abcdedu_backend.utils.JwtUtil;
+import com.abcdedu_backend.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -104,7 +104,7 @@ public class MemberService {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        String uploadImageUrl = fileHandler.upload(profileImage, FileDirectory.PROFILE_IMAGE);
+        String uploadImageUrl = fileHandler.upload(profileImage, FileDirectory.PROFILE_IMAGE, memberId.toString());
 
 
         findMember.updateProfile(request.name(), uploadImageUrl, request.school(), request.studentId());

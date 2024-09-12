@@ -6,6 +6,12 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
+    // 공통
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+
+    INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "사용자가 권한이 없습니다."),
+    ADMIN_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "관리자만 가능한 기능 입니다."),
+    BASIC_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "학생 이상만 가능한 기능 입니다."),
     // 역할별 에러
     STUDENT_VALID_PERMISSION(HttpStatus.FORBIDDEN, "학생등급 이상 가능"),
     ADMIN_VALID_PERMISSION(HttpStatus.FORBIDDEN, "관리자 전용"),
@@ -43,7 +49,16 @@ public enum ErrorCode {
     CLASS_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 클래스입니다."),
     SUB_CLASS_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 서브클래스입니다."),
     ASSIGNMENT_ANSWER_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "지원하지 않는 응답 타입입니다."),
-    ASSIGNMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 과제입니다.");
+    ASSIGNMENT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "지원하지 않는 평가 타입입니다."),
+    ASSIGNMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 과제입니다."),
+    SUBMISSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 시험 답안입니다."),
+
+    //S3
+    S3_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3 업로드에서 에러가 발생했습니다."),
+    S3_OBJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "s3 오브젝트를 찾을 수 없습니다."),
+    S3_DIRECTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "s3 파일 디렉토리를 찾을 수 없습니다."),
+    ASSIGNMENT_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
+    ASSIGNMENT_ANSWER_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "문제지 파일을 찾을 수 없습니다.");
 
 
     private HttpStatus status;

@@ -6,13 +6,13 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record GetAssignmentResponse (
+public record GetAssignmentResponseV2(
         String title,
         String body,
         List<QuestionsDto> questions
 ){
-    public static GetAssignmentResponse of(String title, String body, List<QuestionsDto> questions){
-        return GetAssignmentResponse.builder()
+    public static GetAssignmentResponseV2 of(String title, String body, List<QuestionsDto> questions){
+        return GetAssignmentResponseV2.builder()
                 .title(title)
                 .body(body)
                 .questions(questions)

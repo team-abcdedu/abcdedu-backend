@@ -1,6 +1,7 @@
 package com.abcdedu_backend.contact.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.common.response.PagedResponse;
 import com.abcdedu_backend.contact.service.ContactService;
 import com.abcdedu_backend.contact.dto.request.ContactCreateRequest;
 import com.abcdedu_backend.contact.dto.response.ContactListResponse;
@@ -13,9 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -33,7 +37,7 @@ public class ContactController {
     @PostMapping("/")
     @Operation(summary = "상담 생성", description = "로그인을 하지 않아도 가능한 기능입니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 이메일/제목은 공백이어선 안됩니다. 이메일은 이메일 형식을 맞춰주세요.", content = @Content),
+            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 요청을 공백 없이 모두 채워주세요", content = @Content),
     })
     public Response<Long> createContract(@RequestBody ContactCreateRequest contactCreateRequest) {
         Long contactId = contactService.createContact(contactCreateRequest);
@@ -44,12 +48,12 @@ public class ContactController {
     @GetMapping("/")
     @Operation(summary = "상담 리스트 조회", description = "관리자만 조회 가능 합니다. ")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 : 핸드폰번호/이메일/제목은 공백이어선 안됩니다.", content = @Content),
             @ApiResponse(responseCode = "403", description = "관리자 전용 기능입니다.", content = @Content),
     })
-    public Response<List<ContactListResponse>> readListContact(@JwtValidation Long memberdId) {
-        List<ContactListResponse> contacts = contactService.readListContact(memberdId);
-        return Response.success(contacts);
+    public Response<PagedResponse<ContactListResponse>> readListContact(@JwtValidation Long memberdId) {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+        Page<ContactListResponse> contacts = contactService.readListContact(memberdId, pageable);
+        return Response.success(PagedResponse.from(contacts));
     }
 
     @GetMapping("/{contactId}")
