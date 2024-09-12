@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/lectures")
 @RequiredArgsConstructor
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "성공적으로 요청이 완료되었습니다.", content = @Content),
+        @ApiResponse(responseCode = "200", description = "성공적으로 요청이 완료되었습니다."),
         @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. (RequestBody Validation)", content = @Content),
         @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰입니다.", content = @Content),
         @ApiResponse(responseCode = "404", description = "~를 찾을 찾을 수 없습니다. (유저, 과제, 클래스 등)", content = @Content),
