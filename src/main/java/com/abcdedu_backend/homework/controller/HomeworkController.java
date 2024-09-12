@@ -1,5 +1,6 @@
 package com.abcdedu_backend.homework.controller;
 
+import com.abcdedu_backend.global.security.LoginUserDetails;
 import com.abcdedu_backend.homework.dto.HomeworkReq;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -24,7 +26,7 @@ public class HomeworkController {
         Type은 다음과 같습니다. `SUBJECTIVE`, `SINGLE_OPTION`, 'MULTIPLE_OPTION', 'SHORT_ANSWER'
     """)
     public Response<Long> createHomework(
-//        @AuthenticationPrincipal LoginUserDetails loginUserDetails,
+        @AuthenticationPrincipal LoginUserDetails loginUserDetails,
         @Valid @RequestBody HomeworkReq.CreateWithQuestion req
     ) {
         throw new UnsupportedOperationException();
@@ -36,7 +38,7 @@ public class HomeworkController {
         과제에 대한 PUT 연산을 수행합니다.
     """)
     public Response<Void> updateHomework(
-//        @AuthenticationPrincipal LoginUserDetails loginUserDetails,
+        @AuthenticationPrincipal LoginUserDetails loginUserDetails,
         @PathVariable Long homeworkId,
         @Valid @RequestBody HomeworkReq.Update req
     ) {

@@ -60,8 +60,8 @@ public class HomeworkRes {
     ) {}
 
     public record OptionModel(
-        String content,
-        Integer index
+        Integer index,
+        String content
     ) {}
 
 
