@@ -40,6 +40,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
+    @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
     @Operation(summary = "평가 파일 (이론/시험/과제) 등록 (admin)", description = """
             평가 파일 (이론/시험/과제)를 등록합니다.
             AssignmentType 종류는 `이론`, `시험`, `과제` 입니다""")
@@ -53,6 +54,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
+    @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
     @Operation(summary = "평가 파일 (이론/시험/과제) 문제지 등록 (admin)", description = "평가 파일 (이론/시험/과제) 문제지를 등록합니다.")
     @PostMapping("/assignment-file/{assignmentFileId}/answer")
     public Response<Void> createAssignmentAnswerFile(@PathVariable Long assignmentFileId,
@@ -86,6 +88,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
+    @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
     @Operation(summary = "평가 파일 (이론/시험/과제) 수정", description = "평가 파일 (이론/시험/과제)를 수정합니다.")
     @PatchMapping("/file/{assignmentFileId}")
     public Response<Void> updateAssignmentFile(@PathVariable Long assignmentFileId,
@@ -96,6 +99,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
+    @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
     @Operation(summary = "평가 파일 (시험) 문제지 수정", description = "평가 파일 (시험) 문제지를 수정합니다.")
     @PatchMapping("/answer-file/{assignmentAnswerFileId}")
     public Response<Void> updateAssignmentAnswerFile(@PathVariable Long assignmentAnswerFileId,
