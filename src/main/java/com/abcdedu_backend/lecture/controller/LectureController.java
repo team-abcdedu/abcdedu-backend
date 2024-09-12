@@ -40,7 +40,9 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/과제) 등록 (admin)", description = "평가 파일 (이론/시험/과제)를 등록합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/과제) 등록 (admin)", description = """
+            평가 파일 (이론/시험/과제)를 등록합니다.
+            AssignmentType 종류는 `이론`, `시험`, `과제` 입니다""")
     @PostMapping("/sub-lecture/{subLectureId}/file")
     public Response<Void> createAssignmentFile(@PathVariable Long subLectureId,
                                                @JwtValidation Long memberId,
