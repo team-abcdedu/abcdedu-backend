@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 /**
  * 페이징 요청을 처리하기 위한 공통 클래스
@@ -17,7 +18,10 @@ public class PagingRequest{
     private Integer page;
     @Parameter(description = "페이지 크기(null이면 10)")
     private Integer size;
-
+    @Parameter(description = "정렬할 필드 이름(null이면 정렬하지 않음)", example = "createdAt")
+    private String sortBy;
+    @Parameter(description = "정렬 방향(asc: 오름차순, desc: 내림차순, null이면 asc)", example = "desc")
+    private String sortDirection;
 
     /**
      * PageRequest로 변환
@@ -30,7 +34,18 @@ public class PagingRequest{
         if (size == null || size<1 || size>100) {
             size = 10;
         }
-        return PageRequest.of(page - 1, size);
+        // 정렬 설정
+        Sort sort = Sort.unsorted();  // 기본값: 정렬하지 않음
+        if (sortBy != null && !sortBy.isEmpty()) {
+            Sort.Direction direction = Sort.Direction.ASC; // 기본값: 오름차순
+            if ("desc".equalsIgnoreCase(sortDirection)) {
+                direction = Sort.Direction.DESC;  // 사용자가 "desc"를 요청하면 내림차순으로 변경
+            }
+            sort = Sort.by(direction, sortBy);  // 정렬 필드와 방향 설정
+        }
+
+        return PageRequest.of(page - 1, size, sort);  // 1부터 시작하는 페이지 값을 0 기반으로 변경
     }
+
 
 }
