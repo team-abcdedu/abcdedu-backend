@@ -22,9 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -35,11 +32,9 @@ public class PostService {
     private final FileHandler fileHandler;
 
 
-    public List<PostListResponse> readPostList(Long boardId, Pageable pageable) {
+    public Page<PostListResponse> readPostList(Long boardId, Pageable pageable) {
         Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable);
-        return findPostList.stream()
-                .map(post -> PostToPostListResponse(post))
-                .collect(Collectors.toList());
+        return findPostList.map(this::postToPostListResponse);
     }
 
     public PostResponse getPostById(Long postId, Long memberId) {
@@ -114,7 +109,7 @@ public class PostService {
     }
     // ====== DTO, Entity 변환 =======
     // 다건 조회
-    private PostListResponse PostToPostListResponse(Post post) {
+    private PostListResponse postToPostListResponse(Post post) {
         return PostListResponse.builder()
                         .postId(post.getId())
                         .title(post.getTitle())
