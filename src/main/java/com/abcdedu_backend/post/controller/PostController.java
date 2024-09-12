@@ -1,6 +1,7 @@
 package com.abcdedu_backend.post.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.common.response.PagedResponse;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.service.CommentService;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
@@ -16,11 +17,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -103,9 +107,10 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
             @ApiResponse(responseCode = "403", description = "댓글 불가 게시글입니다.", content = @Content)
     })
-    public Response<List<CommentResponse>> readComment(@PathVariable Long postId) {
-        List<CommentResponse> commentResponses = commentService.readComments(postId);
-        return Response.success(commentResponses);
+    public Response<PagedResponse<CommentResponse>> readComment(@PathVariable Long postId) {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+        Page<CommentResponse> commentResponses = commentService.readComments(postId, pageable);
+        return Response.success(PagedResponse.from(commentResponses));
     }
 
     @Operation(summary = "게시글 특정 댓글 삭제")
