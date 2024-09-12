@@ -46,8 +46,6 @@ public class AuthController {
     private String cookieSameSite;
     @Value("${cookie.secure}")
     private boolean isCookieHttpSecure;
-    @Value("${cookie.domain}")
-    private String cookieDomain;
 
     private final MemberService memberService;
 
@@ -99,7 +97,6 @@ public class AuthController {
                 .maxAge(maxAge)
                 .sameSite(cookieSameSite)
                 .secure(isCookieHttpSecure)
-                .domain(cookieDomain)
                 .build();
         response.setHeader("Set-Cookie", refreshTokenCookie.toString());
     }
