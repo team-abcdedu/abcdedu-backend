@@ -1,5 +1,7 @@
 package com.abcdedu_backend.homework.dto;
 
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -19,19 +21,18 @@ public class HomeworkReplyReq {
         List<Long> optionIndexes
     ) {
         public UserReply {
-            int nullCount = 0;
-            if (optionIndex() == null) {
-                nullCount++;
+            int notNullCount = 0;
+            if (content != null) {
+                notNullCount++;
             }
-            if (optionIndexes() == null) {
-                nullCount++;
+            if (optionIndex != null) {
+                notNullCount++;
             }
-            if (content() == null) {
-                nullCount++;
+            if (optionIndexes != null) {
+                notNullCount++;
             }
-            if (nullCount != 1) {
-                //TODO
-                throw new IllegalArgumentException();
+            if (notNullCount != 1) {
+                throw new ApplicationException(ErrorCode.INVALID_REQUEST);
             }
         }
     }
