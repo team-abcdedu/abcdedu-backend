@@ -1,6 +1,7 @@
 package com.abcdedu_backend.contact.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.common.request.PagingRequest;
 import com.abcdedu_backend.common.response.PagedResponse;
 import com.abcdedu_backend.contact.service.ContactService;
 import com.abcdedu_backend.contact.dto.request.ContactCreateRequest;
@@ -50,9 +51,8 @@ public class ContactController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "403", description = "관리자 전용 기능입니다.", content = @Content),
     })
-    public Response<PagedResponse<ContactListResponse>> readListContact(@JwtValidation Long memberdId) {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
-        Page<ContactListResponse> contacts = contactService.readListContact(memberdId, pageable);
+    public Response<PagedResponse<ContactListResponse>> readListContact(@JwtValidation Long memberdId, PagingRequest pagingRequest) {
+        Page<ContactListResponse> contacts = contactService.readListContact(memberdId, pagingRequest.toPageRequest());
         return Response.success(PagedResponse.from(contacts));
     }
 
