@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
+    // 공통
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "사용자가 권한이 없습니다."),
     ADMIN_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "관리자만 가능한 기능 입니다."),
     BASIC_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "학생 이상만 가능한 기능 입니다."),
