@@ -82,4 +82,25 @@ public class LectureController {
         GetAssignmentAnswerFileUrlResponse response = lectureService.getAssignmentAnswerFileUrl(memberId, assignmentAnswerFileId);
         return Response.success(response);
     }
+
+    @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
+    @Operation(summary = "평가 파일 (이론/시험/과제) 수정", description = "평가 파일 (이론/시험/과제)를 수정합니다.")
+    @PatchMapping("/file/{assignmentFileId}")
+    public Response<Void> updateAssignmentFile(@PathVariable Long assignmentFileId,
+                                                     @JwtValidation Long memberId,
+                                                     @RequestPart("file") MultipartFile file){
+        lectureService.updateAssignmentFile(memberId, assignmentFileId, file);
+        return Response.success();
+    }
+
+    @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
+    @Operation(summary = "평가 파일 (시험) 문제지 수정", description = "평가 파일 (시험) 문제지를 수정합니다.")
+    @PatchMapping("/answer-file/{assignmentAnswerFileId}")
+    public Response<Void> updateAssignmentAnswerFile(@PathVariable Long assignmentAnswerFileId,
+                                                     @JwtValidation Long memberId,
+                                                     @RequestPart("file") MultipartFile file){
+        lectureService.updateAssignmentAnswerFile(memberId, assignmentAnswerFileId, file);
+        return Response.success();
+    }
+
 }
