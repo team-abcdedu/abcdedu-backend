@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -76,7 +77,7 @@ public class AuthController {
     @PostMapping("/login")
     public Response<LoginResponse> login(HttpServletResponse response, @Valid @RequestBody LoginRequest loginRequest){
         LoginTokenDTO loginTokenDto = memberService.login(loginRequest);
-        setRefreshTokenCookie(response, loginTokenDto.refreshToken(), Duration.ofDays(14).toSeconds());
+        setRefreshTokenCookie(response, loginTokenDto.refreshToken(), Duration.ofDays(14).toSeconds(), "dev-api.abcdedu.com");
         LoginResponse loginResponse = new LoginResponse(loginTokenDto.accessToken());
         return Response.success(loginResponse);
     }
@@ -86,17 +87,19 @@ public class AuthController {
     public Response<LoginResponse> logout(HttpServletRequest request, HttpServletResponse response){
         String refreshToken = parseRefreshToken(request);
         memberService.logout(refreshToken);
-        setRefreshTokenCookie(response, "", 0L);
+        setRefreshTokenCookie(response, "", 0L, ".abcdedu.com");
+        setRefreshTokenCookie(response, "", 0L, "dev-api.abcdedu.com");
         return Response.success();
     }
 
-    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken, Long maxAge) {
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken, Long maxAge, String domain) {
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .path("/")
                 .maxAge(maxAge)
                 .sameSite(cookieSameSite)
                 .secure(isCookieHttpSecure)
+                .domain(domain)
                 .build();
         response.setHeader("Set-Cookie", refreshTokenCookie.toString());
     }
@@ -125,6 +128,7 @@ public class AuthController {
             String refreshToken = refreshTokenCookie.getValue();
             return refreshToken;
         } catch (Exception e){
+            log.info(e.getLocalizedMessage());
             throw new ApplicationException(ErrorCode.TOKEN_NOT_FOUND);
         }
     }
