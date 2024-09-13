@@ -3,6 +3,7 @@ package com.abcdedu_backend.homework.controller;
 import com.abcdedu_backend.common.request.PagingRequest;
 import com.abcdedu_backend.common.response.PagedResponse;
 import com.abcdedu_backend.homework.dto.HomeworkRes;
+import com.abcdedu_backend.homework.service.HomeworkQueryService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,13 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/homeworks")
 @Tag(name = "공통 과제", description = "공통 과제 관련 API")
 public class HomeworkQueryController {
+    private final HomeworkQueryService homeworkQueryService;
 
     @GetMapping
     @Operation(summary = "과제 목록 페이징 조회", description = "과제 목록 페이징 조회. 세부내용은 상세 API를 통해 조회합니다.")
     public Response<PagedResponse<HomeworkRes.MainModel>> getHomeworksPaging(
         PagingRequest pagingRequest
     ) {
-        throw new UnsupportedOperationException();
+        var res = homeworkQueryService.getHomeworksPaging(pagingRequest.toPageRequest());
+        return Response.success(res);
     }
 
     @GetMapping("/{homeworkId}")
@@ -32,6 +35,7 @@ public class HomeworkQueryController {
     public Response<HomeworkRes.DetailModel> getHomeworkDetail(
         @PathVariable Long homeworkId
     ) {
-        throw new UnsupportedOperationException();
+        var res = homeworkQueryService.getHomeworkDetail(homeworkId);
+        return Response.success(res);
     }
 }
