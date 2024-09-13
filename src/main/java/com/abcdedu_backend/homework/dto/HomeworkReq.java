@@ -1,5 +1,6 @@
 package com.abcdedu_backend.homework.dto;
 
+import com.abcdedu_backend.homework.entity.HomeworkCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +23,20 @@ public class HomeworkReq {
         List<HomeworkQuestionReq.Create> questions,
         @NotNull
         String additionalDescription
-    ) {}
+    ) {
+        public HomeworkCommand.Create toCommand() {
+            var createQuestionCommands = questions.stream()
+                .map(HomeworkQuestionReq.Create::toCommand)
+                .toList();
+            return HomeworkCommand.Create.builder()
+                .title(title)
+                .subTitle(subTitle)
+                .description(description)
+                .additionalDescription(additionalDescription)
+                .createQuestionCommands(createQuestionCommands)
+                .build();
+        }
+    }
 
     public record Update(
         @NotBlank
@@ -33,7 +47,16 @@ public class HomeworkReq {
         String description,
         @NotNull
         String additionalDescription
-    ) {}
+    ) {
+        public HomeworkCommand.Update toCommand() {
+            return HomeworkCommand.Update.builder()
+                .title(title)
+                .subTitle(subTitle)
+                .description(description)
+                .additionalDescription(additionalDescription)
+                .build();
+        }
+    }
 
 
 }

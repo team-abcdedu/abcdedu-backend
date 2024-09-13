@@ -37,6 +37,10 @@ public class Homework {
     private List<HomeworkQuestion> questions = new ArrayList<>();
 
 
+    public Long getTeacherId() {
+        return teacher.getId();
+    }
+
     public void update(HomeworkCommand.Update command) {
         this.title = command.getTitle();
         this.description = command.getDescription();

@@ -2,6 +2,7 @@ package com.abcdedu_backend.homework.controller;
 
 import com.abcdedu_backend.global.security.LoginUserDetails;
 import com.abcdedu_backend.homework.dto.HomeworkReq;
+import com.abcdedu_backend.homework.service.HomeworkService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class HomeworkController {
+    private final HomeworkService homeworkService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -28,7 +30,8 @@ public class HomeworkController {
         @AuthenticationPrincipal LoginUserDetails loginUserDetails,
         @Valid @RequestBody HomeworkReq.CreateWithQuestion req
     ) {
-        throw new UnsupportedOperationException();
+        Long id = homeworkService.createHomework(loginUserDetails.getLoginUserId(), req.toCommand());
+        return Response.success(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -39,7 +42,8 @@ public class HomeworkController {
         @PathVariable Long homeworkId,
         @Valid @RequestBody HomeworkReq.Update req
     ) {
-        throw new UnsupportedOperationException();
+        homeworkService.updateHomework(loginUserDetails.getLoginUserId(), req.toCommand(), homeworkId);
+        return Response.success();
     }
 
 

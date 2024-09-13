@@ -1,5 +1,6 @@
 package com.abcdedu_backend.homework.dto;
 
+import com.abcdedu_backend.homework.entity.HomeworkQuestionCommand;
 import com.abcdedu_backend.homework.entity.HomeworkQuestionType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -26,7 +27,24 @@ public class HomeworkQuestionReq {
         @NotNull
         Integer index,
         List<Option> options// 객관식일 경우만 사용 nullable
-    ) {}
+    ) {
+        public HomeworkQuestionCommand.Create toCommand() {
+            List<HomeworkQuestionCommand.CreateOption> optionsCommand = null;
+            if(options != null) {
+                optionsCommand = options.stream()
+                    .map(Option::toCommand)
+                    .toList();
+            }
+            return HomeworkQuestionCommand.Create.builder()
+                .type(type)
+                .title(title)
+                .description(description)
+                .score(score)
+                .index(index)
+                .createOptionsCommand(optionsCommand)
+                .build();
+        }
+    }
 
     public record Update(
         @NotNull
@@ -53,5 +71,12 @@ public class HomeworkQuestionReq {
         Integer index,
         @NotNull
         Boolean isAnswer
-    ) {}
+    ) {
+        public HomeworkQuestionCommand.CreateOption toCommand() {
+            return HomeworkQuestionCommand.CreateOption.builder()
+                .content(content)
+                .index(index)
+                .build();
+        }
+    }
 }
