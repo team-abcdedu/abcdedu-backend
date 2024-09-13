@@ -77,7 +77,7 @@ public class HomeworkRes {
         Integer index,
         String content
     ) {
-        public static OptionModel from(HomeworkQuestion.QuestionPayload.QuestionOption option) {
+        public static OptionModel from(HomeworkQuestion.QuestionOption option) {
             return new OptionModel(
                 option.getIndex(),
                 option.getContent()

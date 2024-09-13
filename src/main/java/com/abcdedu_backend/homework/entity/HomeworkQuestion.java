@@ -49,21 +49,21 @@ public class HomeworkQuestion {
     public static class QuestionPayload {
         private List<QuestionOption> questionOptions;
 
-        @Getter
-        @Builder
-        @NoArgsConstructor(access = AccessLevel.PROTECTED)
-        @AllArgsConstructor
-        @EqualsAndHashCode
-        public static class QuestionOption {
-            private Integer index;
-            private String content;
+    }
+    @Getter
+    @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    public static class QuestionOption {
+        private Integer index;
+        private String content;
 
-            public static QuestionOption create(HomeworkQuestionCommand.CreateOption command) {
-                return QuestionOption.builder()
-                    .index(command.getIndex())
-                    .content(command.getContent())
-                    .build();
-            }
+        public static QuestionOption create(HomeworkQuestionCommand.CreateOption command) {
+            return QuestionOption.builder()
+                .index(command.getIndex())
+                .content(command.getContent())
+                .build();
         }
     }
 
@@ -71,7 +71,7 @@ public class HomeworkQuestion {
         QuestionPayload payload = null;
         if (command.getCreateOptionsCommand() != null) {
             payload = new QuestionPayload(command.getCreateOptionsCommand().stream()
-                .map(QuestionPayload.QuestionOption::create)
+                .map(QuestionOption::create)
                 .toList());
         }
         return HomeworkQuestion.builder()
