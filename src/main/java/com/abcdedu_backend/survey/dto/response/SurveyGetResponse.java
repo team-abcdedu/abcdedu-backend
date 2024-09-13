@@ -9,7 +9,6 @@ public record SurveyGetResponse (
         String title,
         String description,
         String writerName,
-        List<SurveyQuestionGetResponse> questionGetResponses,
-        List<SurveyQuestionChoiceGetResponse> choiseGetResponses
+        List<SurveyQuestionGetResponse> questionGetResponses
 ){
 }

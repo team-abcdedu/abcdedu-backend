@@ -19,16 +19,13 @@ public class SurveyQuestionChoice {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name  = "survey_id", nullable = false)
-    private Survey survey;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name  = "survey_question_id", nullable = false)
     private SurveyQuestion surveyQuestion;
 
     @Column(nullable = false)
-    private Integer order; // 선택지 순서
+    private Integer orderNumber; // 선택지 순서
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 100)
     private String description; // 해당 선택지가 나타내는 의미, ex) "매우 좋음"
+
 }

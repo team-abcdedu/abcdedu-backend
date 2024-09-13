@@ -23,17 +23,17 @@ public class SurveyReply extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_id", nullable = false)
-    Survey survey;
+    private Survey survey;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_question_id", nullable = false)
-    SurveyQuestion surveyQuestion;
+    private SurveyQuestion surveyQuestion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    Member member; // 설문 응답자
+    private Member member; // 설문 응답자
 
-    @Column(length = 100)
+    @Column(length = 400)
     private String answer;
 
 }

@@ -22,6 +22,7 @@ public enum ErrorCode {
     SURVEY_QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 설문 질문이 없습니다."),
     SURVEY_QUESTION_CHOICE_IS_ESSAY(HttpStatus.BAD_REQUEST, "서술형 문제는 choice를 가질 수 없습니다."),
     SURVEY_REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 설문 응답이 없습니다."),
+    SURVEY_CHOICE_NUMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 번호의 질문 선택지를 찾을 수 없습니다."),
     // 상담
     CONTACT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상담이 없습니다."),
     CONTACT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 상담 타입입니다."),

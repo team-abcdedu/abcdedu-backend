@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record SurveyListResponse (
+    Long id,
     String title,
     LocalDateTime createAt,
     String writerName

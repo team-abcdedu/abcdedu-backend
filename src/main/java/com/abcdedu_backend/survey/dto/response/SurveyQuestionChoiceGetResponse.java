@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record SurveyQuestionChoiceGetResponse(
-        Integer order,
+        Integer orderNumber,
         String description
 ) {
 }

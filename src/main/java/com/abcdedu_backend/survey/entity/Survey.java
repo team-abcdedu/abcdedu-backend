@@ -8,9 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -22,21 +19,17 @@ public class Survey extends BaseTimeEntity {
     @Id
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     private String title;
 
-    @Column(length = 100)
+    @Column(length = 300)
     private String description;
+
+    @Column(length = 100)
+    private String additionalDescription;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member; // 설문을 만든 작성자, *관리자만 가능하다.*
 
-    @OneToMany(mappedBy = "survey")
-    private List<SurveyQuestion> surveyQuestions;
-
-    public void updateSurvey(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
 }
