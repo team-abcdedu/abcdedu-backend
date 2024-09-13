@@ -77,7 +77,7 @@ public class AuthController {
     @PostMapping("/login")
     public Response<LoginResponse> login(HttpServletResponse response, @Valid @RequestBody LoginRequest loginRequest){
         LoginTokenDTO loginTokenDto = memberService.login(loginRequest);
-        setRefreshTokenCookie(response, loginTokenDto.refreshToken(), Duration.ofDays(14).toSeconds(), "dev-api.abcdedu.com");
+        setRefreshTokenCookie(response, loginTokenDto.refreshToken(), Duration.ofDays(14).toSeconds());
         LoginResponse loginResponse = new LoginResponse(loginTokenDto.accessToken());
         return Response.success(loginResponse);
     }
@@ -87,18 +87,17 @@ public class AuthController {
     public Response<LoginResponse> logout(HttpServletRequest request, HttpServletResponse response){
         String refreshToken = parseRefreshToken(request);
         memberService.logout(refreshToken);
-        setRefreshTokenCookie(response, "", 0L, ".abcdedu.com");
+        setRefreshTokenCookie(response, "", 0L);
         return Response.success();
     }
 
-    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken, Long maxAge, String domain) {
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken, Long maxAge) {
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .path("/")
                 .maxAge(maxAge)
                 .sameSite(cookieSameSite)
                 .secure(isCookieHttpSecure)
-                .domain(domain)
                 .build();
         response.setHeader("Set-Cookie", refreshTokenCookie.toString());
     }
