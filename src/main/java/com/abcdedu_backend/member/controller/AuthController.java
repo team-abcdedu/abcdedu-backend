@@ -88,7 +88,6 @@ public class AuthController {
         String refreshToken = parseRefreshToken(request);
         memberService.logout(refreshToken);
         setRefreshTokenCookie(response, "", 0L, ".abcdedu.com");
-        setRefreshTokenCookie(response, "", 0L, "dev-api.abcdedu.com");
         return Response.success();
     }
 
