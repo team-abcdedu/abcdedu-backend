@@ -9,7 +9,7 @@ import com.abcdedu_backend.member.dto.request.LoginRequest;
 import com.abcdedu_backend.member.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
-import com.abcdedu_backend.member.dto.response.MemberShortInfoResponse;
+import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.member.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.Optional;
@@ -112,11 +111,11 @@ public class MemberService {
         findMember.updateProfile(request.name(), uploadImageObjectKey, request.school(), request.studentId());
     }
 
-    public MemberShortInfoResponse getMemberNameAndRoleInfo(Long memberId) {
+    public MemberNameAndRoleResponse getMemberNameAndRoleInfo(Long memberId) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        return MemberShortInfoResponse.builder()
+        return MemberNameAndRoleResponse.builder()
                 .name(findMember.getName())
                 .role(findMember.getRole().getName())
                 .build();

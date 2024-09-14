@@ -8,6 +8,7 @@ import com.abcdedu_backend.member.dto.request.LoginRequest;
 import com.abcdedu_backend.member.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
+import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.entity.RefreshToken;
@@ -21,7 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -170,7 +170,7 @@ class MemberServiceTest {
     }
 
     @Test
-    public void 멤버프로필정보_조회() {
+    public void 멤버프로필정보_조회_성공() {
         //given
         Member member = createMember();
         String expectedImageUrl = "imageUrl";
@@ -198,7 +198,7 @@ class MemberServiceTest {
     }
 
     @Test
-    public void 멤버프로필정보_업데이트() {
+    public void 멤버프로필정보_업데이트_성공() {
         //given
         Member member = createMember();
         File file = new File("");
@@ -217,7 +217,30 @@ class MemberServiceTest {
         assertThat(member.getImageObjectKey()).isEqualTo("updateObjectKey");
     }
 
+    @Test
+    public void 멤버프로필정보_이름_역할_조회_성공() {
+        Member member = createMember();
+        doReturn(Optional.of(member)).when(memberRepository).findById(member.getId());
 
+        MemberNameAndRoleResponse memberNameAndRoleResponse = target.getMemberNameAndRoleInfo(member.getId());
+
+        verify(memberRepository, times(1)).findById(member.getId());
+        assertThat(memberNameAndRoleResponse.name()).isEqualTo(member.getName());
+        assertThat(memberNameAndRoleResponse.role()).isEqualTo(member.getRole().getName());
+    }
+
+
+    @Test
+    public void 로그아웃_성공() {
+        //given
+        String refreshToken = "refreshToken";
+
+        //when
+        target.logout(refreshToken);
+
+        //then
+        verify(refreshTokenRepository, times(1)).deleteById(refreshToken);
+    }
 
 
     private Member createMember(){

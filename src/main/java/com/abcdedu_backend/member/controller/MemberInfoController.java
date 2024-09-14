@@ -3,7 +3,7 @@ package com.abcdedu_backend.member.controller;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
-import com.abcdedu_backend.member.dto.response.MemberShortInfoResponse;
+import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.utils.FileUtil;
 import com.abcdedu_backend.utils.Response;
@@ -58,8 +58,8 @@ public class MemberInfoController {
 
     @Operation(summary = "프로필 이름, 역할 정보 조회", description = "프로필 이름, 역할을 조회합니다.")
     @GetMapping("/info/name-and-role")
-    public Response<MemberShortInfoResponse> getMemberNameAndRoleInfo(@JwtValidation Long memberId){
-        MemberShortInfoResponse memberShortInfoResponse = memberService.getMemberNameAndRoleInfo(memberId);
-        return Response.success(memberShortInfoResponse);
+    public Response<MemberNameAndRoleResponse> getMemberNameAndRoleInfo(@JwtValidation Long memberId){
+        MemberNameAndRoleResponse memberNameAndRoleResponse = memberService.getMemberNameAndRoleInfo(memberId);
+        return Response.success(memberNameAndRoleResponse);
     }
 }
