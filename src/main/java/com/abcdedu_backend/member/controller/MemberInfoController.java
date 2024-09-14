@@ -5,6 +5,7 @@ import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberShortInfoResponse;
 import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.utils.FileUtil;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 @Slf4j
 @RestController
@@ -46,8 +49,9 @@ public class MemberInfoController {
     @PatchMapping("/info")
     public Response<Void> updateMemberInfo(@JwtValidation Long memberId,
                                                  @Valid @ModelAttribute UpdateMemberInfoRequest updateMemberInfoRequest,
-                                                 @RequestPart("file") MultipartFile profileImage){
-        memberService.updateMemberInfo(memberId, updateMemberInfoRequest, profileImage);
+                                                 @RequestPart("file") MultipartFile multipartFile){
+        File file = FileUtil.convertToFile(multipartFile);
+        memberService.updateMemberInfo(memberId, updateMemberInfoRequest, file);
         return Response.success();
     }
 

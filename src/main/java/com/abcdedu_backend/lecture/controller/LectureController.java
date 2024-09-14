@@ -3,6 +3,7 @@ package com.abcdedu_backend.lecture.controller;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.lecture.dto.response.*;
 import com.abcdedu_backend.lecture.service.LectureService;
+import com.abcdedu_backend.utils.FileUtil;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 @Slf4j
@@ -45,7 +47,9 @@ public class LectureController {
     public Response<Void> createAssignmentFile(@PathVariable Long subLectureId,
                                                @JwtValidation Long memberId,
                                                @RequestParam String assignmentType,
-                                               @RequestPart("file") MultipartFile file){
+                                               @RequestPart("file") MultipartFile multipartFile){
+
+        File file = FileUtil.convertToFile(multipartFile);
         lectureService.createAssignmentsFile(subLectureId, memberId, assignmentType, file);
         return Response.success();
     }
@@ -55,7 +59,8 @@ public class LectureController {
     @PostMapping("/assignment-file/{assignmentFileId}/answer")
     public Response<Void> createAssignmentAnswerFile(@PathVariable Long assignmentFileId,
                                                @JwtValidation Long memberId,
-                                               @RequestPart("file") MultipartFile file){
+                                               @RequestPart("file") MultipartFile multipartFile){
+        File file = FileUtil.convertToFile(multipartFile);
         lectureService.createAssignmentAnswerFile(assignmentFileId, memberId, file);
         return Response.success();
     }
@@ -82,4 +87,6 @@ public class LectureController {
         GetAssignmentAnswerFileUrlResponse response = lectureService.getAssignmentAnswerFileUrl(memberId, assignmentAnswerFileId);
         return Response.success(response);
     }
+
+
 }

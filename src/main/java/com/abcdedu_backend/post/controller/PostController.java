@@ -8,6 +8,7 @@ import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
 import com.abcdedu_backend.post.dto.response.CommentResponse;
 import com.abcdedu_backend.post.dto.response.PostResponse;
 import com.abcdedu_backend.post.service.PostService;
+import com.abcdedu_backend.utils.FileUtil;
 import com.abcdedu_backend.utils.Response;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +25,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 
 @RestController
@@ -59,8 +62,9 @@ public class PostController {
             @ApiResponse(responseCode = "403", description = "학생 등급 이하가 기능을 요청할 때 발생합니다.", content = @Content)
     })
     public Response<Long> createPost(@Valid @RequestPart("data") PostCreateRequest req,
-                                     @RequestPart(value = "file", required = false) MultipartFile file,
+                                     @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                      @JwtValidation Long memberId) {
+        File file = FileUtil.convertToFile(multipartFile);
         return Response.success(postService.createPost(req, memberId, file));
     }
 
@@ -83,8 +87,9 @@ public class PostController {
     })
     public Response<Long> updatePost(@PathVariable Long postId,
                                      @RequestPart("data") PostUpdateRequest postUpdateRequest,
-                                     @RequestPart(value = "file", required = false) MultipartFile file,
+                                     @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                      @JwtValidation Long memberId) {
+        File file = FileUtil.convertToFile(multipartFile);
         return Response.success(postService.updatePost(postId, memberId,postUpdateRequest, file));
     }
 
