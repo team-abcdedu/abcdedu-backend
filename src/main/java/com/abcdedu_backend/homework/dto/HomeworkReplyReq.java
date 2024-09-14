@@ -2,6 +2,8 @@ package com.abcdedu_backend.homework.dto;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
+import com.abcdedu_backend.homework.entity.HomeworkReply;
+import com.abcdedu_backend.homework.entity.HomeworkReplyCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -9,7 +11,13 @@ import java.util.List;
 public class HomeworkReplyReq {
     public record UpsertMany(
         List<UserReply> userReplies
-    ) {}
+    ) {
+        public List<HomeworkReplyCommand.Upsert> toCommands() {
+            return userReplies.stream()
+                .map(UserReply::toCommand)
+                .toList();
+        }
+    }
 
     public record UserReply(
         Long questionId,
@@ -34,6 +42,15 @@ public class HomeworkReplyReq {
             if (notNullCount != 1) {
                 throw new ApplicationException(ErrorCode.INVALID_REQUEST);
             }
+        }
+
+        public HomeworkReplyCommand.Upsert toCommand() {
+            return HomeworkReplyCommand.Upsert.builder()
+                .questionId(questionId)
+                .content(content)
+                .optionIndex(optionIndex)
+                .optionIndexes(optionIndexes)
+                .build();
         }
     }
 
