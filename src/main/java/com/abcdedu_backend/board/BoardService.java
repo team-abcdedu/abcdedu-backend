@@ -47,11 +47,7 @@ public class BoardService {
     }
 
 
-    @Transactional
-    public void addPostToBoard(Board board, Post post) {
-        board.getPosts().add(post);
-        boardRepository.save(board);
-    }
+
 
     // ======== 유효성 검사, 서비스 로직
 

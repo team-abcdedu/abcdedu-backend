@@ -37,8 +37,6 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
     @Column(name = "comment_count")  // 댓글이 생성되거나 삭제될 때 마다 업데이트 해줘야 하는 필드
     private Long commentCount;
 
@@ -71,7 +69,6 @@ public class Post extends BaseTimeEntity {
         this.objectKey = objectKey;
     }
 
-
     public static Post of(Member member, Board board, PostCreateRequest req) {
         return Post.builder()
                 .board(board)
@@ -93,5 +90,17 @@ public class Post extends BaseTimeEntity {
     }
     public void decrementCommentCount() {
         this.commentCount--;
+    }
+
+    public void changeBoard(Board board) {
+        board.getPosts().add(this);
+        this.board = board;
+    }
+
+    public void update(PostUpdateRequest updateReq) {
+        this.title = updateReq.title();
+        this.content = updateReq.content();
+        this.secret = updateReq.secret();
+        this.commentAllow = updateReq.commentAllow();
     }
 }

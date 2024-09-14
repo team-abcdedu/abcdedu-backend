@@ -14,10 +14,9 @@ public record PostResponse (
         String title,
         String writer,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
         Long viewCount,
         Long commentCount,
-        List<Comment> comments
+        String fileDownloadUrl
 ){
 
 }

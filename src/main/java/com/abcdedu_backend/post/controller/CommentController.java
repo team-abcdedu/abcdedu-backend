@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/comments")
@@ -30,8 +31,8 @@ public class CommentController {
             @ApiResponse(responseCode = "404", description = "해당 사용자를 찾을 수 없습니다.", content = @Content)
     })
     @GetMapping("/members/{memberId}")
-    public Response<Long> getCommentCountByMember(@PathVariable Long memberId) {
-        Long count = commentService.countCommentsByMember(memberId);
+    public Response<Integer> getCommentCountByMember(@PathVariable Long memberId) {
+        int count = commentService.countCommentsByMember(memberId);
         return Response.success(count);
     }
 
