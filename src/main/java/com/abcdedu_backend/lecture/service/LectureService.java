@@ -142,8 +142,8 @@ public class LectureService {
         
         String objectKey = fileHandler.upload(
                 file, 
-                FileDirectory.of(assignmentFile.getAssignmentType().getType()), 
-                "answer/"+assignmentFile.getSubLecture().getSubLectureName());
+                FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
+                assignmentFile.getSubLecture().getSubLectureName());
 
         AssignmentAnswerFile assignmentAnswerFile = AssignmentAnswerFile.builder()
                 .objectKey(objectKey)
@@ -165,5 +165,35 @@ public class LectureService {
     private AssignmentAnswerFile findAssignmentAnswerFile(Long assignmentAnswerFileId) {
         return assignmentAnswerFileRepository.findById(assignmentAnswerFileId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_ANSWER_FILE_NOT_FOUND));
+    }
+
+    @Transactional
+    public void updateAssignmentFile(Long memberId, Long assignmentFileId, MultipartFile file) {
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
+        AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
+
+        String objectKey = fileHandler.upload(
+                file,
+                FileDirectory.of(assignmentFile.getAssignmentType().getType()),
+                assignmentFile.getSubLecture().getSubLectureName()
+        );
+
+        assignmentFile.updateObjectKey(objectKey);
+    }
+
+    @Transactional
+    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, MultipartFile file) {
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
+        AssignmentAnswerFile assignmentAnswerFile = findAssignmentAnswerFile(assignmentAnswerFileId);
+
+        String objectKey = fileHandler.upload(
+                file,
+                FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
+                assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
+        );
+
+        assignmentAnswerFile.updateObjectKey(objectKey);
     }
 }
