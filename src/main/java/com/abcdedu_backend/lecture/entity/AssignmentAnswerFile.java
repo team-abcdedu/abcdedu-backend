@@ -24,4 +24,8 @@ public class AssignmentAnswerFile {
 
     @Column(length=100)
     private String objectKey;
+
+    public void updateObjectKey(String objectKey) {
+        this.objectKey = objectKey;
+    }
 }
