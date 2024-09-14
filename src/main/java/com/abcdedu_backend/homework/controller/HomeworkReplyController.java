@@ -27,7 +27,8 @@ public class HomeworkReplyController {
         @PathVariable Long homeworkId,
         @AuthenticationPrincipal LoginUserDetails loginUserDetails
     ) {
-        throw new UnsupportedOperationException();
+        var res = homeworkReplyService.getHomeworkUserReplies(homeworkId, loginUserDetails.getLoginUserId());
+        return Response.success(res);
     }
 
 

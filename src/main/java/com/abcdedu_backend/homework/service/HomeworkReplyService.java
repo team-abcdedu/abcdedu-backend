@@ -1,5 +1,6 @@
 package com.abcdedu_backend.homework.service;
 
+import com.abcdedu_backend.homework.dto.HomeworkReplyRes;
 import com.abcdedu_backend.homework.entity.HomeworkQuestion;
 import com.abcdedu_backend.homework.entity.HomeworkReply;
 import com.abcdedu_backend.homework.entity.HomeworkReplyCommand;
@@ -23,6 +24,21 @@ public class HomeworkReplyService {
     private final MemberRepository memberRepository;
     private final HomeworkQuestionRepository homeworkQuestionRepository;
     private final HomeworkReplyRepository homeworkReplyRepository;
+
+    /**
+     * 사용자 과제 답안 조회
+     * 1. memberId, homeworkId에 해당하는 모든 응답을 조회
+     * 2. 응답을 DTO로 변환하여 반환
+     */
+    @Transactional(readOnly = true)
+    public List<HomeworkReplyRes.UserReplyModel> getHomeworkUserReplies(Long homeworkId, Long memberId) {
+        List<HomeworkReply> homeworkReplies
+            = homeworkReplyRepository.findAllByMemberIdAndHomeworkId(memberId, homeworkId);
+        return homeworkReplies
+            .stream()
+            .map(HomeworkReplyRes.UserReplyModel::from)
+            .toList();
+    }
 
     /**
      * 응답 생성 Upsert
@@ -60,7 +76,7 @@ public class HomeworkReplyService {
 
         // 3. 기존의 응답을 모두 조회하고 Map으로 변환 <질문 ID, 응답>
         Map<Long, HomeworkReply> existedRepliesMap = homeworkReplyRepository
-            .findAllByMemberIdAndQuestionIdsIn(memberId, questionIds)
+            .findAllByMemberIdAndHomeworkId(memberId, homeworkId)
             .stream()
             .collect(Collectors.toMap(HomeworkReply::getHomeworkQuestionId, Function.identity()));
 

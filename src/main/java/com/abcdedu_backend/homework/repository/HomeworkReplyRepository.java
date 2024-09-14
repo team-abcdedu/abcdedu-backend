@@ -9,9 +9,10 @@ import java.util.List;
 
 public interface HomeworkReplyRepository extends JpaRepository<HomeworkReply, Long> {
     @Query("SELECT hr FROM HomeworkReply hr " +
-        "WHERE hr.member.id = :memberId AND hr.homeworkQuestion IN :homeworkQuestions")
-    List<HomeworkReply> findAllByMemberIdAndQuestionIdsIn(
+        "JOIN HomeworkQuestion hq ON hr.homeworkQuestion.id = hq.id " +
+        "WHERE hr.member.id = :memberId AND hq.homework.id = :homeworkId")
+    List<HomeworkReply> findAllByMemberIdAndHomeworkId(
         @Param("memberId") Long memberId,
-        @Param("homeworkQuestions") List<Long> homeworkQuestionsIds
+        @Param("homeworkId") Long homeworkId
     );
 }
