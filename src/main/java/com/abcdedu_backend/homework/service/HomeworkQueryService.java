@@ -17,10 +17,8 @@ public class HomeworkQueryService {
 
     @Transactional(readOnly = true)
     public PagedResponse<HomeworkRes.MainModel> getHomeworksPaging(PageRequest pageRequest) {
-        Page<HomeworkRes.MainModel> homeworks = homeworkRepository
-            .findAll(pageRequest)
-            .map(HomeworkRes.MainModel::from);
-        return PagedResponse.from(homeworks);
+        Page<Homework> homeworks = homeworkRepository.findAll(pageRequest);
+        return PagedResponse.from(homeworks, HomeworkRes.MainModel::from);
     }
 
     @Transactional(readOnly = true)

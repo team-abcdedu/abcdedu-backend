@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.function.Function;
+
 @NoArgsConstructor
 @Getter
 public class PagedResponse<T> {
@@ -27,6 +29,16 @@ public class PagedResponse<T> {
     public static <T> PagedResponse<T> from(Page<T> target) {
         return new PagedResponse<>(
                 target.getContent(),
+                target.getNumber() + 1,
+                target.getSize(),
+                target.getTotalElements(),
+                target.getTotalPages(),
+                target.isLast());
+    }
+
+    public static <R, E> PagedResponse<R> from(Page<E> target, Function<E, R> converter) {
+        return new PagedResponse<>(
+                target.getContent().stream().map(converter).toList(),
                 target.getNumber() + 1,
                 target.getSize(),
                 target.getTotalElements(),
