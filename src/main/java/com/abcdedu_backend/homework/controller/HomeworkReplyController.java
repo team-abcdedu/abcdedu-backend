@@ -3,6 +3,7 @@ package com.abcdedu_backend.homework.controller;
 import com.abcdedu_backend.global.security.LoginUserDetails;
 import com.abcdedu_backend.homework.dto.HomeworkReplyReq;
 import com.abcdedu_backend.homework.dto.HomeworkReplyRes;
+import com.abcdedu_backend.homework.service.HomeworkReplyService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping("/homeworks")
 @Tag(name = "공통 과제", description = "공통 과제 관련 API")
 public class HomeworkReplyController {
+    private final HomeworkReplyService homeworkReplyService;
 
     @Operation(summary = "사용자 과제 답안 조회", description = "사용자 자신이 제출한 과제 답안 기록을 조회합니다.")
     @GetMapping("/{homeworkId}/replies/me")
@@ -36,8 +38,10 @@ public class HomeworkReplyController {
         `questionId`를 제외한 나머지 필드는 반드시 하나만 존재해야하며, question의 type에 맞는 필드를 사용합니다.""")
     public Response<Void> createHomeworkReplies(
         @PathVariable Long homeworkId,
+        @AuthenticationPrincipal LoginUserDetails loginUserDetails,
         @RequestBody HomeworkReplyReq.UpsertMany req
     ) {
-        throw new UnsupportedOperationException();
+        homeworkReplyService.upsertHomeworkReply(homeworkId, loginUserDetails.getLoginUserId(), req.toCommands());
+        return Response.success();
     }
 }

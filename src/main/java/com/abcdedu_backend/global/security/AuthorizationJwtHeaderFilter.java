@@ -48,6 +48,8 @@ public class AuthorizationJwtHeaderFilter extends BasicAuthenticationFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         // `/auth`로 시작하는 요청은 필터를 거치지 않는다.
 //        return request.getServletPath().startsWith("/auth");
+        if(request.getServletPath().startsWith("/admin")) return false;
+        if(request.getServletPath().startsWith("/homeworks")) return false;
         return request.getServletPath().startsWith("/auth") || !request.getServletPath().startsWith("/todo"); //TODO
     }
 }

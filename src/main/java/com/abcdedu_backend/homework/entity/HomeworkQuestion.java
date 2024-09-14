@@ -67,6 +67,10 @@ public class HomeworkQuestion {
         }
     }
 
+    public Long getHomeworkId() {
+        return this.homework.getId();
+    }
+
     public static HomeworkQuestion create(Homework homework, HomeworkQuestionCommand.Create command) {
         QuestionPayload payload = null;
         if (command.getCreateOptionsCommand() != null) {
