@@ -30,8 +30,8 @@ public class CommentController {
             @ApiResponse(responseCode = "404", description = "해당 사용자를 찾을 수 없습니다.", content = @Content)
     })
     @GetMapping("/members/{memberId}")
-    public Response<Long> getCommentCountByMember(@PathVariable Long memberId) {
-        Long count = commentService.countCommentsByMember(memberId);
+    public Response<Integer> getCommentCountByMember(@PathVariable Long memberId) {
+        int count = commentService.countCommentsByMember(memberId);
         return Response.success(count);
     }
 

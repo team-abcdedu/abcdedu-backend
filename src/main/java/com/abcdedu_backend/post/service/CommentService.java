@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,16 +28,19 @@ public class CommentService {
     private final PostService postService;
 
     @Transactional
-    public void updateComment(Long commentId, Long memberId, CommentUpdateRequest updateRequest) {
-        Comment comment = checkVaildation(commentId, memberId);
-        comment.updateContent(updateRequest.content());
-    }
+    public Long createComment(Long postId, Long memberId, CommentCreateRequest createRequest) {
+        Member findMember = memberService.checkMember(memberId);
+        Post findpost = postService.checkPost(postId);
+        CheckPostAllowedComment(findpost);
 
-    @Transactional
-    public void deleteComment(Long postId, Long commentId, Long memberId) {
-         checkVaildation(commentId, memberId);
-        postService.checkPost(postId).decrementCommentCount();
-        commentRepository.deleteById(commentId);
+        Comment comment = Comment.builder()
+                .member(findMember)
+                .post(findpost)
+                .content(createRequest.content())
+                .build();
+        commentRepository.save(comment);
+        findpost.incrementCommentCount();
+        return comment.getId();
     }
 
 
@@ -52,22 +57,24 @@ public class CommentService {
     }
 
     @Transactional
-    public void CreateComment(Long postId, Long memberId, CommentCreateRequest createRequest) {
-        Post findpost = postService.checkPost(postId);
-        CheckPostAllowedComment(findpost);
-        findpost.incrementCommentCount();
-        Member findMember = memberService.checkMember(memberId);
-        Comment comment = Comment.builder()
-                .post(findpost)
-                .member(findMember)
-                .content(createRequest.content())
-                .build();
-        commentRepository.save(comment);
+    public void updateComment(Long commentId, Long memberId, CommentUpdateRequest updateRequest) {
+        Comment comment = checkVaildation(commentId, memberId);
+        comment.updateContent(updateRequest.content());
     }
 
-    public Long countCommentsByMember(Long memberId) {
-        Member member = memberService.checkMember(memberId);
-        return (long) member.getComments().size();
+    @Transactional
+    public void deleteComment(Long postId, Long commentId, Long memberId) {
+        checkVaildation(commentId, memberId);
+        postService.checkPost(postId).decrementCommentCount();
+        commentRepository.deleteById(commentId);
+    }
+
+
+
+    public int countCommentsByMember(Long memberId) {
+        Member findMember = memberService.checkMember(memberId);
+        List<Comment> findComments = commentRepository.findAllByMember(findMember);
+        return findComments.size();
     }
 
     private void CheckPostAllowedComment(Post post) {
