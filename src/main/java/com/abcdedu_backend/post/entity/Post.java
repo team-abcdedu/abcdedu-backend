@@ -40,10 +40,10 @@ public class Post extends BaseTimeEntity {
     @Column(name = "comment_count")  // 댓글이 생성되거나 삭제될 때 마다 업데이트 해줘야 하는 필드
     private Long commentCount;
 
-    @Column(name = "title", length = 20, nullable = false)
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "content", length = 300, nullable = false)
+    @Column(name = "content", length = 1000, nullable = false)
     private String content;
 
     @Column(name = "viewCount", nullable = false)
