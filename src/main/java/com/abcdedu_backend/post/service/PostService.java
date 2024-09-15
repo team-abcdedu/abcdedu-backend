@@ -32,12 +32,12 @@ public class PostService {
     private final FileHandler fileHandler;
 
 
-    public Page<PostListResponse> readPostList(Long boardId, Pageable pageable) {
-        Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable);
+    public Page<PostListResponse> getPosts(Long boardId, Pageable pageable) {
+        Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable); // TODO. REVIEW. findByBoard 방식과 findByBoardId 방식 중 어느것이 나을지 고민
         return findPostList.map(this::postToPostListResponse);
     }
 
-    public PostResponse getPostById(Long postId, Long memberId) {
+    public PostResponse getPost(Long postId, Long memberId) {
         Post findPost = checkPost(postId);
         Member findMember = memberService.checkMember(memberId);
         checkPermission(findMember, findPost);
@@ -49,12 +49,14 @@ public class PostService {
         Board findBoard = boardService.checkBoard(req.boardId());
         Member findMember = memberService.checkMember(memberId);
         if (hasPostingRestrictedByRole(findBoard)) checkMemberGradeHigherThanBasic(findMember);
-        String objectKey = "";
+        // 게시글 저장
         Post post = Post.of(findMember, findBoard, req);
+        post.changeBoard(findBoard);
         postReposiroty.save(post);
+        // 파일
+        String objectKey = "";
         if (hasFile(file)) objectKey = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, post.getId().toString());
         post.updateObjectKey(objectKey);
-        boardService.addPostToBoard(findBoard, post);
         return post.getId();
     }
 
@@ -72,10 +74,12 @@ public class PostService {
         Member findMember = memberService.checkMember(memberId);
         Post findPost = checkPost(postId);
         checkPermission(findMember, findPost);
+        // 게시글 수정
+        findPost.update(updateRequest);
+        //파일
         String objectKey = "";
         if (hasFile(file)) objectKey = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, postId.toString());
         findPost.updatePost(updateRequest, objectKey);
-        postReposiroty.save(findPost);
         return findPost.getId();
     }
 
@@ -124,11 +128,12 @@ public class PostService {
     private PostResponse postToPostResponse(Post post) {
         return PostResponse.builder()
                 .title(post.getTitle())
-                .writer(post.getMember().getName())  // writer는 member의 이름으로 설정
+                .writer(post.getMember().getName())
+                .content(post.getContent())
                 .createdAt(post.getCreatedAt())
-                .updatedAt(post.getUpdatedAt())
                 .viewCount(post.getViewCount())
-                .commentCount(post.getCommentCount())  // 댓글 수
+                .commentCount(post.getCommentCount())
+                .fileDownloadUrl(fileHandler.getPresignedUrl(post.getObjectKey()))
                 .build();
     }
 
