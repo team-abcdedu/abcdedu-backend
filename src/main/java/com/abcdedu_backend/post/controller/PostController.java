@@ -3,6 +3,8 @@ package com.abcdedu_backend.post.controller;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.common.request.PagingRequest;
 import com.abcdedu_backend.common.response.PagedResponse;
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.service.CommentService;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
@@ -19,6 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,13 +55,15 @@ public class PostController {
 
     @PostMapping(value = "/")
     @Operation(summary = "게시글 생성", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content),
-            @ApiResponse(responseCode = "403", description = "학생 등급 이하가 기능을 요청할 때 발생합니다.", content = @Content)
-    })
-    public Response<Long> createPost(@Valid @RequestPart("data") PostCreateRequest req,
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content),
+//            @ApiResponse(responseCode = "403", description = "학생 등급 이하가 기능을 요청할 때 발생합니다.", content = @Content)
+//    })
+    public Response<Long> createPost(@Valid @ModelAttribute PostCreateRequest req,
+                                     BindingResult bindingResult,
                                      @RequestPart(value = "file", required = false) MultipartFile file,
                                      @JwtValidation Long memberId) {
+        if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
         return Response.success(postService.createPost(req, memberId, file));
     }
 
@@ -80,9 +85,11 @@ public class PostController {
             @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
     })
     public Response<Long> updatePost(@PathVariable Long postId,
-                                     @RequestPart("data") PostUpdateRequest postUpdateRequest,
+                                     @Valid @ModelAttribute PostUpdateRequest postUpdateRequest,
+                                     BindingResult bindingResult,
                                      @RequestPart(value = "file", required = false) MultipartFile file,
                                      @JwtValidation Long memberId) {
+        if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
         return Response.success(postService.updatePost(postId, memberId,postUpdateRequest, file));
     }
 
