@@ -20,11 +20,11 @@ public class Lecture {
     @Id
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 10)
     private String title;
 
-    @Column(nullable = false, length = 1)
-    private String type;
+    @Column(nullable = false, length = 40)
+    private String subTitle;
 
     @Column(nullable = false, length = 200)
     private String description;
