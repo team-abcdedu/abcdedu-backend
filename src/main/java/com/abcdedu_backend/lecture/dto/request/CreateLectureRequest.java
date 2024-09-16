@@ -6,7 +6,7 @@ public record CreateLectureRequest(
         @NotBlank
         String title,
         @NotBlank
-        String type,
+        String subTitle,
         @NotBlank
         String description
 ) {

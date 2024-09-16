@@ -8,7 +8,7 @@ import java.util.List;
 @Builder
 public record GetClassResponse(
         String title,
-        String type,
+        String subTitle,
         String description,
         List<SubClassDto> subClasses
 ){
