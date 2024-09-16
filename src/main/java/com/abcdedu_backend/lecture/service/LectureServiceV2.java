@@ -121,7 +121,7 @@ public class LectureServiceV2 {
     private Lecture createLecture(CreateLectureRequest request) {
         return Lecture.builder()
                 .title(request.title())
-                .type(request.type())
+                .subTitle(request.subTitle())
                 .description(request.description())
                 .build();
     }

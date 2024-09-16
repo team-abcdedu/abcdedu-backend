@@ -1,7 +1,10 @@
 package com.abcdedu_backend.post.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.common.request.PagingRequest;
 import com.abcdedu_backend.common.response.PagedResponse;
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.service.CommentService;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
@@ -19,9 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,24 +47,26 @@ public class PostController {
 
     @GetMapping("/{postId}")
     @Operation(summary = "특정 게시글 조회", description = "특정 게시글을 조회합니다. 비밀글은 관리자와 글쓴이만 볼 수 있습니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
-            @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
-    })
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
+//            @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
+//    })
     public Response<PostResponse> readPost(@Valid @PathVariable Long postId,
                                            @JwtValidation Long memberId) {
-        return Response.success(postService.getPostById(postId, memberId));
+        return Response.success(postService.getPost(postId, memberId));
     }
 
-    @PostMapping("/")
+    @PostMapping(value = "/")
     @Operation(summary = "게시글 생성", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content),
-            @ApiResponse(responseCode = "403", description = "학생 등급 이하가 기능을 요청할 때 발생합니다.", content = @Content)
-    })
-    public Response<Long> createPost(@Valid @RequestPart("data") PostCreateRequest req,
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content),
+//            @ApiResponse(responseCode = "403", description = "학생 등급 이하가 기능을 요청할 때 발생합니다.", content = @Content)
+//    })
+    public Response<Long> createPost(@Valid @ModelAttribute PostCreateRequest req,
+                                     BindingResult bindingResult,
                                      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                      @JwtValidation Long memberId) {
+        if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
         File file = FileUtil.convertToFile(multipartFile);
         return Response.success(postService.createPost(req, memberId, file));
     }
@@ -86,9 +89,11 @@ public class PostController {
             @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
     })
     public Response<Long> updatePost(@PathVariable Long postId,
-                                     @RequestPart("data") PostUpdateRequest postUpdateRequest,
+                                     @Valid @ModelAttribute PostUpdateRequest postUpdateRequest,
+                                     BindingResult bindingResult,
                                      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                      @JwtValidation Long memberId) {
+        if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
         File file = FileUtil.convertToFile(multipartFile);
         return Response.success(postService.updatePost(postId, memberId,postUpdateRequest, file));
     }
@@ -101,9 +106,9 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "해당 포스트/멤버가 없습니다.", content = @Content),
             @ApiResponse(responseCode = "403", description = "댓글 불가 게시글입니다.", content = @Content)
     })
-    public Response<Void> createComment(@PathVariable Long postId, @JwtValidation Long memberId, CommentCreateRequest createRequest) {
-        commentService.CreateComment(postId, memberId, createRequest);
-        return Response.success();
+    public Response<Long> createComment(@PathVariable Long postId, @JwtValidation Long memberId, CommentCreateRequest createRequest) {
+        Long commentId = commentService.createComment(postId, memberId, createRequest);
+        return Response.success(commentId);
     }
 
     @Operation(summary = "게시글 댓글 목록 조회", description = "게시글 id에 따라 댓글이 조회됩니다")
@@ -112,9 +117,8 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
             @ApiResponse(responseCode = "403", description = "댓글 불가 게시글입니다.", content = @Content)
     })
-    public Response<PagedResponse<CommentResponse>> readComment(@PathVariable Long postId) {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
-        Page<CommentResponse> commentResponses = commentService.readComments(postId, pageable);
+    public Response<PagedResponse<CommentResponse>> readComment(@PathVariable Long postId, PagingRequest pagingRequest) {
+        Page<CommentResponse> commentResponses = commentService.readComments(postId, pagingRequest.toPageRequest());
         return Response.success(PagedResponse.from(commentResponses));
     }
 

@@ -58,7 +58,7 @@ public class LectureService {
     private GetClassResponse convertToGetClassResponse(Lecture lecture) {
         return GetClassResponse.builder()
                 .title(lecture.getTitle())
-                .type(lecture.getType())
+                .subTitle(lecture.getSubTitle())
                 .description(lecture.getDescription())
                 .subClasses(convertToSubClassesDto(lecture.getSubLectures()))
                 .build();
