@@ -12,8 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.Date;
@@ -30,13 +31,13 @@ public class S3FileHandler implements FileHandler {
     private String bucketName;
 
     @Override
-    public String upload(MultipartFile multipartFile, FileDirectory directory, String fileName){
-        log.info(multipartFile.getOriginalFilename());
-        try {
-            String extension = getExtension(multipartFile);
-            InputStream inputStream = multipartFile.getInputStream();
+    public String upload(File file, FileDirectory directory, String fileName){
+        log.info(file.getName());
+        try (InputStream inputStream = new FileInputStream(file)){
+            String extension = getExtension(file);
             String key = createUploadKey(directory, fileName, extension);
             amazonS3.putObject(new PutObjectRequest(bucketName, key, inputStream,null));
+            file.delete();
             return key;
         } catch (Exception e) {
             log.info(e.getLocalizedMessage());
@@ -59,8 +60,8 @@ public class S3FileHandler implements FileHandler {
         return directory.getDirectoryName() + fileName + extension;
     }
 
-    private String getExtension(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
+    private String getExtension(File file) {
+        String originalFilename = file.getName();
         String extension = "";
         if (originalFilename.contains(".")) {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));

@@ -14,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,7 +80,7 @@ public class LectureService {
     }
 
     @Transactional
-    public void createAssignmentsFile(Long subLectureId, Long memberId, String assignmentType, MultipartFile file) {
+    public void createAssignmentsFile(Long subLectureId, Long memberId, String assignmentType, File file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         SubLecture findSubLecture = findSubLecture(subLectureId);
@@ -134,7 +134,7 @@ public class LectureService {
         }
     }
 
-    public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, MultipartFile file) {
+    public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, File file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);

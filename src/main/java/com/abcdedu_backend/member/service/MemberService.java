@@ -9,7 +9,7 @@ import com.abcdedu_backend.member.dto.request.LoginRequest;
 import com.abcdedu_backend.member.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
-import com.abcdedu_backend.member.dto.response.MemberShortInfoResponse;
+import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.member.dto.response.ReissueResponse;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
@@ -22,8 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
@@ -87,34 +87,35 @@ public class MemberService {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
+        String imageUrl = fileHandler.getPresignedUrl(findMember.getImageObjectKey());
+
         return MemberInfoResponse.builder()
                 .studentId(findMember.getStudentId())
                 .email(findMember.getEmail())
                 .name(findMember.getName())
                 .role(findMember.getRole().getName())
                 .school(findMember.getSchool())
-                .imageUrl(findMember.getImageUrl())
+                .imageUrl(imageUrl)
                 .createdAt(findMember.getCreatedAt())
                 .createPostCount(findMember.getPosts().size())
                 .createCommentCount(findMember.getComments().size())
                 .build();
     }
     @Transactional
-    public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request, MultipartFile profileImage) {
+    public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request, File file) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        String uploadImageUrl = fileHandler.upload(profileImage, FileDirectory.PROFILE_IMAGE, memberId.toString());
+        String uploadImageObjectKey = fileHandler.upload(file, FileDirectory.PROFILE_IMAGE, memberId.toString());
 
-
-        findMember.updateProfile(request.name(), uploadImageUrl, request.school(), request.studentId());
+        findMember.updateProfile(request.name(), uploadImageObjectKey, request.school(), request.studentId());
     }
 
-    public MemberShortInfoResponse getMemberNameAndRoleInfo(Long memberId) {
+    public MemberNameAndRoleResponse getMemberNameAndRoleInfo(Long memberId) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        return MemberShortInfoResponse.builder()
+        return MemberNameAndRoleResponse.builder()
                 .name(findMember.getName())
                 .role(findMember.getRole().getName())
                 .build();

@@ -26,20 +26,20 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false, length = 10)
     private String name;
 
-    @Column(nullable = false, length = 40)
+    @Column(nullable = false, length = 40, unique = true)
     private String email;
 
     @Column(nullable = false, length = 60)
     private String encodedPassword;
 
-    @Column(length = 10)
+    @Column(length = 20)
     private String school;
 
     @Column
     private Long studentId;
 
     @Column(length=100)
-    private String imageUrl;
+    private String imageObjectKey;
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
@@ -63,7 +63,7 @@ public class Member extends BaseTimeEntity {
 
     public void updateProfile(String name, String imageUrl, String school, Long studentId){
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.imageObjectKey = imageUrl;
         this.school = school;
         this.studentId = studentId;
     }
