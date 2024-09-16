@@ -54,9 +54,7 @@ public class PostService {
         post.changeBoard(findBoard);
         postReposiroty.save(post);
         // 파일
-        String objectKey = "";
-        if (hasFile(file)) objectKey = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, post.getId().toString());
-        post.updateObjectKey(objectKey);
+        if (hasFile(file)) post.updateObjectKey(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, post.getId().toString()));
         return post.getId();
     }
 
@@ -77,9 +75,7 @@ public class PostService {
         // 게시글 수정
         findPost.update(updateRequest);
         //파일
-        String objectKey = "";
-        if (hasFile(file)) objectKey = fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, postId.toString());
-        findPost.updatePost(updateRequest, objectKey);
+        if (hasFile(file)) findPost.updateObjectKey(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, postId.toString()));
         return findPost.getId();
     }
 
