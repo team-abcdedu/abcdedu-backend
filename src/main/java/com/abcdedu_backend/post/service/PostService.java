@@ -106,7 +106,7 @@ public class PostService {
     }
 
     private boolean hasFile(File file) {
-        return file != null && !file.exists() && file.length() > 0;
+        return file != null && file.exists();
     }
     // ====== DTO, Entity 변환 =======
     // 다건 조회
@@ -117,7 +117,7 @@ public class PostService {
                         .writer(post.getMember().getName())
                         .viewCount(post.getViewCount())
                         .commentCount(post.getCommentCount())
-                        .updatedAt(post.getUpdatedAt())
+                        .createdAt(post.getCreatedAt())
                         .build();
     }
 
@@ -130,7 +130,7 @@ public class PostService {
                 .createdAt(post.getCreatedAt())
                 .viewCount(post.getViewCount())
                 .commentCount(post.getCommentCount())
-                .fileDownloadUrl(fileHandler.getPresignedUrl(post.getObjectKey()))
+                .fileDownloadUrl(post.getObjectKey() != null ? fileHandler.getPresignedUrl(post.getObjectKey()) : null)
                 .build();
     }
 
