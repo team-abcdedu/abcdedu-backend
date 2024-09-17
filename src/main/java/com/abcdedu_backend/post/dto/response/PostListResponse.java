@@ -13,6 +13,6 @@ public record PostListResponse (
         String writer,
         Long viewCount,
         Long commentCount,
-        LocalDateTime updatedAt
+        LocalDateTime createdAt
 ){
 }

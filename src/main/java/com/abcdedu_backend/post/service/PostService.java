@@ -117,7 +117,7 @@ public class PostService {
                         .writer(post.getMember().getName())
                         .viewCount(post.getViewCount())
                         .commentCount(post.getCommentCount())
-                        .updatedAt(post.getUpdatedAt())
+                        .createdAt(post.getCreatedAt())
                         .build();
     }
 
