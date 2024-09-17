@@ -67,7 +67,8 @@ public class PostController {
                                      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                      @JwtValidation Long memberId) {
         if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
-        File file = FileUtil.convertToFile(multipartFile);
+        File file = null;
+        if (!multipartFile.isEmpty()) file = FileUtil.convertToFile(multipartFile);
         return Response.success(postService.createPost(req, memberId, file));
     }
 
@@ -94,7 +95,8 @@ public class PostController {
                                      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                      @JwtValidation Long memberId) {
         if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
-        File file = FileUtil.convertToFile(multipartFile);
+        File file = null;
+        if (!multipartFile.isEmpty()) file = FileUtil.convertToFile(multipartFile);
         return Response.success(postService.updatePost(postId, memberId,postUpdateRequest, file));
     }
 
