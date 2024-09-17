@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -174,7 +175,7 @@ public class LectureService {
         AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
 
         String objectKey = fileHandler.upload(
-                file,
+                (File) file,
                 FileDirectory.of(assignmentFile.getAssignmentType().getType()),
                 assignmentFile.getSubLecture().getSubLectureName()
         );
@@ -189,7 +190,7 @@ public class LectureService {
         AssignmentAnswerFile assignmentAnswerFile = findAssignmentAnswerFile(assignmentAnswerFileId);
 
         String objectKey = fileHandler.upload(
-                file,
+                (File) file,
                 FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
                 assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
         );
