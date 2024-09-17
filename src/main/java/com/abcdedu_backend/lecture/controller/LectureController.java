@@ -98,7 +98,8 @@ public class LectureController {
     @PatchMapping("/file/{assignmentFileId}")
     public Response<Void> updateAssignmentFile(@PathVariable Long assignmentFileId,
                                                      @JwtValidation Long memberId,
-                                                     @RequestPart("file") MultipartFile file){
+                                                     @RequestPart("file") MultipartFile multipartFile){
+        File file = FileUtil.convertToFile(multipartFile);
         lectureService.updateAssignmentFile(memberId, assignmentFileId, file);
         return Response.success();
     }
@@ -109,7 +110,8 @@ public class LectureController {
     @PatchMapping("/answer-file/{assignmentAnswerFileId}")
     public Response<Void> updateAssignmentAnswerFile(@PathVariable Long assignmentAnswerFileId,
                                                      @JwtValidation Long memberId,
-                                                     @RequestPart("file") MultipartFile file){
+                                                     @RequestPart("file") MultipartFile multipartFile){
+        File file = FileUtil.convertToFile(multipartFile);
         lectureService.updateAssignmentAnswerFile(memberId, assignmentAnswerFileId, file);
         return Response.success();
     }
