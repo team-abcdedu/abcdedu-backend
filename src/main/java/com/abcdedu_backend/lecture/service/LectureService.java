@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -169,13 +168,13 @@ public class LectureService {
     }
 
     @Transactional
-    public void updateAssignmentFile(Long memberId, Long assignmentFileId, MultipartFile file) {
+    public void updateAssignmentFile(Long memberId, Long assignmentFileId, File file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
 
         String objectKey = fileHandler.upload(
-                (File) file,
+                file,
                 FileDirectory.of(assignmentFile.getAssignmentType().getType()),
                 assignmentFile.getSubLecture().getSubLectureName()
         );
@@ -184,13 +183,13 @@ public class LectureService {
     }
 
     @Transactional
-    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, MultipartFile file) {
+    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, File file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentAnswerFile assignmentAnswerFile = findAssignmentAnswerFile(assignmentAnswerFileId);
 
         String objectKey = fileHandler.upload(
-                (File) file,
+                file,
                 FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
                 assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
         );
