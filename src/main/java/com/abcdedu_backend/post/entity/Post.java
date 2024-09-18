@@ -60,14 +60,6 @@ public class Post extends BaseTimeEntity {
     @Column(name = "file_url")
     private String fileUrl;
 
-    public void updatePost(PostUpdateRequest request, String fileUrl) {
-        this.title = request.title();
-        this.content = request.content();
-        this.secret = request.secret();
-        this.commentAllow = request.commentAllow();
-        this.fileUrl = fileUrl;
-    }
-
     public static Post of(Member member, Board board, PostCreateRequest req) {
         return Post.builder()
                 .board(board)

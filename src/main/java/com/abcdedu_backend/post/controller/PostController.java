@@ -85,10 +85,12 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "게시글을 수정합니다..")
+    /*
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
             @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
     })
+     */
     public Response<Long> updatePost(@PathVariable Long postId,
                                      @Valid @ModelAttribute PostUpdateRequest postUpdateRequest,
                                      BindingResult bindingResult,
