@@ -130,6 +130,7 @@ public class HomeworkService {
         return HomeworkGetRes.builder()
                 .title(homework.getTitle())
                 .description(homework.getDescription())
+                .additionalDescription(homework.getAdditionalDescription())
                 .questionGetResponses(HomeworkQuestionsToHomeworkQuestionGetRess(checkQeustionsByHomework(homework)))
                 .build();
     }
