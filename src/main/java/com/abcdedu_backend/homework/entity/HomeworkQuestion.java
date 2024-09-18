@@ -20,7 +20,7 @@ public class HomeworkQuestion {
     @Column(nullable = false)
     private String orderNumber; // 순서대로 출력하기 위한 용도 아님, 서브 질문 처리용
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 500)
     private String content; // 질문 내용
 
     @Column(nullable = false)
