@@ -17,6 +17,7 @@ import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class HomeworkService {
         return homeworkToHomeworkGetRes(findHomework);
     }
 
+    @Transactional
     public void createHomeworkReply(Long memberId, Long homeworkId, List<HomeworkReplyCreateReq> replyRequests) {
         Member findMember = checkPermission(memberId, MemberRole.STUDENT);
         Homework findHomework = checkHomework(homeworkId);
