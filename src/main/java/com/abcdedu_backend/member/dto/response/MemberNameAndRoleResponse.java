@@ -4,7 +4,7 @@ import lombok.Builder;
 
 
 @Builder
-public record MemberShortInfoResponse (
+public record MemberNameAndRoleResponse(
         String name,
         String role
 ) {

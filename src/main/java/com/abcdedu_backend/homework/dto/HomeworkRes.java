@@ -1,12 +1,14 @@
 package com.abcdedu_backend.homework.dto;
 
+import com.abcdedu_backend.homework.entity.HomeworkQuestionType;
+
 import java.util.List;
 
 public class HomeworkRes {
     public record MainModel(
         Long id,
         String title,
-        String description
+        String subTitle
 //        UserRes.Main teacher, TODO 필요시 추가
 
     ) {}
@@ -14,49 +16,22 @@ public class HomeworkRes {
     public record DetailModel(
         Long id,
         String title,
+        String subTitle,
         String description,
-        List<SubjectQuestionModel> subjectQuestions,
-        List<ShortQuestionModel> shortQuestions,
-        List<MultipleOptionQuestionModel> multipleQuestions,
-        List<SingleOptionQuestionModel> singleQuestions,
+        List<QuestionModel> questions,
         String additionalDescription
     ){}
 
 
-    public record SubjectQuestionModel(
+    public record QuestionModel(
         Long id,
-        Integer index,
-        String title,
-        String description,
-        Integer score
-
-    ) {}
-
-    public record ShortQuestionModel(
-        Long id,
-        Integer index,
-        String title,
-        String description,
-        Integer score
-
-    ) {}
-
-    public record MultipleOptionQuestionModel(
-        Long id,
+        HomeworkQuestionType type,
         Integer index,
         String title,
         String description,
         Integer score,
         List<OptionModel> options
-    ) {}
 
-    public record SingleOptionQuestionModel(
-        Long id,
-        Integer index,
-        String title,
-        String description,
-        Integer score,
-        List<OptionModel> options
     ) {}
 
     public record OptionModel(

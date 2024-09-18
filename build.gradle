@@ -62,9 +62,23 @@ dependencies {
 
     //AWS S3 의존성 추가
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.619'
+
+    // Test용 Gson추가
+    testImplementation 'com.google.code.gson:gson:2.11.0'
+
+    // Test용 redis 추가
+    testImplementation "org.testcontainers:testcontainers:1.19.0"
+    testImplementation "org.testcontainers:junit-jupiter:1.19.0"
+
+
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+test {
+    systemProperty 'spring.profiles.active', 'test'
 }
 

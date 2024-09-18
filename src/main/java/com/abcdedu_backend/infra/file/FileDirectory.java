@@ -13,10 +13,11 @@ import java.util.stream.Stream;
 public enum FileDirectory {
     PROFILE_IMAGE("프로필","abcdedu/profile/"),
     ASSIGNMENT_EXAM_FILE("시험","abcdedu/assignment/exam/"),
-    ASSIGNMENT_PROJECT_FILE("프로젝트","abcdedu/assignment/project/"),
-    ASSIGNMENT_LAB_FILE("실습","abcdedu/assignment/lab/"),
     ASSIGNMENT_THEORY_FILE("이론","abcdedu/assignment/theory/"),
+    ASSIGNMENT_DATA_FILE("자료","abcdedu/assignment/data/"),
+    ASSIGNMENT_EXAM_ANSWER_FILE("시험답안지","abcdedu/assignment/exam/answer"),
     POST_ATTACHMENT("게시글", "abcdedu/post/attachment/");
+
     private final String type;
     private final String directoryName;
 

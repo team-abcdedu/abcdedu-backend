@@ -20,7 +20,7 @@ public class Board {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     private List<Post> posts;
 
     public static Board of(String name) {

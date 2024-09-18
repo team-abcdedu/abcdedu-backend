@@ -3,8 +3,9 @@ package com.abcdedu_backend.member.controller;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
-import com.abcdedu_backend.member.dto.response.MemberShortInfoResponse;
+import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.utils.FileUtil;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,12 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+
 @Slf4j
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "성공적으로 요청이 완료되었습니다.", content = @Content),
+        @ApiResponse(responseCode = "200", description = "성공적으로 요청이 완료되었습니다."),
         @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. (RequestBody Validation)", content = @Content),
         @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰입니다.", content = @Content),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content)
@@ -46,16 +49,17 @@ public class MemberInfoController {
     @PatchMapping("/info")
     public Response<Void> updateMemberInfo(@JwtValidation Long memberId,
                                                  @Valid @ModelAttribute UpdateMemberInfoRequest updateMemberInfoRequest,
-                                                 @RequestPart("file") MultipartFile profileImage){
-        memberService.updateMemberInfo(memberId, updateMemberInfoRequest, profileImage);
+                                                 @RequestPart("file") MultipartFile multipartFile){
+        File file = FileUtil.convertToFile(multipartFile);
+        memberService.updateMemberInfo(memberId, updateMemberInfoRequest, file);
         return Response.success();
     }
 
 
     @Operation(summary = "프로필 이름, 역할 정보 조회", description = "프로필 이름, 역할을 조회합니다.")
     @GetMapping("/info/name-and-role")
-    public Response<MemberShortInfoResponse> getMemberNameAndRoleInfo(@JwtValidation Long memberId){
-        MemberShortInfoResponse memberShortInfoResponse = memberService.getMemberNameAndRoleInfo(memberId);
-        return Response.success(memberShortInfoResponse);
+    public Response<MemberNameAndRoleResponse> getMemberNameAndRoleInfo(@JwtValidation Long memberId){
+        MemberNameAndRoleResponse memberNameAndRoleResponse = memberService.getMemberNameAndRoleInfo(memberId);
+        return Response.success(memberNameAndRoleResponse);
     }
 }

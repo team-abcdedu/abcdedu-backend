@@ -7,7 +7,6 @@ import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
-import com.abcdedu_backend.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,11 +46,7 @@ public class BoardService {
     }
 
 
-    @Transactional
-    public void addPostToBoard(Board board, Post post) {
-        board.getPosts().add(post);
-        boardRepository.save(board);
-    }
+
 
     // ======== 유효성 검사, 서비스 로직
 

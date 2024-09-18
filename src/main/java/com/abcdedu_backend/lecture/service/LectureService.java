@@ -14,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,7 +58,7 @@ public class LectureService {
     private GetClassResponse convertToGetClassResponse(Lecture lecture) {
         return GetClassResponse.builder()
                 .title(lecture.getTitle())
-                .type(lecture.getType())
+                .subTitle(lecture.getSubTitle())
                 .description(lecture.getDescription())
                 .subClasses(convertToSubClassesDto(lecture.getSubLectures()))
                 .build();
@@ -80,7 +80,7 @@ public class LectureService {
     }
 
     @Transactional
-    public void createAssignmentsFile(Long subLectureId, Long memberId, String assignmentType, MultipartFile file) {
+    public void createAssignmentsFile(Long subLectureId, Long memberId, String assignmentType, File file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         SubLecture findSubLecture = findSubLecture(subLectureId);
@@ -134,7 +134,7 @@ public class LectureService {
         }
     }
 
-    public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, MultipartFile file) {
+    public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, File file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
@@ -142,8 +142,8 @@ public class LectureService {
         
         String objectKey = fileHandler.upload(
                 file, 
-                FileDirectory.of(assignmentFile.getAssignmentType().getType()), 
-                "answer/"+assignmentFile.getSubLecture().getSubLectureName());
+                FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
+                assignmentFile.getSubLecture().getSubLectureName());
 
         AssignmentAnswerFile assignmentAnswerFile = AssignmentAnswerFile.builder()
                 .objectKey(objectKey)
@@ -165,5 +165,35 @@ public class LectureService {
     private AssignmentAnswerFile findAssignmentAnswerFile(Long assignmentAnswerFileId) {
         return assignmentAnswerFileRepository.findById(assignmentAnswerFileId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_ANSWER_FILE_NOT_FOUND));
+    }
+
+    @Transactional
+    public void updateAssignmentFile(Long memberId, Long assignmentFileId, File file) {
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
+        AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
+
+        String objectKey = fileHandler.upload(
+                file,
+                FileDirectory.of(assignmentFile.getAssignmentType().getType()),
+                assignmentFile.getSubLecture().getSubLectureName()
+        );
+
+        assignmentFile.updateObjectKey(objectKey);
+    }
+
+    @Transactional
+    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, File file) {
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
+        AssignmentAnswerFile assignmentAnswerFile = findAssignmentAnswerFile(assignmentAnswerFileId);
+
+        String objectKey = fileHandler.upload(
+                file,
+                FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
+                assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
+        );
+
+        assignmentAnswerFile.updateObjectKey(objectKey);
     }
 }

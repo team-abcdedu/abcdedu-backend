@@ -12,9 +12,10 @@ import java.util.stream.Stream;
 public enum AssignmentType {
 
     EXAM("시험"),
-    PROJECT("프로젝트"),
-    Lab("실습"),
-    Theory("이론");
+    Theory("이론"),
+    DATA("자료");
+
+
 
 
     private final String type;
