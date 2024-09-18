@@ -13,6 +13,7 @@ import com.abcdedu_backend.homework.repository.HomeworkQuestionRepository;
 import com.abcdedu_backend.homework.repository.HomeworkReplyRepository;
 import com.abcdedu_backend.homework.repository.HomeworkRepository;
 import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,16 +30,13 @@ public class HomeworkService {
     private final HomeworkReplyRepository replyRepository;
 
     public HomeworkGetRes getHomework(Long memberId, Long homeworkId) {
-        Member findMember = memberService.checkMember(memberId);
-        if (!findMember.isStudent()) throw new ApplicationException(ErrorCode.BASIC_INVALID_PERMISSION);
+        checkPermission(memberId, MemberRole.STUDENT);
         Homework findHomework = checkHomework(homeworkId);
         return toDto(findHomework);
     }
 
     public void createHomeworkReply(Long memberId, Long homeworkId, List<HomeworkReplyCreateReq> replyRequests) {
-        Member findMember = memberService.checkMember(memberId);
-        if (!findMember.isStudent()) throw new ApplicationException(ErrorCode.BASIC_INVALID_PERMISSION);
-
+        Member findMember = checkPermission(memberId, MemberRole.STUDENT);
         Homework findHomework = checkHomework(homeworkId);
         List<HomeworkQuestion> findQuestions = checkQeustionsByHomework(findHomework);
         List<HomeworkReply> homeworkReplies = toEntity(findHomework, findQuestions, replyRequests, findMember);
@@ -46,8 +44,7 @@ public class HomeworkService {
     }
 
     public HomeworkReplyGetRes getReplies(Long memberId, Long homeworkId) {
-        Member findMember = memberService.checkMember(memberId);
-        if (!findMember.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
+        checkPermission(memberId, MemberRole.ADMIN);
 
         Homework findHomework = checkHomework(homeworkId);
         List<HomeworkQuestion> findQestions = checkQeustionsByHomework(findHomework);
@@ -85,6 +82,18 @@ public class HomeworkService {
 
     public List<HomeworkReply> checkRepliesByHomework(Homework homework) {
         return replyRepository.findAllByHomework(homework);
+    }
+
+
+    public Member checkPermission(Long memberId, MemberRole memberRole) {
+        Member member = memberService.checkMember(memberId);
+        if (memberRole == MemberRole.STUDENT) {
+            if (!member.isStudent() && !member.isAdmin()) throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
+        }
+        else if (memberRole == MemberRole.ADMIN) {
+            if (!member.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
+        }
+        return member;
     }
 
     private void saveReplies(List<HomeworkReply> replies) {
