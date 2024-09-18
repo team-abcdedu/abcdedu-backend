@@ -80,6 +80,17 @@ public class PostService {
         return findPost.getId();
     }
 
+    @Transactional
+    public void levelUpPostWriter(Long memberId, Long postId, MemberRole memberRole) {
+        Member loginedMember = memberService.checkMember(memberId);
+        if (!loginedMember.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
+
+        Post post = checkPost(postId);
+        Member writer = memberService.checkMember(post.getMember().getId());
+        writer.updateRole(memberRole);
+        log.info("levelUpPostWriter() 성공");
+    }
+
     public Post checkPost(Long postId) {
         return postReposiroty.findById(postId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.POST_NOT_FOUND));
@@ -136,6 +147,7 @@ public class PostService {
                 .commentAllow(post.getCommentAllow())
                 .build();
     }
+
 
 
 }

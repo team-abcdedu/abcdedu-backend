@@ -7,6 +7,7 @@ import com.abcdedu_backend.common.request.SortRequest;
 import com.abcdedu_backend.common.response.PagedResponse;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
+import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.service.CommentService;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
@@ -136,6 +137,18 @@ public class PostController {
     @DeleteMapping("/{postId}/comments/{commentId}")
     public Response<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @JwtValidation Long memberId) {
         commentService.deleteComment(postId, commentId, memberId);
+        return Response.success();
+    }
+
+    /**
+     * 등업 기능
+     */
+    @Operation(summary = "게시글 작성자의 등급을 선택한 등급으로 올린다.", description = "관리자 이상만 가능한 기능입니다. 등업게시판에서만 사용합니다.")
+    @PostMapping("/{postId}/levelup/{roleName}")
+    public Response<Void> levelUpPostWriter(@JwtValidation Long memberId,
+                                            @PathVariable Long postId,
+                                            @PathVariable MemberRole roleName) {
+        postService.levelUpPostWriter(memberId, postId, roleName);
         return Response.success();
     }
 
