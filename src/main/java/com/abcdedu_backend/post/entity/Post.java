@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.util.List;
 
 @Entity
 @Builder
@@ -58,15 +57,15 @@ public class Post extends BaseTimeEntity {
     @Column(name = "deleted")
     private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
 
-    @Column(name = "object_key")
-    private String objectKey;
+    @Column(name = "file_url")
+    private String fileUrl;
 
-    public void updatePost(PostUpdateRequest request, String objectKey) {
+    public void updatePost(PostUpdateRequest request, String fileUrl) {
         this.title = request.title();
         this.content = request.content();
         this.secret = request.secret();
         this.commentAllow = request.commentAllow();
-        this.objectKey = objectKey;
+        this.fileUrl = fileUrl;
     }
 
     public static Post of(Member member, Board board, PostCreateRequest req) {
@@ -83,7 +82,7 @@ public class Post extends BaseTimeEntity {
     }
 
     public void updateObjectKey(String objectKey) {
-        this.objectKey = objectKey;
+        this.fileUrl = objectKey;
     }
     public void incrementCommentCount() {
         this.commentCount++;

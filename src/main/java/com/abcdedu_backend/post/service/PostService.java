@@ -131,7 +131,7 @@ public class PostService {
                 .createdAt(post.getCreatedAt())
                 .viewCount(post.getViewCount())
                 .commentCount(post.getCommentCount())
-                .fileDownloadUrl(!post.getObjectKey().isEmpty() ? fileHandler.getPresignedUrl(post.getObjectKey()) : null)
+                .fileUrl(!post.getFileUrl().isEmpty() ? fileHandler.getPresignedUrl(post.getFileUrl()) : null)
                 .secret(post.getSecret())
                 .commentAllow(post.getCommentAllow())
                 .build();
