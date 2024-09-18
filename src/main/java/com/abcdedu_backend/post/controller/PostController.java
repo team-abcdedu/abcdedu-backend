@@ -1,7 +1,9 @@
 package com.abcdedu_backend.post.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.common.page.PageManager;
 import com.abcdedu_backend.common.request.PagingRequest;
+import com.abcdedu_backend.common.request.SortRequest;
 import com.abcdedu_backend.common.response.PagedResponse;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
@@ -121,8 +123,8 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
             @ApiResponse(responseCode = "403", description = "댓글 불가 게시글입니다.", content = @Content)
     })
-    public Response<PagedResponse<CommentResponse>> readComment(@PathVariable Long postId, PagingRequest pagingRequest) {
-        Page<CommentResponse> commentResponses = commentService.readComments(postId, pagingRequest.toPageRequest());
+    public Response<PagedResponse<CommentResponse>> readComment(@PathVariable Long postId, PagingRequest pagingRequest, SortRequest sortRequest) {
+        Page<CommentResponse> commentResponses = commentService.readComments(postId,new PageManager(pagingRequest, sortRequest).makePageRequest());
         return Response.success(PagedResponse.from(commentResponses));
     }
 

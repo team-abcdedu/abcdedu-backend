@@ -1,7 +1,9 @@
 package com.abcdedu_backend.contact.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.common.page.PageManager;
 import com.abcdedu_backend.common.request.PagingRequest;
+import com.abcdedu_backend.common.request.SortRequest;
 import com.abcdedu_backend.common.response.PagedResponse;
 import com.abcdedu_backend.contact.service.ContactService;
 import com.abcdedu_backend.contact.dto.request.ContactCreateRequest;
@@ -45,11 +47,8 @@ public class ContactController {
 
     @GetMapping("/")
     @Operation(summary = "상담 리스트 조회", description = "관리자만 조회 가능 합니다. ")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "403", description = "관리자 전용 기능입니다.", content = @Content),
-    })
-    public Response<PagedResponse<ContactListResponse>> readListContact(@JwtValidation Long memberdId, PagingRequest pagingRequest) {
-        Page<ContactListResponse> contacts = contactService.readListContact(memberdId, pagingRequest.toPageRequest());
+    public Response<PagedResponse<ContactListResponse>> readListContact(@JwtValidation Long memberdId, PagingRequest pagingRequest, SortRequest sortRequest) {
+        Page<ContactListResponse> contacts = contactService.readListContact(memberdId, new PageManager(pagingRequest, sortRequest).makePageRequest());
         return Response.success(PagedResponse.from(contacts));
     }
 

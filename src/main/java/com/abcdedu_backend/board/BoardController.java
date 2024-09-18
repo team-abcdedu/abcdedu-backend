@@ -67,7 +67,7 @@ public class BoardController {
     @GetMapping("/{boardId}/posts")
     @Operation(summary = "카테고리별 게시글 목록", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다.")
     public Response<PagedResponse<PostListResponse>> getPostList(@PathVariable Long boardId, PagingRequest pagingRequest, SortRequest sortRequest) {
-        Page<PostListResponse> allPosts = postService.readPostList(boardId, new PageManager(pagingRequest, sortRequest).makePageRequest());
+        Page<PostListResponse> allPosts = postService.getPosts(boardId, new PageManager(pagingRequest, sortRequest).makePageRequest());
         return Response.success(PagedResponse.from(allPosts));
     }
 
