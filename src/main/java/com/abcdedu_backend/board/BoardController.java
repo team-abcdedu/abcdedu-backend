@@ -4,6 +4,8 @@ import com.abcdedu_backend.board.dto.request.BoardCreateRequest;
 import com.abcdedu_backend.board.dto.response.BoardResponse;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.common.request.PagingRequest;
+import com.abcdedu_backend.common.page.PageManager;
+import com.abcdedu_backend.common.request.SortRequest;
 import com.abcdedu_backend.common.response.PagedResponse;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.service.PostService;
@@ -64,8 +66,8 @@ public class BoardController {
 
     @GetMapping("/{boardId}/posts")
     @Operation(summary = "카테고리별 게시글 목록", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다.")
-    public Response<PagedResponse<PostListResponse>> getPostList(@PathVariable Long boardId, PagingRequest pagingRequest) {
-        Page<PostListResponse> allPosts = postService.getPosts(boardId, pagingRequest.toPageRequest());
+    public Response<PagedResponse<PostListResponse>> getPostList(@PathVariable Long boardId, PagingRequest pagingRequest, SortRequest sortRequest) {
+        Page<PostListResponse> allPosts = postService.getPosts(boardId, new PageManager(pagingRequest, sortRequest).makePageRequest());
         return Response.success(PagedResponse.from(allPosts));
     }
 

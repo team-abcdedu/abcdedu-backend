@@ -1,7 +1,9 @@
 package com.abcdedu_backend.survey.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.common.page.PageManager;
 import com.abcdedu_backend.common.request.PagingRequest;
+import com.abcdedu_backend.common.request.SortRequest;
 import com.abcdedu_backend.common.response.PagedResponse;
 import com.abcdedu_backend.survey.dto.request.SurveyCreateRequest;
 import com.abcdedu_backend.survey.dto.request.SurveyReplyCreateRequest;
@@ -37,8 +39,8 @@ public class SurveyController {
 
     @Operation(summary = "설문 리스트 조회")
     @GetMapping("/")
-    public Response<PagedResponse<SurveyListResponse>> getSurveys(@JwtValidation Long memberId, PagingRequest pagingRequest) {
-        Page<SurveyListResponse> surveys = surveyService.getSurveys(memberId, pagingRequest.toPageRequest());
+    public Response<PagedResponse<SurveyListResponse>> getSurveys(@JwtValidation Long memberId, PagingRequest pagingRequest, SortRequest sortRequest) {
+        Page<SurveyListResponse> surveys = surveyService.getSurveys(memberId, new PageManager(pagingRequest, sortRequest).makePageRequest());
         return Response.success(PagedResponse.from(surveys));
     }
 
