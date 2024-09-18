@@ -31,7 +31,7 @@ public class HomeworkController {
         return Response.success(res);
     }
 
-    @Operation(summary = "과제 응답 제출", description = "과제 응답을 제출합니다.")
+    @Operation(summary = "과제 응답 제출", description = "과제 응답을 제출합니다. 응답은 list로 들어가기 때문에 질문 갯수에 맞춰서 List로 요청바랍니다.")
     @PostMapping("/{homeworkId}/replies")
     public Response<Void> createHomeworkReply(@JwtValidation Long memberId, @PathVariable Long homeworkId,
                                               @Valid @RequestBody List<HomeworkReplyCreateReq> replyRequests) {
