@@ -32,28 +32,28 @@ public class HomeworkService {
 
     public HomeworkGetRes getHomework(Long memberId, Long homeworkId) {
         checkPermission(memberId, MemberRole.STUDENT);
-        Homework findHomework = checkHomework(homeworkId);
-        return homeworkToHomeworkGetRes(findHomework);
+        Homework homework = checkHomework(homeworkId);
+        return homeworkToHomeworkGetRes(homework);
     }
 
     @Transactional
     public void createHomeworkReply(Long memberId, Long homeworkId, List<HomeworkReplyCreateReq> replyRequests) {
-        Member findMember = checkPermission(memberId, MemberRole.STUDENT);
-        Homework findHomework = checkHomework(homeworkId);
-        List<HomeworkQuestion> findQuestions = checkQeustionsByHomework(findHomework);
-        List<HomeworkReply> homeworkReplies = makeHomeworkReply(findHomework, findQuestions, replyRequests, findMember);
+        Member member = checkPermission(memberId, MemberRole.STUDENT);
+        Homework homework = checkHomework(homeworkId);
+        List<HomeworkQuestion> questions = checkQeustionsByHomework(homework);
+        List<HomeworkReply> homeworkReplies = makeHomeworkReply(homework, questions, replyRequests, member);
         saveReplies(homeworkReplies);
     }
 
     public HomeworkReplyGetRes getReplies(Long memberId, Long homeworkId) {
         checkPermission(memberId, MemberRole.ADMIN);
 
-        Homework findHomework = checkHomework(homeworkId);
-        List<HomeworkQuestion> findQestions = checkQeustionsByHomework(findHomework);
-        List<HomeworkReply> findReplies= checkRepliesByHomework(findHomework);
+        Homework homework = checkHomework(homeworkId);
+        List<HomeworkQuestion> questions = checkQeustionsByHomework(homework);
+        List<HomeworkReply> replies = checkRepliesByHomework(homework);
 
         // 설문 질문을 헤더로 설정
-        List<String> questionHeaders = findQestions.stream()
+        List<String> questionHeaders = questions.stream()
                 .map(HomeworkQuestion::getContent) // 질문 내용을 열 제목으로 사용
                 .collect(Collectors.toList());
 
@@ -61,13 +61,13 @@ public class HomeworkService {
         List<List<String>> records = new ArrayList<>();
         Map<Long, List<String>> respondentAnswersMap = new HashMap<>();
 
-        for (HomeworkReply reply : findReplies) {
+        for (HomeworkReply reply : replies) {
             Long respondentId = reply.getMember().getId(); // 응답자의 ID로 그룹화
             HomeworkQuestion relatedQuestion = reply.getHomeworkQuestion(); // 응답과 연관된 질문
 
             respondentAnswersMap
-                    .computeIfAbsent(respondentId, k -> new ArrayList<>(Collections.nCopies(findQestions.size(), "")))  // 질문 수만큼 빈 값으로 초기화
-                    .set(findQestions.indexOf(relatedQuestion), reply.getAnswer());  // 질문의 인덱스에 응답을 삽입
+                    .computeIfAbsent(respondentId, k -> new ArrayList<>(Collections.nCopies(questions.size(), "")))  // 질문 수만큼 빈 값으로 초기화
+                    .set(questions.indexOf(relatedQuestion), reply.getAnswer());  // 질문의 인덱스에 응답을 삽입
         }
         // 응답 데이터를 레코드 형식으로 변환
         records.addAll(respondentAnswersMap.values());
