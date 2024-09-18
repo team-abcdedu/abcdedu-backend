@@ -112,13 +112,14 @@ public class PostService {
     // 다건 조회
     private PostListResponse postToPostListResponse(Post post) {
         return PostListResponse.builder()
-                        .postId(post.getId())
-                        .title(post.getTitle())
-                        .writer(post.getMember().getName())
-                        .viewCount(post.getViewCount())
-                        .commentCount(post.getCommentCount())
-                        .createdAt(post.getCreatedAt())
-                        .build();
+                .postId(post.getId())
+                .title(post.getTitle())
+                .writer(post.getMember().getName())
+                .viewCount(post.getViewCount())
+                .commentCount(post.getCommentCount())
+                .createdAt(post.getCreatedAt())
+                .secret(post.getSecret())
+                .build();
     }
 
     // 단건 조회
@@ -130,11 +131,11 @@ public class PostService {
                 .createdAt(post.getCreatedAt())
                 .viewCount(post.getViewCount())
                 .commentCount(post.getCommentCount())
-                .fileDownloadUrl(post.getObjectKey() != null ? fileHandler.getPresignedUrl(post.getObjectKey()) : null)
+                .fileDownloadUrl(!post.getObjectKey().isEmpty() ? fileHandler.getPresignedUrl(post.getObjectKey()) : null)
+                .secret(post.getSecret())
+                .commentAllow(post.getCommentAllow())
                 .build();
     }
-
-
 
 
 }

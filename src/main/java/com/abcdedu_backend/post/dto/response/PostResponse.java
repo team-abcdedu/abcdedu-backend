@@ -13,7 +13,9 @@ public record PostResponse (
         LocalDateTime createdAt,
         Long viewCount,
         Long commentCount,
-        String fileDownloadUrl
+        String fileDownloadUrl,
+        Boolean secret,
+        Boolean commentAllow
 ){
 
 }

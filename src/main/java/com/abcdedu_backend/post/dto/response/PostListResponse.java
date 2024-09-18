@@ -13,6 +13,7 @@ public record PostListResponse (
         String writer,
         Long viewCount,
         Long commentCount,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Boolean secret
 ){
 }
