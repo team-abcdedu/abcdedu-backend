@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -57,7 +56,7 @@ public class HomeworkService {
         // 설문 질문을 헤더로 설정
         List<String> questionHeaders = questions.stream()
                 .map(HomeworkQuestion::getContent) // 질문 내용을 열 제목으로 사용
-                .collect(Collectors.toList());
+                .toList();
 
         // 각 사람의 응답을 레코드로 생성
         List<List<String>> records = new ArrayList<>();
@@ -124,7 +123,7 @@ public class HomeworkService {
                         .isAnswerRequired(question.isAnswerRequired())
                         .content(question.getContent())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private HomeworkGetRes homeworkToHomeworkGetRes(Homework homework) {
