@@ -16,12 +16,14 @@ import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class HomeworkService {
@@ -72,12 +74,14 @@ public class HomeworkService {
         // 응답 데이터를 레코드 형식으로 변환
         records.addAll(respondentAnswersMap.values());
 
+        log.info("응답 생성 성공, 응답 갯수 : {}", records.size());
         return new HomeworkReplyGetRes(questionHeaders, records);
     }
 
     public Homework checkHomework(Long homeworkId) {
         return homeworkRepository.findById(homeworkId).orElseThrow(() -> new ApplicationException(ErrorCode.HOMEWORK_NOT_FOUND));
     }
+
     public List<HomeworkQuestion> checkQeustionsByHomework(Homework homework) {
         return questionRepository.findAllByHomework(homework);
     }
@@ -90,11 +94,15 @@ public class HomeworkService {
     public Member checkPermission(Long memberId, MemberRole memberRole) {
         Member member = memberService.checkMember(memberId);
         if (memberRole == MemberRole.STUDENT) {
-            if (!member.isStudent() && !member.isAdmin()) throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
-        }
-        else if (memberRole == MemberRole.ADMIN) {
+            if (!member.isStudent() && !member.isAdmin()) {
+                log.warn("사용자 역할 권한 검증 실패");
+                throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
+            }
+        } else if (memberRole == MemberRole.ADMIN) {
+            log.warn("사용자 역할 권한 검증 실패");
             if (!member.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
+        log.info("checkPermission() : 권한 확인 성공");
         return member;
     }
 
@@ -103,12 +111,11 @@ public class HomeworkService {
             try {
                 replyRepository.save(reply);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("saveReplies() : 데이터 베이스 저장 실패, message = {}", e.getMessage());
                 throw new ApplicationException(ErrorCode.DATABASE_ERROR);
             }
         }
     }
-
 
     private List<HomeworkQuestionGetRes> HomeworkQuestionsToHomeworkQuestionGetRess(List<HomeworkQuestion> questions) {
         return questions.stream()
@@ -142,7 +149,6 @@ public class HomeworkService {
         }
         return replies;
     }
-
 
 
 }
