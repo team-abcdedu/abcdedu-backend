@@ -32,14 +32,14 @@ public class HomeworkService {
     public HomeworkGetRes getHomework(Long memberId, Long homeworkId) {
         checkPermission(memberId, MemberRole.STUDENT);
         Homework findHomework = checkHomework(homeworkId);
-        return toDto(findHomework);
+        return homeworkToHomeworkGetRes(findHomework);
     }
 
     public void createHomeworkReply(Long memberId, Long homeworkId, List<HomeworkReplyCreateReq> replyRequests) {
         Member findMember = checkPermission(memberId, MemberRole.STUDENT);
         Homework findHomework = checkHomework(homeworkId);
         List<HomeworkQuestion> findQuestions = checkQeustionsByHomework(findHomework);
-        List<HomeworkReply> homeworkReplies = toEntity(findHomework, findQuestions, replyRequests, findMember);
+        List<HomeworkReply> homeworkReplies = makeHomeworkReply(findHomework, findQuestions, replyRequests, findMember);
         saveReplies(homeworkReplies);
     }
 
@@ -108,7 +108,7 @@ public class HomeworkService {
     }
 
 
-    private List<HomeworkQuestionGetRes> toDto(List<HomeworkQuestion> questions) {
+    private List<HomeworkQuestionGetRes> HomeworkQuestionsToHomeworkQuestionGetRess(List<HomeworkQuestion> questions) {
         return questions.stream()
                 .map(question -> HomeworkQuestionGetRes.builder()
                         .orderNumber(question.getOrderNumber())
@@ -118,15 +118,15 @@ public class HomeworkService {
                 .collect(Collectors.toList());
     }
 
-    private HomeworkGetRes toDto(Homework homework) {
+    private HomeworkGetRes homeworkToHomeworkGetRes(Homework homework) {
         return HomeworkGetRes.builder()
                 .title(homework.getTitle())
                 .description(homework.getDescription())
-                .questionGetResponses(toDto(checkQeustionsByHomework(homework)))
+                .questionGetResponses(HomeworkQuestionsToHomeworkQuestionGetRess(checkQeustionsByHomework(homework)))
                 .build();
     }
 
-    private List<HomeworkReply> toEntity(Homework homework, List<HomeworkQuestion> questions, List<HomeworkReplyCreateReq> replyRequests, Member member) {
+    private List<HomeworkReply> makeHomeworkReply(Homework homework, List<HomeworkQuestion> questions, List<HomeworkReplyCreateReq> replyRequests, Member member) {
         List<HomeworkReply> replies = new ArrayList<>();
         for (int i = 0; i < questions.size(); i++) {
             replies.add(
