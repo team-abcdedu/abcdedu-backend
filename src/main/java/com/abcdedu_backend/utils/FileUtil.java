@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+@Deprecated
 @Slf4j
 public class FileUtil {
 

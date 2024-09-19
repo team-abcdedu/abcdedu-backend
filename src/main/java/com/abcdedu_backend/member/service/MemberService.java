@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.Optional;
@@ -102,7 +103,7 @@ public class MemberService {
                 .build();
     }
     @Transactional
-    public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request, File file) {
+    public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request, MultipartFile file) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 

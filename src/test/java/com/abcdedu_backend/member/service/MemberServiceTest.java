@@ -22,8 +22,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -199,18 +199,17 @@ class MemberServiceTest {
 
     @Test
     public void 멤버프로필정보_업데이트_성공() {
-        //given
+        // given
         Member member = createMember();
-        File file = new File("");
         doReturn(Optional.of(member)).when(memberRepository).findById(member.getId());
-        doReturn("updateObjectKey").when(fileHandler).upload(file, FileDirectory.PROFILE_IMAGE, member.getId().toString());
+        doReturn("updateObjectKey").when(fileHandler).upload(any(MultipartFile.class), eq(FileDirectory.PROFILE_IMAGE), eq(member.getId().toString()));
 
-        //when
-        target.updateMemberInfo(member.getId() , new UpdateMemberInfoRequest("테스트이름", "!!대학교", 31234L), file);
+        // when
+        target.updateMemberInfo(member.getId(), new UpdateMemberInfoRequest("테스트이름", "!!대학교", 31234L), mock(MultipartFile.class));
 
-        //then
+        // then
         verify(memberRepository, times(1)).findById(member.getId());
-        verify(fileHandler, times(1)).upload(file, FileDirectory.PROFILE_IMAGE, member.getId().toString());
+        verify(fileHandler, times(1)).upload(any(MultipartFile.class), eq(FileDirectory.PROFILE_IMAGE), eq(member.getId().toString()));
         assertThat(member.getName()).isEqualTo("테스트이름");
         assertThat(member.getSchool()).isEqualTo("!!대학교");
         assertThat(member.getStudentId()).isEqualTo(31234L);

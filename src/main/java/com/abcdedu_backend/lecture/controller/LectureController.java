@@ -51,9 +51,7 @@ public class LectureController {
                                                @JwtValidation Long memberId,
                                                @RequestParam String assignmentType,
                                                @RequestPart("file") MultipartFile multipartFile){
-
-        File file = FileUtil.convertToFile(multipartFile);
-        lectureService.createAssignmentsFile(subLectureId, memberId, assignmentType, file);
+        lectureService.createAssignmentsFile(subLectureId, memberId, assignmentType, multipartFile);
         return Response.success();
     }
 
@@ -64,8 +62,7 @@ public class LectureController {
     public Response<Void> createAssignmentAnswerFile(@PathVariable Long assignmentFileId,
                                                @JwtValidation Long memberId,
                                                @RequestPart("file") MultipartFile multipartFile){
-        File file = FileUtil.convertToFile(multipartFile);
-        lectureService.createAssignmentAnswerFile(assignmentFileId, memberId, file);
+        lectureService.createAssignmentAnswerFile(assignmentFileId, memberId, multipartFile);
         return Response.success();
     }
 
@@ -99,8 +96,7 @@ public class LectureController {
     public Response<Void> updateAssignmentFile(@PathVariable Long assignmentFileId,
                                                      @JwtValidation Long memberId,
                                                      @RequestPart("file") MultipartFile multipartFile){
-        File file = FileUtil.convertToFile(multipartFile);
-        lectureService.updateAssignmentFile(memberId, assignmentFileId, file);
+        lectureService.updateAssignmentFile(memberId, assignmentFileId, multipartFile);
         return Response.success();
     }
 
@@ -111,8 +107,7 @@ public class LectureController {
     public Response<Void> updateAssignmentAnswerFile(@PathVariable Long assignmentAnswerFileId,
                                                      @JwtValidation Long memberId,
                                                      @RequestPart("file") MultipartFile multipartFile){
-        File file = FileUtil.convertToFile(multipartFile);
-        lectureService.updateAssignmentAnswerFile(memberId, assignmentAnswerFileId, file);
+        lectureService.updateAssignmentAnswerFile(memberId, assignmentAnswerFileId, multipartFile);
         return Response.success();
     }
 
