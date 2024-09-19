@@ -56,7 +56,7 @@ public class PostController {
         return Response.success(postService.getPost(postId, memberId));
     }
 
-    @PostMapping("/")
+    @PostMapping()
     @Operation(summary = "게시글 생성", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다.")
 //    @ApiResponses(value = {
 //            @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content),
