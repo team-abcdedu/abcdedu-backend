@@ -1,47 +1,50 @@
 package com.abcdedu_backend.homework.controller;
 
-import com.abcdedu_backend.global.security.LoginUserDetails;
-import com.abcdedu_backend.homework.dto.HomeworkReq;
+import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.homework.dto.response.HomeworkGetRes;
+import com.abcdedu_backend.homework.dto.request.HomeworkReplyCreateReq;
+import com.abcdedu_backend.homework.dto.response.HomeworkReplyGetRes;
+import com.abcdedu_backend.homework.service.HomeworkService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
-@Tag(name = "공통 과제 관리", description = "공통 과제 관리 관련 API")
-@RequestMapping("/admin/homeworks")
+@Slf4j
 @RestController
+@RequestMapping("/homeworks")
 @RequiredArgsConstructor
+@Tag(name = "공통과제 기능", description = "조회, 응답 (학생 이상 가능), 응답 조회 (관리자만 이용 가능), 과제 생성 기능은 없습니다.")
 public class HomeworkController {
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    @Operation(summary = "과제 생성", description = """
-        과제 생성+문제 생성, 이후 `homeworkId`를 반환합니다.
-        `options`의 경우 객관식일 경우에만 사용하며, nullable 합니다. 내부 필드는 not-null 입니다.
-        Type은 다음과 같습니다. `SUBJECTIVE`, `SINGLE_OPTION`, `MULTIPLE_OPTION`, `SHORT_ANSWER`""")
-    public Response<Long> createHomework(
-        @AuthenticationPrincipal LoginUserDetails loginUserDetails,
-        @Valid @RequestBody HomeworkReq.CreateWithQuestion req
-    ) {
-        throw new UnsupportedOperationException();
+    private final HomeworkService homeworkService;
+
+    @Operation(summary = "공통 과제 상세 조회", description = "응답을 하기 위해 문제 내용이 조회된다.")
+    @GetMapping("/{homeworkId}")
+    public Response<HomeworkGetRes> getHomework(@JwtValidation Long memberId, @PathVariable Long homeworkId) {
+        HomeworkGetRes res = homeworkService.getHomework(memberId, homeworkId);
+        return Response.success(res);
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{homeworkId}")
-    @Operation(summary = "과제 수정", description = "과제에 대한 PUT 연산을 수행합니다.")
-    public Response<Void> updateHomework(
-        @AuthenticationPrincipal LoginUserDetails loginUserDetails,
-        @PathVariable Long homeworkId,
-        @Valid @RequestBody HomeworkReq.Update req
-    ) {
-        throw new UnsupportedOperationException();
+    @Operation(summary = "과제 응답 제출", description = "과제 응답을 제출합니다. 응답은 list로 들어가기 때문에 질문 갯수에 맞춰서 List로 요청바랍니다.")
+    @PostMapping("/{homeworkId}/replies")
+    public Response<Void> createHomeworkReply(@JwtValidation Long memberId, @PathVariable Long homeworkId,
+                                              @Valid @RequestBody List<HomeworkReplyCreateReq> replyRequests) {
+        homeworkService.createHomeworkReply(memberId, homeworkId, replyRequests);
+        return Response.success();
     }
 
+    @Operation(summary = "과제 응답 조회", description = "과제에 대한 응답을 전체 조회 합니다. (설문과 같은 양식)")
+    @GetMapping("/{homeworkId}/replies")
+    public Response<HomeworkReplyGetRes> getReplies(@JwtValidation Long memberId, @PathVariable Long homeworkId) {
+        HomeworkReplyGetRes homeworkReplyGetRes = homeworkService.getReplies(memberId, homeworkId);
+        return Response.success(homeworkReplyGetRes);
+    }
 
 
 }
