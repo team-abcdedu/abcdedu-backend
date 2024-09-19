@@ -31,14 +31,14 @@ public class SurveyController {
 
     // ====== 설문
     @Operation(summary = "설문 등록", description = "여러 개의 질문을 담을 설문을 등록한다.")
-    @PostMapping("/")
+    @PostMapping
     public Response<Long> createSurvey(@Valid @RequestBody SurveyCreateRequest request, @JwtValidation Long memberId) {
         Long surveyId = surveyService.createSurvey(request, memberId);
         return Response.success(surveyId);
     }
 
     @Operation(summary = "설문 리스트 조회")
-    @GetMapping("/")
+    @GetMapping
     public Response<PagedResponse<SurveyListResponse>> getSurveys(@JwtValidation Long memberId, PagingRequest pagingRequest, SortRequest sortRequest) {
         Page<SurveyListResponse> surveys = surveyService.getSurveys(memberId, new PageManager(pagingRequest, sortRequest).makePageRequest());
         return Response.success(PagedResponse.from(surveys));
