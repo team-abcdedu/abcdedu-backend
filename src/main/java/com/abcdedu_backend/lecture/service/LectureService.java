@@ -169,7 +169,7 @@ public class LectureService {
     }
 
     @Transactional
-    public void updateAssignmentFile(Long memberId, Long assignmentFileId, MultipartFile file) {
+    public void updateAssignmentFile(Long memberId, Long assignmentFileId, File file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
@@ -184,7 +184,7 @@ public class LectureService {
     }
 
     @Transactional
-    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, MultipartFile file) {
+    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, File file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentAnswerFile assignmentAnswerFile = findAssignmentAnswerFile(assignmentAnswerFileId);
