@@ -52,6 +52,7 @@ public class CommentService {
                 .map(comment -> CommentResponse.builder()
                         .content(comment.getContent())
                         .writerName(comment.getMember().getName())
+                        .writerEmail(comment.getMember().getEmail())
                         .createdAt(comment.getCreatedAt())
                         .build());
     }

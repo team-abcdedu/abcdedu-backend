@@ -140,6 +140,7 @@ public class PostService {
         return PostResponse.builder()
                 .title(post.getTitle())
                 .writer(post.getMember().getName())
+                .writerEmail(post.getMember().getEmail())
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
                 .viewCount(post.getViewCount())
