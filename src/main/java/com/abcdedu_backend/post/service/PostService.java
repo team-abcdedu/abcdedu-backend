@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
@@ -46,7 +47,7 @@ public class PostService {
     }
 
     @Transactional
-    public Long createPost(PostCreateRequest req, Long memberId, File file) {
+    public Long createPost(PostCreateRequest req, Long memberId, MultipartFile file) {
         Board findBoard = boardService.checkBoard(req.boardId());
         Member findMember = memberService.checkMember(memberId);
         if (hasPostingRestrictedByRole(findBoard)) checkMemberGradeHigherThanBasic(findMember);
@@ -69,7 +70,7 @@ public class PostService {
     }
 
     @Transactional
-    public Long updatePost(Long postId, Long memberId, PostUpdateRequest updateRequest, File file) {
+    public Long updatePost(Long postId, Long memberId, PostUpdateRequest updateRequest, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         Post findPost = checkPost(postId);
         checkPermission(findMember, findPost);
@@ -116,8 +117,8 @@ public class PostService {
         return boardService.boardIdToName(boardId);
     }
 
-    private boolean hasFile(File file) {
-        return file != null && file.exists();
+    private boolean hasFile(MultipartFile file) {
+        return file != null && !file.isEmpty();
     }
     // ====== DTO, Entity 변환 =======
     // 다건 조회

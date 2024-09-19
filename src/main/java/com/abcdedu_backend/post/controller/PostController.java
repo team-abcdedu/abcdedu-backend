@@ -14,7 +14,6 @@ import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
 import com.abcdedu_backend.post.dto.response.CommentResponse;
 import com.abcdedu_backend.post.dto.response.PostResponse;
 import com.abcdedu_backend.post.service.PostService;
-import com.abcdedu_backend.utils.FileUtil;
 import com.abcdedu_backend.utils.Response;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,8 +28,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
 
 
 @RestController
@@ -70,9 +67,7 @@ public class PostController {
                                      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                      @JwtValidation Long memberId) {
         if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
-        File file = null;
-        if (!multipartFile.isEmpty()) file = FileUtil.convertToFile(multipartFile);
-        return Response.success(postService.createPost(req, memberId, file));
+        return Response.success(postService.createPost(req, memberId, multipartFile));
     }
 
     @DeleteMapping("/{postId}")
@@ -100,9 +95,7 @@ public class PostController {
                                      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                      @JwtValidation Long memberId) {
         if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
-        File file = null;
-        if (!multipartFile.isEmpty()) file = FileUtil.convertToFile(multipartFile);
-        return Response.success(postService.updatePost(postId, memberId,postUpdateRequest, file));
+        return Response.success(postService.updatePost(postId, memberId,postUpdateRequest, multipartFile));
     }
 
 

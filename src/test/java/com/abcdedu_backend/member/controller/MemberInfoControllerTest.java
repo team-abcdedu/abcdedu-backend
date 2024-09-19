@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -119,7 +120,7 @@ class MemberInfoControllerTest {
         doNothing().when(memberService).updateMemberInfo(
                 any(Long.class),
                 any(UpdateMemberInfoRequest.class),
-                any(File.class)
+                any(MultipartFile.class)
         );
 
         // when

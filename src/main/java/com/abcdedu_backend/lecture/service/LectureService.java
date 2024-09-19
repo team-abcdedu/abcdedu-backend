@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,7 +80,7 @@ public class LectureService {
     }
 
     @Transactional
-    public void createAssignmentsFile(Long subLectureId, Long memberId, String assignmentType, File file) {
+    public void createAssignmentsFile(Long subLectureId, Long memberId, String assignmentType, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         SubLecture findSubLecture = findSubLecture(subLectureId);
@@ -135,7 +134,7 @@ public class LectureService {
         }
     }
 
-    public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, File file) {
+    public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
@@ -169,13 +168,13 @@ public class LectureService {
     }
 
     @Transactional
-    public void updateAssignmentFile(Long memberId, Long assignmentFileId, File file) {
+    public void updateAssignmentFile(Long memberId, Long assignmentFileId, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
 
         String objectKey = fileHandler.upload(
-                (File) file,
+                file,
                 FileDirectory.of(assignmentFile.getAssignmentType().getType()),
                 assignmentFile.getSubLecture().getSubLectureName()
         );
@@ -184,13 +183,13 @@ public class LectureService {
     }
 
     @Transactional
-    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, File file) {
+    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentAnswerFile assignmentAnswerFile = findAssignmentAnswerFile(assignmentAnswerFileId);
 
         String objectKey = fileHandler.upload(
-                (File) file,
+                file,
                 FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
                 assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
         );
