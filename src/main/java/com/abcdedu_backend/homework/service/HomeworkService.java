@@ -122,6 +122,7 @@ public class HomeworkService {
                         .orderNumber(question.getOrderNumber())
                         .isAnswerRequired(question.isAnswerRequired())
                         .content(question.getContent())
+                        .additionalContent(question.getAdditionalContent())
                         .build())
                 .toList();
     }

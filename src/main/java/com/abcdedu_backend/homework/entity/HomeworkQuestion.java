@@ -23,6 +23,9 @@ public class HomeworkQuestion {
     @Column(nullable = false, length = 500)
     private String content; // 질문 내용
 
+    @Column(length = 500)
+    private String additionalContent; // 추가 질문 내용
+
     @Column(nullable = false)
     private boolean isAnswerRequired; // 답변 필수인지
 
