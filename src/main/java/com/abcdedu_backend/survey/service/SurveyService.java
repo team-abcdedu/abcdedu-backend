@@ -44,7 +44,7 @@ public class SurveyService {
                 .build();
         surveyRepository.save(survey);
 
-        request.questions().forEach(reqQuestion-> {
+        request.questions().forEach(reqQuestion -> {
 
             SurveyQuestion surveyQuestion = SurveyQuestion.builder()
                     .type(reqQuestion.type())
@@ -54,15 +54,17 @@ public class SurveyService {
                     .survey(survey)
                     .build();
             questionRepository.save(surveyQuestion);
-
-            reqQuestion.choices().forEach(reqChoice -> {
-                SurveyQuestionChoice choice = SurveyQuestionChoice.builder()
-                        .orderNumber(reqChoice.orderNumber())
-                        .description(reqChoice.description())
-                        .surveyQuestion(surveyQuestion)
-                        .build();
-                choiceRepository.save(choice);
-            });
+            // 서술형은 선택지가 null이거나 비어있을 수 있다.
+            if (reqQuestion.choices() != null && !(reqQuestion.choices().isEmpty())) {
+                reqQuestion.choices().forEach(reqChoice -> {
+                    SurveyQuestionChoice choice = SurveyQuestionChoice.builder()
+                            .orderNumber(reqChoice.orderNumber())
+                            .description(reqChoice.description())
+                            .surveyQuestion(surveyQuestion)
+                            .build();
+                    choiceRepository.save(choice);
+                });
+            }
         });
 
         return survey.getId();
@@ -84,7 +86,7 @@ public class SurveyService {
     }
 
     /**
-     *  선택한 설문지로 응답을 하기 위해 설문지를 조회한다. (질문-선택지 포함)
+     * 선택한 설문지로 응답을 하기 위해 설문지를 조회한다. (질문-선택지 포함)
      */
     public SurveyGetResponse getSurvey(Long memberId, Long surveyId) {
         checkSurveyPermmision(memberId);
@@ -202,7 +204,8 @@ public class SurveyService {
 
     private Member checkSurveyCreatePermmision(Long memberId) {
         Member findMember = memberService.checkMember(memberId);
-        if (!findMember.isStudent() && !findMember.isAdmin()) throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
+        if (!findMember.isStudent() && !findMember.isAdmin())
+            throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
         return findMember;
     }
 
