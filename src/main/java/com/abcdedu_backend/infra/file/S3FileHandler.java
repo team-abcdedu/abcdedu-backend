@@ -36,10 +36,11 @@ public class S3FileHandler implements FileHandler {
         try (InputStream inputStream = file.getInputStream()){
             String extension = getExtension(file);
             String key = createUploadKey(directory, fileName, extension);
+            log.info("S3 upload 성공 key: {}", key);
             amazonS3.putObject(new PutObjectRequest(bucketName, key, inputStream,null));
             return key;
         } catch (Exception e) {
-            log.info(e.getLocalizedMessage());
+            log.error("S3 upload 실패 : {}", e.getLocalizedMessage());
             throw new ApplicationException(ErrorCode.S3_UPLOAD_ERROR);
         }
     }
@@ -73,6 +74,7 @@ public class S3FileHandler implements FileHandler {
         try {
             amazonS3.deleteObject(new DeleteObjectRequest(bucketName, objectKey));
         } catch (Exception e) {
+            log.error("S3 deleted 실패 : {}", e.getLocalizedMessage());
             throw new ApplicationException(ErrorCode.S3_OBJECT_NOT_FOUND);
         }
     }

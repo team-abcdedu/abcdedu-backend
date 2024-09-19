@@ -54,7 +54,6 @@ public class LocalFileHandler implements FileHandler{
 
     private String getExtension(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
-        log.info(originalFilename);
         String extension = "";
         if (originalFilename.contains(".")) {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
