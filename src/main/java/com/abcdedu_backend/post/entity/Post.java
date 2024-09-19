@@ -73,8 +73,8 @@ public class Post extends BaseTimeEntity {
                 .build();
     }
 
-    public void updateObjectKey(String objectKey) {
-        this.fileUrl = objectKey;
+    public void updateFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
     public void incrementCommentCount() {
         this.commentCount++;
