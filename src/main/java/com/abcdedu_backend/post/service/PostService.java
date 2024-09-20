@@ -84,7 +84,7 @@ public class PostService {
         if (hasFile(file)) post.updateFileUrl(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, postId.toString()));
         return post.getId();
     }
-
+    @Transactional
     public void deletePostFile(Long postId, Long memberId) {
         Member findMember = memberService.checkMember(memberId);
         Post post = checkPost(postId);
@@ -126,9 +126,19 @@ public class PostService {
 
         Post post = checkPost(postId);
         Member writer = memberService.checkMember(post.getMember().getId());
-        writer.updateRole(memberRole);
-        log.info("levelUpPostWriter() 성공");
+
+        try {
+            writer.updateRole(memberRole);
+            log.info("1. member updateRole 성공");
+            postReposiroty.delete(post);
+            log.info("2. post 삭제 성공");
+        } catch (Exception e) {
+            log.error("등업 및 게시글 삭제 DB 실패, message : {}", e.getMessage());
+            throw new ApplicationException(ErrorCode.DATABASE_ERROR);
+        }
+        log.info("멤버 등업 및 해당 등업 게시글 삭제 성공");
     }
+
 
     public Post checkPost(Long postId) {
         return postReposiroty.findById(postId)
