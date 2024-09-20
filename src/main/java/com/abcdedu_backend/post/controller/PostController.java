@@ -98,7 +98,7 @@ public class PostController {
         return Response.success(postService.updatePost(postId, memberId,postUpdateRequest, multipartFile));
     }
 
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/{postId}/file")
     @Operation(summary = "게시글의 파일 삭제", description = "관리자 혹은 글을 작성한 본인 만이 해당 글의 파일을 삭제할 수 있습니다.")
     public Response<Void> deletePostFile(@PathVariable Long postId, @JwtValidation Long memberId) {
         postService.deletePostFile(postId, memberId);
