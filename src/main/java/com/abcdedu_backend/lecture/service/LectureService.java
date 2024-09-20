@@ -80,16 +80,16 @@ public class LectureService {
     }
 
     @Transactional
-    public void createAssignmentsFile(Long subLectureId, Long memberId, String assignmentType, MultipartFile file) {
+    public void createAssignmentsFile(Long subLectureId, Long memberId, AssignmentType assignmentType, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         SubLecture findSubLecture = findSubLecture(subLectureId);
-        String objectKey = fileHandler.upload(file, FileDirectory.of(assignmentType), findSubLecture.getSubLectureName());
+        String objectKey = fileHandler.upload(file, FileDirectory.of(assignmentType.getType()), findSubLecture.getSubLectureName());
 
         AssignmentFile assignmentFile = AssignmentFile.builder()
                 .objectKey(objectKey)
                 .subLecture(findSubLecture)
-                .assignmentType(AssignmentType.of(assignmentType))
+                .assignmentType(assignmentType)
                 .build();
 
         assignmentFileRepository.save(assignmentFile);
@@ -123,7 +123,7 @@ public class LectureService {
     }
 
     private static void checkTheoryPermission(AssignmentFile assignmentFile, Member findMember) {
-        if (assignmentFile.getAssignmentType() == AssignmentType.Theory && !findMember.isAdmin()){
+        if (assignmentFile.getAssignmentType() == AssignmentType.THEORY && !findMember.isAdmin()){
             throw new ApplicationException(ErrorCode.ADMIN_INVALID_PERMISSION);
         }
     }

@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public enum AssignmentType {
 
     EXAM("시험"),
-    Theory("이론"),
+    THEORY("이론"),
     DATA("자료");
 
 

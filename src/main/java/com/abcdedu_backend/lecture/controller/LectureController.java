@@ -2,6 +2,7 @@ package com.abcdedu_backend.lecture.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.lecture.dto.response.*;
+import com.abcdedu_backend.lecture.entity.AssignmentType;
 import com.abcdedu_backend.lecture.service.LectureService;
 import com.abcdedu_backend.utils.FileUtil;
 import com.abcdedu_backend.utils.Response;
@@ -43,21 +44,22 @@ public class LectureController {
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/과제) 등록 (admin)", description = """
-            평가 파일 (이론/시험/과제)를 등록합니다.
-            AssignmentType 종류는 `이론`, `시험`, `과제` 입니다""")
+    @Operation(summary = "평가 파일 (이론/시험/자료) 등록 (admin)", description = """
+            평가 파일 (이론/시험/자료)를 등록합니다.
+            AssignmentType 종류는 `THEORY(이론)`, `EXAM(시험)`, `DATA(자료)` 입니다""")
     @PostMapping("/sub-lecture/{subLectureId}/file")
     public Response<Void> createAssignmentFile(@PathVariable Long subLectureId,
                                                @JwtValidation Long memberId,
-                                               @RequestParam String assignmentType,
+                                               @RequestParam AssignmentType assignmentType,
                                                @RequestPart("file") MultipartFile multipartFile){
+
         lectureService.createAssignmentsFile(subLectureId, memberId, assignmentType, multipartFile);
         return Response.success();
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/과제) 문제지 등록 (admin)", description = "평가 파일 (이론/시험/과제) 문제지를 등록합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료) 문제지 등록 (admin)", description = "평가 파일 (이론/시험/자료) 문제지를 등록합니다.")
     @PostMapping("/assignment-file/{assignmentFileId}/answer")
     public Response<Void> createAssignmentAnswerFile(@PathVariable Long assignmentFileId,
                                                @JwtValidation Long memberId,
@@ -66,7 +68,7 @@ public class LectureController {
         return Response.success();
     }
 
-    @Operation(summary = "평가 파일 (이론/시험/과제) 리스트 조회", description = "평가 파일 (이론/시험/과제) 리스트를 조회합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료) 리스트 조회", description = "평가 파일 (이론/시험/자료) 리스트를 조회합니다.")
     @GetMapping("/sub-lecture/{subLectureId}")
     public Response<List<GetAssignmentResponseV1>> getAssignments(@PathVariable Long subLectureId){
         List<GetAssignmentResponseV1> response =lectureService.getAssignments(subLectureId);
@@ -74,7 +76,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/과제) 조회", description = "평가 파일 (이론/시험/과제)를 조회합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료) 조회", description = "평가 파일 (이론/시험/자료)를 조회합니다.")
     @GetMapping("/file/{assignmentFileId}")
     public Response<GetAssignmentFileUrlResponse> getAssignmentFileUrl(@PathVariable Long assignmentFileId, @JwtValidation Long memberId){
         GetAssignmentFileUrlResponse response = lectureService.getAssignmentFileUrl(memberId, assignmentFileId);
@@ -91,7 +93,7 @@ public class LectureController {
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/과제) 수정", description = "평가 파일 (이론/시험/과제)를 수정합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료) 수정", description = "평가 파일 (이론/시험/자료)를 수정합니다.")
     @PatchMapping("/file/{assignmentFileId}")
     public Response<Void> updateAssignmentFile(@PathVariable Long assignmentFileId,
                                                      @JwtValidation Long memberId,
