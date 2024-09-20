@@ -4,6 +4,7 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.exception.ExceptionManager;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
+import com.abcdedu_backend.member.dto.response.MemberBasicInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.member.service.MemberService;
@@ -170,6 +171,48 @@ class MemberInfoControllerTest {
         final String url = "/members/info/name-and-role";
         Long memberId = 2L;
         doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberService).getMemberNameAndRoleInfo(memberId);
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                get(url)
+                        .header("Authorization", "Bearer validToken")
+                        .param("memberId", memberId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions.andExpect(status().isNotFound());
+    }
+
+    @Test
+    void 프로필_기본_정보_조회_성공() throws Exception {
+        // given
+        final String url = "/members/basic-info";
+        Long memberId = 1L;
+        MemberBasicInfoResponse memberBasicInfoResponse = new MemberBasicInfoResponse("고동천", "관리자", "ehdcjs159@gmail.com");
+        doReturn(memberBasicInfoResponse).when(memberService).getMemberBasicInfo(memberId);
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                get(url)
+                        .header("Authorization", "Bearer validToken")
+                        .param("memberId", memberId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.name").value(memberBasicInfoResponse.name()))
+                .andExpect(jsonPath("$.result.role").value(memberBasicInfoResponse.role()))
+                .andExpect(jsonPath("$.result.email").value(memberBasicInfoResponse.email()));
+    }
+
+    @Test
+    void 프로필_기본_정보_조회_실패_없는멤버() throws Exception {
+        // given
+        final String url = "/members/basic-info";
+        Long memberId = 2L;
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberService).getMemberBasicInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(

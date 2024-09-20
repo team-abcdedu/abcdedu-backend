@@ -7,6 +7,7 @@ import com.abcdedu_backend.member.dto.LoginTokenDTO;
 import com.abcdedu_backend.member.dto.request.LoginRequest;
 import com.abcdedu_backend.member.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
+import com.abcdedu_backend.member.dto.response.MemberBasicInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.member.entity.Member;
@@ -226,6 +227,19 @@ class MemberServiceTest {
         verify(memberRepository, times(1)).findById(member.getId());
         assertThat(memberNameAndRoleResponse.name()).isEqualTo(member.getName());
         assertThat(memberNameAndRoleResponse.role()).isEqualTo(member.getRole().getName());
+    }
+
+    @Test
+    public void 멤버프로필_기본_정보_조회_성공() {
+        Member member = createMember();
+        doReturn(Optional.of(member)).when(memberRepository).findById(member.getId());
+
+        MemberBasicInfoResponse memberBasicInfoResponse = target.getMemberBasicInfo(member.getId());
+
+        verify(memberRepository, times(1)).findById(member.getId());
+        assertThat(memberBasicInfoResponse.name()).isEqualTo(member.getName());
+        assertThat(memberBasicInfoResponse.role()).isEqualTo(member.getRole().getName());
+        assertThat(memberBasicInfoResponse.email()).isEqualTo(member.getEmail());
     }
 
 
