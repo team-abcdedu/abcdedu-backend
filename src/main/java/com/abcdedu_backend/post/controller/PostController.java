@@ -56,7 +56,7 @@ public class PostController {
         return Response.success(postService.getPost(postId, memberId));
     }
 
-    @PostMapping("/")
+    @PostMapping
     @Operation(summary = "게시글 생성", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다.")
 //    @ApiResponses(value = {
 //            @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content),
@@ -100,13 +100,14 @@ public class PostController {
 
 
     // ============ 댓글
-    @Operation(summary = "게시글에 댓글 생성", description = "게시글에 댓글을 작성합니다.")
+    @Operation(summary = "게시글에 댓글 생성", description = "게시글에 댓글을 작성합니다. content는 Not null입니다.")
     @PostMapping("/{postId}/comments")
 //    @ApiResponses(value = {
 //            @ApiResponse(responseCode = "404", description = "해당 포스트/멤버가 없습니다.", content = @Content),
 //            @ApiResponse(responseCode = "403", description = "댓글 불가 게시글입니다.", content = @Content)
 //    })
-    public Response<Long> createComment(@PathVariable Long postId, @JwtValidation Long memberId, CommentCreateRequest createRequest) {
+    public Response<Long> createComment(@PathVariable Long postId, @JwtValidation Long memberId,
+                                        @Valid @RequestBody CommentCreateRequest createRequest) {
         Long commentId = commentService.createComment(postId, memberId, createRequest);
         return Response.success(commentId);
     }

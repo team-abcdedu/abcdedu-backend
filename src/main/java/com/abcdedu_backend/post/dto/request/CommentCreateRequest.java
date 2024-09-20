@@ -1,4 +1,9 @@
 package com.abcdedu_backend.post.dto.request;
 
-public record CommentCreateRequest(String content) {
+import jakarta.validation.constraints.NotNull;
+
+public record CommentCreateRequest(
+        @NotNull
+        String content
+) {
 }
