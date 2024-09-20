@@ -167,7 +167,7 @@ public class SurveyService {
 
     // 질문-응답 조회
     public SurveyRepliesGetResponse getSurveyReplies(Long memberId, Long surveyId) {
-        checkSurveyPermmision(memberId);
+        //checkSurveyPermmision(memberId);
         Survey findSurvey = checkSurvey(surveyId);
         List<SurveyQuestion> questions = questionRepository.findBySurvey(findSurvey);
         List<SurveyReply> replies = replyRepository.findBySurvey(findSurvey);
