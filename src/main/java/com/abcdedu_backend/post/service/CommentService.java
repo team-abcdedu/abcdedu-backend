@@ -63,8 +63,10 @@ public class CommentService {
         Page<Comment> comments = commentRepository.findByPost(findpost, pageable);
         return comments
                 .map(comment -> CommentResponse.builder()
+                        .commentId(comment.getId())
                         .content(comment.getContent())
                         .writerName(comment.getMember().getName())
+                        .writerEmail(comment.getMember().getEmail())
                         .createdAt(comment.getCreatedAt())
                         .build());
     }

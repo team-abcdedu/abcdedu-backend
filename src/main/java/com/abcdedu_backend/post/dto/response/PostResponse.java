@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public record PostResponse (
         String title,
         String writer,
+        String writerEmail,
         String content,
         LocalDateTime createdAt,
         Long viewCount,
@@ -16,6 +17,7 @@ public record PostResponse (
         String fileUrl,
         Boolean secret,
         Boolean commentAllow
+
 ){
 
 }

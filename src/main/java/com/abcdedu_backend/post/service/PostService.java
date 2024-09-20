@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +55,8 @@ public class PostService {
         post.changeBoard(findBoard);
         postReposiroty.save(post);
         // 파일
-        if (hasFile(file)) post.updateObjectKey(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, post.getId().toString()));
+        if (hasFile(file)) post.updateFileUrl(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, post.getId().toString()));
+        else post.updateFileUrl(""); // NULL을 방지하기 위한 공백 삽입
         return post.getId();
     }
 
@@ -72,13 +72,14 @@ public class PostService {
     @Transactional
     public Long updatePost(Long postId, Long memberId, PostUpdateRequest updateRequest, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
-        Post findPost = checkPost(postId);
-        checkPermission(findMember, findPost);
+        Post post = checkPost(postId);
+        checkPermission(findMember, post);
         // 게시글 수정
-        findPost.update(updateRequest);
+        post.update(updateRequest);
         //파일
-        if (hasFile(file)) findPost.updateObjectKey(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, postId.toString()));
-        return findPost.getId();
+        if (hasFile(file)) post.updateFileUrl(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, postId.toString()));
+        else post.updateFileUrl(""); // NULL을 방지하기 위한 공백 삽입
+        return post.getId();
     }
 
     @Transactional
@@ -139,11 +140,12 @@ public class PostService {
         return PostResponse.builder()
                 .title(post.getTitle())
                 .writer(post.getMember().getName())
+                .writerEmail(post.getMember().getEmail())
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
                 .viewCount(post.getViewCount())
                 .commentCount(post.getCommentCount())
-                .fileUrl(!post.getFileUrl().isEmpty() ? fileHandler.getPresignedUrl(post.getFileUrl()) : null)
+                .fileUrl(!post.getFileUrl().isEmpty() ? fileHandler.getPresignedUrl(post.getFileUrl()) : "")
                 .secret(post.getSecret())
                 .commentAllow(post.getCommentAllow())
                 .build();
