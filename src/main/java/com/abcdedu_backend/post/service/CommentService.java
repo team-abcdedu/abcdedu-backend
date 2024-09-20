@@ -12,6 +12,7 @@ import com.abcdedu_backend.post.entity.Comment;
 import com.abcdedu_backend.post.entity.Post;
 import com.abcdedu_backend.post.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
@@ -38,9 +40,20 @@ public class CommentService {
                 .post(findpost)
                 .content(createRequest.content())
                 .build();
-        commentRepository.save(comment);
+
+        saveComment(comment);
         findpost.incrementCommentCount();
         return comment.getId();
+    }
+
+    private void saveComment(Comment comment) {
+        try {
+            commentRepository.save(comment);
+        } catch (Exception e) {
+            log.error("createComment() : comment 저장 실패");
+            throw new ApplicationException(ErrorCode.DATABASE_ERROR);
+        }
+        log.info("createComment() : comment 생성 및 저장 성공 - {}", comment.getContent());
     }
 
 
