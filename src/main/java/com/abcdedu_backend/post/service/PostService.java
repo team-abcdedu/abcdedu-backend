@@ -39,10 +39,14 @@ public class PostService {
     }
 
     public PostResponse getPost(Long postId, Long memberId) {
-        Post findPost = checkPost(postId);
-        Member findMember = memberService.checkMember(memberId);
-        checkPermission(findMember, findPost);
-        return postToPostResponse(findPost);
+        Post post = checkPost(postId);
+        Member member = memberService.checkMember(memberId);
+        if (post.getSecret()) {
+            checkPermission(member, post);
+
+        }
+
+        return postToPostResponse(post);
     }
 
     @Transactional
@@ -78,9 +82,42 @@ public class PostService {
         post.update(updateRequest);
         //파일
         if (hasFile(file)) post.updateFileUrl(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, postId.toString()));
-        else post.updateFileUrl(""); // NULL을 방지하기 위한 공백 삽입
         return post.getId();
     }
+    @Transactional
+    public void deletePostFile(Long postId, Long memberId) {
+        Member findMember = memberService.checkMember(memberId);
+        Post post = checkPost(postId);
+        checkPermission(findMember, post);
+
+        deleteFile(post.getFileUrl());
+        deleteFileUrl(post);
+        log.info("게시글 파일 삭제 성공");
+    }
+
+    @Transactional
+    void deleteFileUrl(Post post) {
+        try {
+            post.updateFileUrl("");
+        } catch (Exception e) {
+            log.error("deleteFileUrl() post에 파일 url update 실패 - message : {}", e.getMessage());
+            throw new ApplicationException(ErrorCode.DATABASE_ERROR);
+        }
+
+    }
+
+    void deleteFile(String fileUrl) {
+        if (fileUrl != null && !fileUrl.isEmpty()) {  // file이 비어 있는데 삭제 버튼을 누를 수 있음을 방지
+            try {
+                fileHandler.delete(fileUrl);
+            } catch (Exception e) {
+                log.error("deleteFile() S3연계 post 파일 삭제 실패 - message : {}", e.getMessage());
+                throw new ApplicationException(ErrorCode.FILE_ERROR);
+            }
+
+        }
+    }
+
 
     @Transactional
     public void levelUpPostWriter(Long memberId, Long postId, MemberRole memberRole) {
@@ -89,9 +126,19 @@ public class PostService {
 
         Post post = checkPost(postId);
         Member writer = memberService.checkMember(post.getMember().getId());
-        writer.updateRole(memberRole);
-        log.info("levelUpPostWriter() 성공");
+
+        try {
+            writer.updateRole(memberRole);
+            log.info("1. member updateRole 성공");
+            postReposiroty.delete(post);
+            log.info("2. post 삭제 성공");
+        } catch (Exception e) {
+            log.error("등업 및 게시글 삭제 DB 실패, message : {}", e.getMessage());
+            throw new ApplicationException(ErrorCode.DATABASE_ERROR);
+        }
+        log.info("멤버 등업 및 해당 등업 게시글 삭제 성공");
     }
+
 
     public Post checkPost(Long postId) {
         return postReposiroty.findById(postId)
@@ -100,9 +147,11 @@ public class PostService {
 
     // post 게시자 본인과 관리자만 할 수 있는 기능에 추가
     private void checkPermission(Member member, Post post) {
-        if (!member.getRole().equals(MemberRole.ADMIN) && !member.getId().equals(post.getMember().getId())) {
+        if (member.getRole() != MemberRole.ADMIN && !member.getId().equals(post.getMember().getId())) {
+            log.error("checkPermission() 실패 - member_role : {}, post_writer_id : {}, logined_member_id : {}", member.getRole(), post.getMember().getId(), member.getId());
             throw new ApplicationException(ErrorCode.ADMIN_OR_WRITER_PERMISSION);
         }
+        log.info("checkPermission() 성공");
     }
     // role이 학생 이상인지
     private void checkMemberGradeHigherThanBasic(Member member) {
@@ -121,6 +170,7 @@ public class PostService {
     private boolean hasFile(MultipartFile file) {
         return file != null && !file.isEmpty();
     }
+
     // ====== DTO, Entity 변환 =======
     // 다건 조회
     private PostListResponse postToPostListResponse(Post post) {
