@@ -4,7 +4,6 @@ import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.lecture.dto.response.*;
 import com.abcdedu_backend.lecture.entity.AssignmentType;
 import com.abcdedu_backend.lecture.service.LectureService;
-import com.abcdedu_backend.utils.FileUtil;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
 
 @Slf4j

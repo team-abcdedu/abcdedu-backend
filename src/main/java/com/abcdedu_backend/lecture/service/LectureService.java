@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -81,25 +82,30 @@ public class LectureService {
 
     @Transactional
     public void createAssignmentsFile(Long subLectureId, Long memberId, AssignmentType assignmentType, MultipartFile file) {
-        Member findMember = memberService.checkMember(memberId);
-        checkAdminPermission(findMember);
-        SubLecture findSubLecture = findSubLecture(subLectureId);
-        String objectKey = fileHandler.upload(file, FileDirectory.of(assignmentType.getType()), findSubLecture.getSubLectureName());
+        Member member = memberService.checkMember(memberId);
+        checkAdminPermission(member);
+        SubLecture subLecture = findSubLecture(subLectureId);
+        checkDuplicationFile(assignmentType, subLecture.getAssignmentFiles());
 
-        AssignmentFile assignmentFile = AssignmentFile.builder()
-                .objectKey(objectKey)
-                .subLecture(findSubLecture)
-                .assignmentType(assignmentType)
-                .build();
-
+        String objectKey = fileHandler.upload(file, FileDirectory.of(assignmentType.getType()), subLecture.getSubLectureName());
+        AssignmentFile assignmentFile = AssignmentFile.of(subLecture, assignmentType, objectKey);
         assignmentFileRepository.save(assignmentFile);
+    }
+
+    private void checkDuplicationFile(AssignmentType assignmentType, List<AssignmentFile> files) {
+        Optional<AssignmentFile> assignmentFileOptional = files.stream()
+                .filter(assignmentFile -> assignmentFile.getAssignmentType() == assignmentType)
+                .findFirst();
+        if (assignmentFileOptional.isPresent()){
+            throw new ApplicationException(ErrorCode.ASSIGNMENT_FILE_DUPLICATION);
+        }
     }
 
     public List<GetAssignmentResponseV1> getAssignments(Long subLectureId) {
         SubLecture findSublecture = findSubLecture(subLectureId);
         return findSublecture.getAssignmentFiles().stream()
                 .map(assignmentFile -> new GetAssignmentResponseV1(assignmentFile.getAssignmentType().getType(), assignmentFile.getId()))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     public GetAssignmentFileUrlResponse getAssignmentFileUrl(Long memberId, Long assignmentFileId) {
