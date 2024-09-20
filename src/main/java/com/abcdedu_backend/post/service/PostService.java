@@ -85,6 +85,40 @@ public class PostService {
         return post.getId();
     }
 
+    public void deletePostFile(Long postId, Long memberId) {
+        Member findMember = memberService.checkMember(memberId);
+        Post post = checkPost(postId);
+        checkPermission(findMember, post);
+
+        deleteFile(post.getFileUrl());
+        deleteFileUrl(post);
+        log.info("게시글 파일 삭제 성공");
+    }
+
+    @Transactional
+    void deleteFileUrl(Post post) {
+        try {
+            post.updateFileUrl("");
+        } catch (Exception e) {
+            log.error("deleteFileUrl() post에 파일 url update 실패 - message : {}", e.getMessage());
+            throw new ApplicationException(ErrorCode.DATABASE_ERROR);
+        }
+
+    }
+
+    void deleteFile(String fileUrl) {
+        if (fileUrl != null && !fileUrl.isEmpty()) {  // file이 비어 있는데 삭제 버튼을 누를 수 있음을 방지
+            try {
+                fileHandler.delete(fileUrl);
+            } catch (Exception e) {
+                log.error("deleteFile() S3연계 post 파일 삭제 실패 - message : {}", e.getMessage());
+                throw new ApplicationException(ErrorCode.FILE_ERROR);
+            }
+
+        }
+    }
+
+
     @Transactional
     public void levelUpPostWriter(Long memberId, Long postId, MemberRole memberRole) {
         Member loginedMember = memberService.checkMember(memberId);
@@ -126,6 +160,7 @@ public class PostService {
     private boolean hasFile(MultipartFile file) {
         return file != null && !file.isEmpty();
     }
+
     // ====== DTO, Entity 변환 =======
     // 다건 조회
     private PostListResponse postToPostListResponse(Post post) {
