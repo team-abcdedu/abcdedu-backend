@@ -88,20 +88,14 @@ public class MemberService {
     public MemberInfoResponse getMemberInfo(Long memberId) {
         Member member = checkMember(memberId);
 
-        String imageUrl = fileHandler.getPresignedUrl(member.getImageObjectKey());
+        String imageUrl = null;
+        if (member.getImageObjectKey() != null) {
+            imageUrl = fileHandler.getPresignedUrl(member.getImageObjectKey());
+        }
 
-        return MemberInfoResponse.builder()
-                .studentId(member.getStudentId())
-                .email(member.getEmail())
-                .name(member.getName())
-                .role(member.getRole().getName())
-                .school(member.getSchool())
-                .imageUrl(imageUrl)
-                .createdAt(member.getCreatedAt())
-                .createPostCount(member.getPosts().size())
-                .createCommentCount(member.getComments().size())
-                .build();
+        return MemberInfoResponse.of(member, imageUrl);
     }
+
     @Transactional
     public void updateMemberInfo(Long memberId, UpdateMemberInfoRequest request, MultipartFile file) {
         Member findMember = memberRepository.findById(memberId)
