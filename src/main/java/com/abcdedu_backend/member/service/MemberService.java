@@ -8,6 +8,7 @@ import com.abcdedu_backend.member.dto.LoginTokenDTO;
 import com.abcdedu_backend.member.dto.request.LoginRequest;
 import com.abcdedu_backend.member.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
+import com.abcdedu_backend.member.dto.response.MemberBasicInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.member.dto.response.ReissueResponse;
@@ -85,21 +86,20 @@ public class MemberService {
     }
 
     public MemberInfoResponse getMemberInfo(Long memberId) {
-        Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        Member member = checkMember(memberId);
 
-        String imageUrl = fileHandler.getPresignedUrl(findMember.getImageObjectKey());
+        String imageUrl = fileHandler.getPresignedUrl(member.getImageObjectKey());
 
         return MemberInfoResponse.builder()
-                .studentId(findMember.getStudentId())
-                .email(findMember.getEmail())
-                .name(findMember.getName())
-                .role(findMember.getRole().getName())
-                .school(findMember.getSchool())
+                .studentId(member.getStudentId())
+                .email(member.getEmail())
+                .name(member.getName())
+                .role(member.getRole().getName())
+                .school(member.getSchool())
                 .imageUrl(imageUrl)
-                .createdAt(findMember.getCreatedAt())
-                .createPostCount(findMember.getPosts().size())
-                .createCommentCount(findMember.getComments().size())
+                .createdAt(member.getCreatedAt())
+                .createPostCount(member.getPosts().size())
+                .createCommentCount(member.getComments().size())
                 .build();
     }
     @Transactional
@@ -113,12 +113,11 @@ public class MemberService {
     }
 
     public MemberNameAndRoleResponse getMemberNameAndRoleInfo(Long memberId) {
-        Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        Member member = checkMember(memberId);
 
         return MemberNameAndRoleResponse.builder()
-                .name(findMember.getName())
-                .role(findMember.getRole().getName())
+                .name(member.getName())
+                .role(member.getRole().getName())
                 .build();
     }
 
@@ -136,13 +135,13 @@ public class MemberService {
     }
 
     private Member createMember(SignUpRequest request, MemberRole role) {
-        Member signUpMember = Member.builder()
+        Member member = Member.builder()
                 .name(request.name())
                 .email(request.email())
                 .encodedPassword(passwordEncoder.encode(request.password()))
                 .role(role)
                 .build();
-        return signUpMember;
+        return member;
     }
 
     private void checkDuplicateEmail(SignUpRequest request) {
@@ -156,5 +155,14 @@ public class MemberService {
     @Transactional
     public void logout(String refreshToken) {
         refreshTokenRepository.deleteById(refreshToken);
+    }
+
+    public MemberBasicInfoResponse getMemberBasicInfo(Long memberId) {
+        Member member = checkMember(memberId);
+        return MemberBasicInfoResponse.builder()
+                .name(member.getName())
+                .role(member.getRole().getName())
+                .email(member.getEmail())
+                .build();
     }
 }
