@@ -78,7 +78,6 @@ public class PostService {
         post.update(updateRequest);
         //파일
         if (hasFile(file)) post.updateFileUrl(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, postId.toString()));
-        else post.updateFileUrl(""); // NULL을 방지하기 위한 공백 삽입
         return post.getId();
     }
 
