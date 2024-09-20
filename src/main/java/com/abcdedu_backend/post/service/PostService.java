@@ -39,10 +39,14 @@ public class PostService {
     }
 
     public PostResponse getPost(Long postId, Long memberId) {
-        Post findPost = checkPost(postId);
-        Member findMember = memberService.checkMember(memberId);
-        checkPermission(findMember, findPost);
-        return postToPostResponse(findPost);
+        Post post = checkPost(postId);
+        Member member = memberService.checkMember(memberId);
+        if (post.getSecret()) {
+            checkPermission(member, post);
+
+        }
+
+        return postToPostResponse(post);
     }
 
     @Transactional
@@ -99,9 +103,11 @@ public class PostService {
 
     // post 게시자 본인과 관리자만 할 수 있는 기능에 추가
     private void checkPermission(Member member, Post post) {
-        if (!member.getRole().equals(MemberRole.ADMIN) && !member.getId().equals(post.getMember().getId())) {
+        if (member.getRole() != MemberRole.ADMIN && !member.getId().equals(post.getMember().getId())) {
+            log.error("checkPermission() 실패 - member_role : {}, post_writer_id : {}, logined_member_id : {}", member.getRole(), post.getMember().getId(), member.getId());
             throw new ApplicationException(ErrorCode.ADMIN_OR_WRITER_PERMISSION);
         }
+        log.info("checkPermission() 성공");
     }
     // role이 학생 이상인지
     private void checkMemberGradeHigherThanBasic(Member member) {
