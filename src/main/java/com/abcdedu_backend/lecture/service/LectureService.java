@@ -140,12 +140,12 @@ public class LectureService {
         }
     }
 
+    @Transactional
     public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, MultipartFile file) {
-        Member findMember = memberService.checkMember(memberId);
-        checkAdminPermission(findMember);
+        Member member = memberService.checkMember(memberId);
+        checkAdminPermission(member);
         AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
-        
-        
+
         String objectKey = fileHandler.upload(
                 file, 
                 FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,

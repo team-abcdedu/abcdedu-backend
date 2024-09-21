@@ -50,7 +50,8 @@ public class MemberInfoController {
     @PatchMapping("/info")
     public Response<Void> updateMemberInfo(@JwtValidation Long memberId,
                                                  @Valid @ModelAttribute UpdateMemberInfoRequest updateMemberInfoRequest,
-                                                 @RequestPart("file") MultipartFile multipartFile){
+                                                 @RequestPart(value = "file", required = false) MultipartFile multipartFile){
+        System.out.println(multipartFile);
         memberService.updateMemberInfo(memberId, updateMemberInfoRequest, multipartFile);
         return Response.success();
     }
