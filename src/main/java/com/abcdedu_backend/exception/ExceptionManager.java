@@ -1,6 +1,8 @@
 package com.abcdedu_backend.exception;
 
 import com.abcdedu_backend.utils.Response;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +15,12 @@ public class ExceptionManager {
     public ResponseEntity<Response<?>> applicationExceptionHandler(ApplicationException e) {
         return ResponseEntity.status(e.getErrorCode().getStatus()).body(Response.error(ErrorResponse.of(e.getErrorCode().toString(), e.getMessage())));
     }
+
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<Response<?>> databaseExceptionHandler(DataAccessException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Response.error(ErrorResponse.of(e.getCause().toString(), e.getMessage())));
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response<?>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex){
