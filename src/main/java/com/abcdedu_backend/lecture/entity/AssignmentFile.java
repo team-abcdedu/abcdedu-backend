@@ -34,4 +34,12 @@ public class AssignmentFile {
     public void updateObjectKey(String objectKey) {
         this.objectKey = objectKey;
     }
+
+    public static AssignmentFile of(SubLecture subLecture, AssignmentType assignmentType, String objectKey) {
+        return AssignmentFile.builder()
+                .objectKey(objectKey)
+                .subLecture(subLecture)
+                .assignmentType(assignmentType)
+                .build();
+    }
 }

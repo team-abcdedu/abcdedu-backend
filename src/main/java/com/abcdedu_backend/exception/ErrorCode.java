@@ -53,6 +53,7 @@ public enum ErrorCode {
     ASSIGNMENT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "지원하지 않는 평가 타입입니다."),
     ASSIGNMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 과제입니다."),
     SUBMISSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 시험 답안입니다."),
+    ASSIGNMENT_FILE_DUPLICATION(HttpStatus.CONFLICT, "이미 존재하는 파일입니다."),
 
     //S3
     S3_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3 업로드에서 에러가 발생했습니다."),

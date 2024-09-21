@@ -83,4 +83,3 @@ jobs:
           docker image tag $IMAGE_NAME:$IMAGE_TAG abcdedu/prod
           chmod 777 ./deploy.sh
           ./deploy.sh
-          docker rmi $(docker images -q)
