@@ -24,7 +24,7 @@ public class SubLecture {
     @JoinColumn(name = "lecture_id", nullable = false)
     private Lecture lecture;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     private String title;
 
     @Column(nullable = false)
