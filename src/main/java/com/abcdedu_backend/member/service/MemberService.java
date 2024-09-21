@@ -101,7 +101,9 @@ public class MemberService {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        String uploadImageObjectKey = fileHandler.upload(file, FileDirectory.PROFILE_IMAGE, memberId.toString());
+        String uploadImageObjectKey = file.isEmpty()
+                ? null
+                : fileHandler.upload(file, FileDirectory.PROFILE_IMAGE, memberId.toString());
 
         findMember.updateProfile(request.name(), uploadImageObjectKey, request.school(), request.studentId());
     }
