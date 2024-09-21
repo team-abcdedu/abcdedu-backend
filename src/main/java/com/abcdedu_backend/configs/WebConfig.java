@@ -25,10 +25,11 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:8080",
                         "http://localhost:8081",
                         "http://localhost:8082",
-                        "http://abcdedu.com",
                         "https://abcdedu.com",
-                        "http://dev.abcdedu.com",
-                        "https://dev.abcdedu.com"
+                        "https://www.abcdedu.com",
+                        "https://dev.abcdedu.com",
+                        "https://dev-api.abcdedu.com",
+                        "https://api.abcdedu.com"
                         )
                 .allowedHeaders("*")
                 .allowedMethods(
