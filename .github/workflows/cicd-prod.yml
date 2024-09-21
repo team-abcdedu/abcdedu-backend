@@ -24,6 +24,7 @@ jobs:
         distribution: 'temurin'
     - name: application.yml 생성
       run: |
+        mkdir -p ./src/main/resources
         cd ./src/main/resources 
         touch ./application.yaml
         echo "$APPLICATION_PROD_PROFILE" > ./application.yaml
