@@ -101,7 +101,7 @@ public class MemberService {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        String uploadImageObjectKey = file.isEmpty()
+        String uploadImageObjectKey = file == null
                 ? null
                 : fileHandler.upload(file, FileDirectory.PROFILE_IMAGE, memberId.toString());
 
