@@ -50,7 +50,6 @@ public class LectureController {
                                                @JwtValidation Long memberId,
                                                @RequestParam AssignmentType assignmentType,
                                                @RequestPart("file") MultipartFile multipartFile){
-
         lectureService.createAssignmentsFile(subLectureId, memberId, assignmentType, multipartFile);
         return Response.success();
     }

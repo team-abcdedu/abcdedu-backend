@@ -2,6 +2,7 @@ package com.abcdedu_backend.lecture.entity;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
+import com.abcdedu_backend.infra.file.FileDirectory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,15 +16,5 @@ public enum AssignmentType {
     THEORY("이론"),
     DATA("자료");
 
-
-
-
     private final String type;
-
-    public static AssignmentType of (String type){
-        return Stream.of(AssignmentType.values())
-                .filter(a -> a.getType().equals(type))
-                .findFirst()
-                .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_TYPE_NOT_FOUND));
-    }
 }
