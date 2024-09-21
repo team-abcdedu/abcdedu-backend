@@ -89,7 +89,7 @@ public class SurveyService {
      * 선택한 설문지로 응답을 하기 위해 설문지를 조회한다. (질문-선택지 포함)
      */
     public SurveyGetResponse getSurvey(Long memberId, Long surveyId) {
-        checkSurveyPermmision(memberId);
+        // checkSurveyPermmision(memberId);
         Survey findSurvey = checkSurvey(surveyId);
         List<SurveyQuestion> findQuestions = questionRepository.findBySurvey(findSurvey);
 
