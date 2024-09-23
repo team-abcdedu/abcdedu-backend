@@ -11,6 +11,7 @@ public record PostListResponse (
         Long postId,
         String title,
         String writer,
+        String writerEmail,
         Long viewCount,
         Long commentCount,
         LocalDateTime createdAt,

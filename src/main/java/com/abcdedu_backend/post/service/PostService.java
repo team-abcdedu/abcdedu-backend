@@ -178,6 +178,7 @@ public class PostService {
                 .postId(post.getId())
                 .title(post.getTitle())
                 .writer(post.getMember().getName())
+                .writerEmail(post.getMember().getEmail())
                 .viewCount(post.getViewCount())
                 .commentCount(post.getCommentCount())
                 .createdAt(post.getCreatedAt())
