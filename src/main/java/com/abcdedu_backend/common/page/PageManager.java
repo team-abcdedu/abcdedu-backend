@@ -1,7 +1,7 @@
 package com.abcdedu_backend.common.page;
 
-import com.abcdedu_backend.common.request.PagingRequest;
-import com.abcdedu_backend.common.request.SortRequest;
+import com.abcdedu_backend.common.page.request.PagingRequest;
+import com.abcdedu_backend.common.page.request.SortRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 
