@@ -29,7 +29,7 @@ public enum ErrorCode {
 
     // 게시판
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 포스트가 없습니다."),
-    POST_NOT_ALLOWED_COMMENT(HttpStatus.FORBIDDEN, "댓글을 허용하지 않는 게시글 입니다."),
+    POST_NOT_ALLOWED_COMMENT(HttpStatus.BAD_REQUEST, "댓글을 허용하지 않는 게시글 입니다."),
 
     // 댓글
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다."),
