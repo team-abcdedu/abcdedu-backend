@@ -44,25 +44,14 @@ public class S3FileHandler implements FileHandler {
         }
     }
 
-//    @Override
-//    public String getPresignedUrl(String objectKey) {
-//        Date expiration = getDateOneHourLater();
-//
-//        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, objectKey)
-//                .withMethod(HttpMethod.GET)
-//                .withExpiration(expiration);
-//
-//        return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
-//    }
-
     @Override
     public String getPresignedUrl(String objectKey) {
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = generatePresignUrlRequestForExtension(objectKey);
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignUrlRequestForExtension(objectKey);
         log.info("generatePresignedUrlRequest 생성 완료");
         return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
     }
 
-    private GeneratePresignedUrlRequest generatePresignUrlRequestForExtension(String objectKey) {
+    private GeneratePresignedUrlRequest getGeneratePresignUrlRequestForExtension(String objectKey) {
 
         Date expiration = getDateOneHourLater();
 
