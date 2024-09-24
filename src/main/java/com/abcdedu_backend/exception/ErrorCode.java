@@ -11,8 +11,6 @@ public enum ErrorCode {
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 오류"),
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "사용자가 권한이 없습니다."),
     // 역할별 에러
-    ADMIN_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "관리자만 가능한 기능 입니다."),
-    BASIC_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "학생 이상만 가능한 기능 입니다."),
     STUDENT_VALID_PERMISSION(HttpStatus.FORBIDDEN, "학생등급 이상 가능"),
     ADMIN_VALID_PERMISSION(HttpStatus.FORBIDDEN, "관리자 전용"),
     ADMIN_OR_WRITER_PERMISSION(HttpStatus.FORBIDDEN, "본인과 관리자 전용"),
