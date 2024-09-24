@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +15,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.Date;
@@ -32,12 +31,12 @@ public class S3FileHandler implements FileHandler {
     private String bucketName;
 
     @Override
-    public String upload(MultipartFile file, FileDirectory directory, String fileName){
-        try (InputStream inputStream = file.getInputStream()){
+    public String upload(MultipartFile file, FileDirectory directory, String fileName) {
+        try (InputStream inputStream = file.getInputStream()) {
             String extension = getExtension(file);
             String key = createUploadKey(directory, fileName, extension);
             log.info("S3 upload 성공 key: {}", key);
-            amazonS3.putObject(new PutObjectRequest(bucketName, key, inputStream,null));
+            amazonS3.putObject(new PutObjectRequest(bucketName, key, inputStream, null));
             return key;
         } catch (Exception e) {
             log.error("S3 upload 실패 : {}", e.getLocalizedMessage());
@@ -47,14 +46,29 @@ public class S3FileHandler implements FileHandler {
 
     @Override
     public String getPresignedUrl(String objectKey) {
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignUrlRequestForExtension(objectKey);
+        log.info("generatePresignedUrlRequest 생성 완료");
+        return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+    }
+
+    private GeneratePresignedUrlRequest getGeneratePresignUrlRequestForExtension(String objectKey) {
+
         Date expiration = getDateOneHourLater();
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, objectKey)
                 .withMethod(HttpMethod.GET)
                 .withExpiration(expiration);
-
-        return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+        log.info("확장자를 보여줍니다. {}", getExtension(objectKey));
+        if (getExtension(objectKey).equals("pdf")) {
+            log.info("pdf파일을 조회합니다.");
+            return generatePresignedUrlRequest
+                    .withResponseHeaders(new ResponseHeaderOverrides()
+                            .withContentDisposition("inline")
+                            .withContentType("application/pdf"));
+        }
+        return generatePresignedUrlRequest;
     }
+
 
     private String createUploadKey(FileDirectory directory, String fileName, String extension) {
         return directory.getDirectoryName() + fileName + extension;
@@ -65,6 +79,15 @@ public class S3FileHandler implements FileHandler {
         String extension = "";
         if (originalFilename.contains(".")) {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+        return extension;
+    }
+
+    private String getExtension(String objectKey) {
+        String extension = "";
+        if (objectKey.contains(".")) {
+            extension = objectKey.substring(objectKey.lastIndexOf("."));
+            log.info("getExtension() {}", extension);
         }
         return extension;
     }

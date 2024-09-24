@@ -2,9 +2,9 @@ package com.abcdedu_backend.survey.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.common.page.PageManager;
-import com.abcdedu_backend.common.request.PagingRequest;
-import com.abcdedu_backend.common.request.SortRequest;
-import com.abcdedu_backend.common.response.PagedResponse;
+import com.abcdedu_backend.common.page.request.PagingRequest;
+import com.abcdedu_backend.common.page.request.SortRequest;
+import com.abcdedu_backend.common.page.response.PagedResponse;
 import com.abcdedu_backend.survey.dto.request.SurveyCreateRequest;
 import com.abcdedu_backend.survey.dto.request.SurveyReplyCreateRequest;
 import com.abcdedu_backend.survey.dto.response.*;

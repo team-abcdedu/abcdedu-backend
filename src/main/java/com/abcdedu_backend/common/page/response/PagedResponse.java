@@ -1,4 +1,4 @@
-package com.abcdedu_backend.common.response;
+package com.abcdedu_backend.common.page.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
