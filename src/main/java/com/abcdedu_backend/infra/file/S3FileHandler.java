@@ -66,10 +66,9 @@ public class S3FileHandler implements FileHandler {
                             .withContentDisposition("inline")
                             .withContentType("application/pdf"));
         }
-        else {
-            return generatePresignedUrlRequest;
-        }
+        return generatePresignedUrlRequest;
     }
+
 
     private String createUploadKey(FileDirectory directory, String fileName, String extension) {
         return directory.getDirectoryName() + fileName + extension;
