@@ -1,4 +1,4 @@
-package com.abcdedu_backend.common.request;
+package com.abcdedu_backend.common.page.request;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
