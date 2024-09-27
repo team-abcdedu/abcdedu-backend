@@ -64,12 +64,15 @@ dependencies {
     //AWS S3 의존성 추가
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.619'
 
-    // Test용 Gson추가
+    // ========= Test
+    // Gson
     testImplementation 'com.google.code.gson:gson:2.11.0'
-
-    // Test용 redis 추가
+    // redis
     testImplementation "org.testcontainers:testcontainers:1.19.0"
     testImplementation "org.testcontainers:junit-jupiter:1.19.0"
+    // lombok
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     // DB 마이그레이션 툴 flyway 추가
     implementation 'org.flywaydb:flyway-core'
