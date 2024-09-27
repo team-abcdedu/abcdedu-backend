@@ -32,4 +32,9 @@ public class Survey extends BaseTimeEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member; // 설문을 만든 작성자, *관리자만 가능하다.*
 
+    public void update(String title, String description, String additionalDescription) {
+        this.title = title;
+        this.description = description;
+        this.additionalDescription = additionalDescription;
+    }
 }
