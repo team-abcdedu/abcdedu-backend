@@ -2,7 +2,6 @@ package com.abcdedu_backend.infra.file;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.lecture.entity.AssignmentAnswerType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
