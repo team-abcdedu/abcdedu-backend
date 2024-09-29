@@ -8,15 +8,15 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record GetLectureResponse(
+public record GetClassResponse(
         String title,
         String subTitle,
         String description,
         List<SubClassDto> subClasses
 ){
 
-    public static GetLectureResponse createGetClassResponse(Lecture lecture) {
-        return GetLectureResponse.builder()
+    public static GetClassResponse createGetClassResponse(Lecture lecture) {
+        return GetClassResponse.builder()
                 .title(lecture.getTitle())
                 .subTitle(lecture.getSubTitle())
                 .description(lecture.getDescription())

@@ -35,8 +35,8 @@ public class LectureController {
 
     @Operation(summary = "클래스 조회", description = "클래스(A, B, C, D) 및 서브 클래스를 조회합니다.")
     @GetMapping
-    public Response<List<GetLectureResponse>> GetLectures(){
-        List<GetLectureResponse> response = lectureService.getLectures();
+    public Response<List<GetClassResponse>> GetLectures(){
+        List<GetClassResponse> response = lectureService.getLectures();
         return Response.success(response);
     }
 

@@ -32,11 +32,11 @@ public class LectureService {
     private final AssignmentFileRepository assignmentFileRepository;
     private final AssignmentAnswerFileRepository assignmentAnswerFileRepository;
 
-    public List<GetLectureResponse> getLectures() {
+    public List<GetClassResponse> getLectures() {
         List<Lecture> lectures = lectureRepository.findAll();
 
         return lectures.stream()
-                .map(GetLectureResponse::createGetClassResponse)
+                .map(GetClassResponse::createGetClassResponse)
                 .toList();
     }
 
@@ -54,17 +54,17 @@ public class LectureService {
     }
 
     public List<GetAssignmentResponseV1> getAssignments(Long subLectureId) {
-        SubLecture findSublecture = subLectureRepository.getById(subLectureId);
-        return findSublecture.getAssignmentFiles().stream()
-                .map(assignmentFile -> new GetAssignmentResponseV1(assignmentFile.getAssignmentType().getType(), assignmentFile.getId()))
+        SubLecture subLecture = subLectureRepository.getById(subLectureId);
+        return subLecture.getAssignmentFiles().stream()
+                .map(GetAssignmentResponseV1::of)
                 .toList();
     }
 
     public GetAssignmentFileUrlResponse getAssignmentFileUrl(Long memberId, Long assignmentFileId) {
-        Member findMember = memberService.checkMember(memberId);
+        Member member = memberService.checkMember(memberId);
         AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
-        checkTheoryPermission(assignmentFile, findMember);
-        checkBasicPermission(findMember);
+        checkTheoryPermission(assignmentFile, member);
+        checkBasicPermission(member);
         String objectKey = assignmentFile.getObjectKey();
         String presignedUrl = fileHandler.getPresignedUrl(objectKey);
         if (assignmentFile.getAssignmentAnswerFile() == null){
