@@ -53,6 +53,17 @@ public class LectureService {
         assignmentFileRepository.save(assignmentFile);
     }
 
+    @Transactional
+    public void createAssignmentsFile(Long subLectureId, AssignmentType assignmentType, MultipartFile file) {
+        SubLecture subLecture = subLectureRepository.getById(subLectureId);
+        checkDuplicationFile(assignmentType, subLecture);
+
+        String objectKey = fileHandler.upload(file, FileDirectory.of(assignmentType.getType()), subLecture.getSubLectureName());
+
+        AssignmentFile assignmentFile = AssignmentFile.of(subLecture, assignmentType, objectKey);
+        assignmentFileRepository.save(assignmentFile);
+    }
+
     public List<GetAssignmentResponseV1> getAssignments(Long subLectureId) {
         SubLecture subLecture = subLectureRepository.getById(subLectureId);
         return subLecture.getAssignmentFiles().stream()
@@ -120,9 +131,35 @@ public class LectureService {
     }
 
     @Transactional
+    public void updateAssignmentFile(Long assignmentFileId, MultipartFile file) {
+        AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
+
+        String objectKey = fileHandler.upload(
+                file,
+                FileDirectory.of(assignmentFile.getAssignmentType().getType()),
+                assignmentFile.getSubLecture().getSubLectureName()
+        );
+
+        assignmentFile.updateObjectKey(objectKey);
+    }
+
+    @Transactional
     public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
+        AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
+
+        String objectKey = fileHandler.upload(
+                file,
+                FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
+                assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
+        );
+
+        assignmentAnswerFile.updateObjectKey(objectKey);
+    }
+
+    @Transactional
+    public void updateAssignmentAnswerFile(Long assignmentAnswerFileId, MultipartFile file) {
         AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
 
         String objectKey = fileHandler.upload(

@@ -42,9 +42,9 @@ public class LectureController {
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/자료) 등록 (admin)", description = """
+    @Operation(summary = "평가 파일 (이론/시험/자료) 등록 (admin) -----> ***** 관리자 기능으로 이전*****", description = """
             평가 파일 (이론/시험/자료)를 등록합니다.
-            AssignmentType 종류는 `THEORY(이론)`, `EXAM(시험)`, `DATA(자료)` 입니다""")
+            AssignmentType 종류는 `THEORY(이론)`, `EXAM(시험)`, `DATA(자료)` 입니다""", deprecated = true)
     @PostMapping("/sub-lecture/{subLectureId}/file")
     public Response<Void> createAssignmentFile(@PathVariable Long subLectureId,
                                                @JwtValidation Long memberId,
@@ -90,7 +90,7 @@ public class LectureController {
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/자료) 수정", description = "평가 파일 (이론/시험/자료)를 수정합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료) 수정 (admin) -----> ***** 관리자 기능으로 이전 *****", description = "평가 파일 (이론/시험/자료)를 수정합니다.", deprecated = true)
     @PatchMapping("/file/{assignmentFileId}")
     public Response<Void> updateAssignmentFile(@PathVariable Long assignmentFileId,
                                                      @JwtValidation Long memberId,
@@ -101,7 +101,7 @@ public class LectureController {
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (시험) 문제지 수정", description = "평가 파일 (시험) 문제지를 수정합니다.")
+    @Operation(summary = "평가 파일 (시험) 문제지 수정 (admin) -----> ***** 관리자 기능으로 이전 *****", description = "평가 파일 (시험) 문제지를 수정합니다.", deprecated = true)
     @PatchMapping("/answer-file/{assignmentAnswerFileId}")
     public Response<Void> updateAssignmentAnswerFile(@PathVariable Long assignmentAnswerFileId,
                                                      @JwtValidation Long memberId,

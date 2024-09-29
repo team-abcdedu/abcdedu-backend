@@ -78,9 +78,9 @@ public class MemberService {
         refreshTokenRepository.findById(refreshToken)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_REFRESH_TOKEN));
 
-        Long userId = jwtUtil.getMemberIdFromRefreshToken(refreshToken);
+        Long memberId = jwtUtil.getMemberIdFromRefreshToken(refreshToken);
 
-        String accessToken = jwtUtil.createAccessToken(userId);
+        String accessToken = jwtUtil.createAccessToken(memberId);
 
         return new ReissueResponse(accessToken);
     }

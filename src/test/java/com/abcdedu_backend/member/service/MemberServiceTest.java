@@ -146,6 +146,7 @@ class MemberServiceTest {
         doReturn(Optional.of(refreshToken)).when(refreshTokenRepository).findById(token);
         doReturn(1L).when(jwtUtil).getMemberIdFromRefreshToken(token);
         doReturn("accessToken").when(jwtUtil).createAccessToken(1L);
+//        doReturn()
 
         //when
         target.reissue(token);
