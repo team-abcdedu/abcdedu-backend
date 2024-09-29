@@ -75,7 +75,7 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 조회", description = "평가 파일 (이론/시험/자료/시험지)를 조회합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 조회 - 9/30 update", description = "평가 파일 (이론/시험/자료/시험지)를 조회합니다. `9/30 수정 : answerFileId 제거`")
     @GetMapping("/file/{assignmentFileId}")
     public Response<GetAssignmentFileUrlResponse> getAssignmentFileUrl(@PathVariable Long assignmentFileId, @JwtValidation Long memberId){
         GetAssignmentFileUrlResponse response = lectureService.getAssignmentFileUrl(memberId, assignmentFileId);

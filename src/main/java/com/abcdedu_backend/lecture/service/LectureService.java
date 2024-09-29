@@ -40,20 +40,6 @@ public class LectureService {
                 .toList();
     }
 
-    @Deprecated
-    @Transactional
-    public void createAssignmentsFile(Long subLectureId, Long memberId, AssignmentType assignmentType, MultipartFile file) {
-        Member member = memberService.checkMember(memberId);
-        checkAdminPermission(member);
-        SubLecture subLecture = subLectureRepository.getById(subLectureId);
-        checkDuplicationFile(assignmentType, subLecture);
-
-        String objectKey = fileHandler.upload(file, FileDirectory.of(assignmentType.getType()), subLecture.getSubLectureName());
-
-        AssignmentFile assignmentFile = AssignmentFile.of(subLecture, assignmentType, objectKey);
-        assignmentFileRepository.save(assignmentFile);
-    }
-
     @Transactional
     public void createAssignmentsFile(Long subLectureId, AssignmentType assignmentType, MultipartFile file) {
         SubLecture subLecture = subLectureRepository.getById(subLectureId);
@@ -79,13 +65,37 @@ public class LectureService {
         checkBasicPermission(member);
         String objectKey = assignmentFile.getObjectKey();
         String presignedUrl = fileHandler.getPresignedUrl(objectKey);
-        if (assignmentFile.getAssignmentAnswerFile() == null){
-            return GetAssignmentFileUrlResponse.builder()
-                    .filePresignedUrl(presignedUrl)
-                    .build();
-        }
 
-        return new GetAssignmentFileUrlResponse(presignedUrl, assignmentFile.getAssignmentAnswerFile().getId());
+        return new GetAssignmentFileUrlResponse(presignedUrl);
+    }
+
+    @Transactional
+    public void updateAssignmentFile(Long assignmentFileId, MultipartFile file) {
+        AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
+
+        String objectKey = fileHandler.upload(
+                file,
+                FileDirectory.of(assignmentFile.getAssignmentType().getType()),
+                assignmentFile.getSubLecture().getSubLectureName()
+        );
+
+        assignmentFile.updateObjectKey(objectKey);
+    }
+
+    @Deprecated
+    @Transactional
+    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, MultipartFile file) {
+        Member findMember = memberService.checkMember(memberId);
+        checkAdminPermission(findMember);
+        AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
+
+        String objectKey = fileHandler.upload(
+                file,
+                FileDirectory.ASSIGNMENT_ANSWER_FILE,
+                assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
+        );
+
+        assignmentAnswerFile.updateObjectKey(objectKey);
     }
 
     @Deprecated
@@ -96,7 +106,7 @@ public class LectureService {
         AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
 
         String objectKey = fileHandler.upload(
-                file, 
+                file,
                 FileDirectory.ASSIGNMENT_ANSWER_FILE,
                 assignmentFile.getSubLecture().getSubLectureName());
 
@@ -120,6 +130,20 @@ public class LectureService {
 
     @Deprecated
     @Transactional
+    public void createAssignmentsFile(Long subLectureId, Long memberId, AssignmentType assignmentType, MultipartFile file) {
+        Member member = memberService.checkMember(memberId);
+        checkAdminPermission(member);
+        SubLecture subLecture = subLectureRepository.getById(subLectureId);
+        checkDuplicationFile(assignmentType, subLecture);
+
+        String objectKey = fileHandler.upload(file, FileDirectory.of(assignmentType.getType()), subLecture.getSubLectureName());
+
+        AssignmentFile assignmentFile = AssignmentFile.of(subLecture, assignmentType, objectKey);
+        assignmentFileRepository.save(assignmentFile);
+    }
+
+    @Deprecated
+    @Transactional
     public void updateAssignmentFile(Long memberId, Long assignmentFileId, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
@@ -132,34 +156,6 @@ public class LectureService {
         );
 
         assignmentFile.updateObjectKey(objectKey);
-    }
-
-    @Transactional
-    public void updateAssignmentFile(Long assignmentFileId, MultipartFile file) {
-        AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
-
-        String objectKey = fileHandler.upload(
-                file,
-                FileDirectory.of(assignmentFile.getAssignmentType().getType()),
-                assignmentFile.getSubLecture().getSubLectureName()
-        );
-
-        assignmentFile.updateObjectKey(objectKey);
-    }
-
-    @Transactional
-    public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, MultipartFile file) {
-        Member findMember = memberService.checkMember(memberId);
-        checkAdminPermission(findMember);
-        AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
-
-        String objectKey = fileHandler.upload(
-                file,
-                FileDirectory.ASSIGNMENT_ANSWER_FILE,
-                assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
-        );
-
-        assignmentAnswerFile.updateObjectKey(objectKey);
     }
 
     private void checkDuplicationFile(AssignmentType assignmentType, SubLecture subLecture) {
