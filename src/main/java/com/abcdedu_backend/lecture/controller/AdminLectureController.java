@@ -2,6 +2,8 @@ package com.abcdedu_backend.lecture.controller;
 
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.lecture.entity.AssignmentType;
 import com.abcdedu_backend.lecture.service.LectureService;
 import com.abcdedu_backend.utils.Response;
@@ -40,6 +42,9 @@ public class AdminLectureController {
     public Response<Void> createAssignmentFile(@PathVariable Long subLectureId,
                                                @RequestParam AssignmentType assignmentType,
                                                @RequestPart("file") MultipartFile multipartFile){
+        if (multipartFile.isEmpty()){
+            throw new ApplicationException(ErrorCode.FILE_NOT_FOUND);
+        }
         lectureService.createAssignmentsFile(subLectureId, assignmentType, multipartFile);
         return Response.success();
     }
@@ -50,6 +55,9 @@ public class AdminLectureController {
     @PatchMapping("/file/{assignmentFileId}")
     public Response<Void> updateAssignmentFile(@PathVariable Long assignmentFileId,
                                                @RequestPart("file") MultipartFile multipartFile){
+        if (multipartFile.isEmpty()){
+            throw new ApplicationException(ErrorCode.FILE_NOT_FOUND);
+        }
         lectureService.updateAssignmentFile(assignmentFileId, multipartFile);
         return Response.success();
     }

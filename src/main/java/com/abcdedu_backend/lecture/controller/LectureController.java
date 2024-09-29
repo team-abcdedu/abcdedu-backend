@@ -40,6 +40,21 @@ public class LectureController {
         return Response.success(response);
     }
 
+    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 리스트 조회", description = "평가 파일 (이론/시험/자료/시험지) 리스트를 조회합니다.")
+    @GetMapping("/sub-lecture/{subLectureId}")
+    public Response<List<GetAssignmentResponseV1>> getAssignments(@PathVariable Long subLectureId){
+        List<GetAssignmentResponseV1> response =lectureService.getAssignments(subLectureId);
+        return Response.success(response);
+    }
+
+    @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
+    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 조회 - 9/30 update", description = "평가 파일 (이론/시험/자료/시험지)를 조회합니다. `9/30 수정 : answerFileId 제거`")
+    @GetMapping("/file/{assignmentFileId}")
+    public Response<GetAssignmentFileUrlResponse> getAssignmentFileUrl(@PathVariable Long assignmentFileId, @JwtValidation Long memberId){
+        GetAssignmentFileUrlResponse response = lectureService.getAssignmentFileUrl(memberId, assignmentFileId);
+        return Response.success(response);
+    }
+
     @Deprecated
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
@@ -61,25 +76,10 @@ public class LectureController {
     @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 문제지 등록 (admin)", description = "평가 파일 (이론/시험/자료) 문제지를 등록합니다.", deprecated = true)
     @PostMapping("/assignment-file/{assignmentFileId}/answer")
     public Response<Void> createAssignmentAnswerFile(@PathVariable Long assignmentFileId,
-                                               @JwtValidation Long memberId,
-                                               @RequestPart("file") MultipartFile multipartFile){
+                                                     @JwtValidation Long memberId,
+                                                     @RequestPart("file") MultipartFile multipartFile){
         lectureService.createAssignmentAnswerFile(assignmentFileId, memberId, multipartFile);
         return Response.success();
-    }
-
-    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 리스트 조회", description = "평가 파일 (이론/시험/자료/시험지) 리스트를 조회합니다.")
-    @GetMapping("/sub-lecture/{subLectureId}")
-    public Response<List<GetAssignmentResponseV1>> getAssignments(@PathVariable Long subLectureId){
-        List<GetAssignmentResponseV1> response =lectureService.getAssignments(subLectureId);
-        return Response.success(response);
-    }
-
-    @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 조회 - 9/30 update", description = "평가 파일 (이론/시험/자료/시험지)를 조회합니다. `9/30 수정 : answerFileId 제거`")
-    @GetMapping("/file/{assignmentFileId}")
-    public Response<GetAssignmentFileUrlResponse> getAssignmentFileUrl(@PathVariable Long assignmentFileId, @JwtValidation Long memberId){
-        GetAssignmentFileUrlResponse response = lectureService.getAssignmentFileUrl(memberId, assignmentFileId);
-        return Response.success(response);
     }
 
     @Deprecated

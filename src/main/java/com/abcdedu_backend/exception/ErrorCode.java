@@ -64,7 +64,10 @@ public enum ErrorCode {
     FILE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 관련 서버 에러입니다"),
 
     // 공통 과제
-    HOMEWORK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공통과제를 찾을 수 없습니다.");
+    HOMEWORK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공통과제를 찾을 수 없습니다."),
+
+    //파일 에러
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다.");
 
     private HttpStatus status;
     private String message;
