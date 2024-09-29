@@ -19,10 +19,13 @@ import com.abcdedu_backend.member.service.MemberService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,12 +77,12 @@ class LectureServiceTest {
         verify(lectureRepository, times(1)).findAll();
     }
 
-    @Test
-    void 클래스_평가를_성공적으로_업로드한다() {
+    @ParameterizedTest
+    @EnumSource(AssignmentType.class)
+    void 클래스_평가를_성공적으로_업로드한다(AssignmentType assignmentType) {
         // Given: Mock 데이터 준비
         Long subLectureId = 1L;
         Long memberId = 1L;
-        AssignmentType assignmentType = AssignmentType.DATA;
         MockMultipartFile mockFile = new MockMultipartFile("file", "test.txt", "text/plain", "".getBytes());
 
         Member member = createMember();
@@ -125,7 +128,7 @@ class LectureServiceTest {
     }
 
     @Test
-    void 과제를_조회한다() {
+    void 평가파일_리스트를_조회한다() {
         // Given
         Long subLectureId = 1L;
         AssignmentFile assignmentFile1 = createAssignmentFile(AssignmentType.DATA, 1L);
@@ -147,13 +150,14 @@ class LectureServiceTest {
         assertThat(assignmentFile2.getAssignmentType().getType()).isEqualTo(result.get(1).assignmentType());
     }
 
-    @Test
-    void 과제를_조회하고_URL을_가져온다() {
+    @ParameterizedTest
+    @EnumSource(value = AssignmentType.class, names = "THEORY", mode = EnumSource.Mode.EXCLUDE)
+    void 평가파일을_조회하고_presignedURL을_가져온다_이론제외(AssignmentType assignmentType) {
         // Given
         Long memberId = 1L;
         Long assignmentFileId = 1L;
         Member mockMember = mock(Member.class);
-        AssignmentFile assignmentFile = createAssignmentFile(AssignmentType.DATA, 1L);
+        AssignmentFile assignmentFile = createAssignmentFile(assignmentType, 1L);
         String presignedUrl = "http://example.com/presigned-url";
 
         doReturn(mockMember).when(memberService).checkMember(memberId);
@@ -166,7 +170,91 @@ class LectureServiceTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.filePresignedUrl()).isEqualTo(presignedUrl);
-        assertThat(result.assignmentAnswerFileId()).isNull();
+    }
+
+    @Test
+    void 이론파일을_조회하고_presignedURL을_가져온다() {
+        // Given
+        Long memberId = 1L;
+        Long assignmentFileId = 1L;
+        Member mockMember = createMember();
+        AssignmentFile assignmentFile = createAssignmentFile(AssignmentType.THEORY, 1L);
+        String presignedUrl = "http://example.com/presigned-url";
+
+        doReturn(mockMember).when(memberService).checkMember(memberId);
+        doReturn(assignmentFile).when(assignmentFileRepository).getById(assignmentFileId);
+        doReturn(presignedUrl).when(fileHandler).getPresignedUrl(assignmentFile.getObjectKey());
+
+        // When
+        GetAssignmentFileUrlResponse result = target.getAssignmentFileUrl(memberId, assignmentFileId);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.filePresignedUrl()).isEqualTo(presignedUrl);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AssignmentType.class, names = "THEORY")
+    void 이론파일은_새싹등급일때_조회하지_못한다() {
+        // Given
+        Long memberId = 1L;
+        Long assignmentFileId = 1L;
+        Member mockMember = createBasicMember();
+        AssignmentFile assignmentFile = createAssignmentFile(AssignmentType.THEORY, 1L);
+
+        doReturn(mockMember).when(memberService).checkMember(memberId);
+        doReturn(assignmentFile).when(assignmentFileRepository).getById(assignmentFileId);
+
+        // When & Then
+        Assertions.assertThrows(ApplicationException.class,
+                () -> target.getAssignmentFileUrl(memberId, assignmentFileId));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AssignmentType.class, names = "THEORY")
+    void 클래스_이론_평가를_성공적으로_업로드한다(AssignmentType assignmentType) {
+        // Given
+        Long subLectureId = 1L;
+        Long memberId = 1L;
+        MockMultipartFile mockFile = new MockMultipartFile("file", "test.txt", "text/plain", "".getBytes());
+
+        Member member = createMember();
+        SubLecture subLecture = createSubLecture(createLecture());
+
+        // When
+        doReturn(member).when(memberService).checkMember(memberId);
+        doReturn(subLecture).when(subLectureRepository).getById(subLectureId);
+        doReturn("s3/object/key").when(fileHandler).upload(mockFile, FileDirectory.of(assignmentType.getType()), subLecture.getSubLectureName());
+
+        // Then
+        target.createAssignmentsFile(subLectureId, memberId, assignmentType, mockFile);
+
+        verify(memberService, times(1)).checkMember(memberId);
+        verify(subLectureRepository, times(1)).getById(subLectureId);
+        verify(fileHandler, times(1)).upload(mockFile, FileDirectory.of(assignmentType.getType()), subLecture.getSubLectureName());
+        verify(assignmentFileRepository, times(1)).save(any(AssignmentFile.class));
+    }
+
+    @Test
+    void 평가파일을_업데이트한다() {
+        // Given
+        Long assignmentFileId = 1L;
+        MultipartFile mockFile = mock(MultipartFile.class);
+        SubLecture subLecture = createSubLecture(createLecture());
+        AssignmentFile assignmentFile = createAssignmentFile(AssignmentType.ANSWER, assignmentFileId, subLecture);
+        String updatedObjectKey = "updateObjectKey";
+
+        doReturn(assignmentFile).when(assignmentFileRepository).getById(assignmentFileId);
+        doReturn(updatedObjectKey).when(fileHandler).upload(mockFile, FileDirectory.of(assignmentFile.getAssignmentType().getType()), assignmentFile.getSubLecture().getSubLectureName());
+
+        // When
+        target.updateAssignmentFile(assignmentFileId, mockFile);
+
+        // Then
+        verify(assignmentFileRepository, times(1)).getById(assignmentFileId);
+        verify(fileHandler, times(1)).upload(mockFile,
+                FileDirectory.of(assignmentFile.getAssignmentType().getType()),
+                assignmentFile.getSubLecture().getSubLectureName());
     }
 
     private AssignmentFile createAssignmentFile(AssignmentType type, Long id) {
@@ -177,11 +265,28 @@ class LectureServiceTest {
                 .build();
     }
 
+    private AssignmentFile createAssignmentFile(AssignmentType type, Long id, SubLecture subLecture) {
+        return AssignmentFile.builder()
+                .id(id)
+                .assignmentType(type)
+                .objectKey("objectKey")
+                .subLecture(subLecture)
+                .build();
+    }
+
     private Member createMember() {
         return Member.builder()
                 .id(1L)
                 .name("관리자")
                 .role(MemberRole.ADMIN)
+                .build();
+    }
+
+    private Member createBasicMember() {
+        return Member.builder()
+                .id(1L)
+                .name("새싹")
+                .role(MemberRole.BASIC)
                 .build();
     }
 
