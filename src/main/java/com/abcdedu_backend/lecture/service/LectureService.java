@@ -40,6 +40,7 @@ public class LectureService {
                 .toList();
     }
 
+    @Deprecated
     @Transactional
     public void createAssignmentsFile(Long subLectureId, Long memberId, AssignmentType assignmentType, MultipartFile file) {
         Member member = memberService.checkMember(memberId);
@@ -87,6 +88,7 @@ public class LectureService {
         return new GetAssignmentFileUrlResponse(presignedUrl, assignmentFile.getAssignmentAnswerFile().getId());
     }
 
+    @Deprecated
     @Transactional
     public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, MultipartFile file) {
         Member member = memberService.checkMember(memberId);
@@ -95,7 +97,7 @@ public class LectureService {
 
         String objectKey = fileHandler.upload(
                 file, 
-                FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
+                FileDirectory.ASSIGNMENT_ANSWER_FILE,
                 assignmentFile.getSubLecture().getSubLectureName());
 
         AssignmentAnswerFile assignmentAnswerFile = AssignmentAnswerFile.builder()
@@ -106,6 +108,7 @@ public class LectureService {
         assignmentAnswerFileRepository.save(assignmentAnswerFile);
     }
 
+    @Deprecated
     public GetAssignmentAnswerFileUrlResponse getAssignmentAnswerFileUrl(Long memberId, Long assignmentAnswerFileId) {
         Member findMember = memberService.checkMember(memberId);
         AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
@@ -115,6 +118,7 @@ public class LectureService {
         return new GetAssignmentAnswerFileUrlResponse(presignedUrl);
     }
 
+    @Deprecated
     @Transactional
     public void updateAssignmentFile(Long memberId, Long assignmentFileId, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
@@ -151,20 +155,7 @@ public class LectureService {
 
         String objectKey = fileHandler.upload(
                 file,
-                FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
-                assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
-        );
-
-        assignmentAnswerFile.updateObjectKey(objectKey);
-    }
-
-    @Transactional
-    public void updateAssignmentAnswerFile(Long assignmentAnswerFileId, MultipartFile file) {
-        AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
-
-        String objectKey = fileHandler.upload(
-                file,
-                FileDirectory.ASSIGNMENT_EXAM_ANSWER_FILE,
+                FileDirectory.ASSIGNMENT_ANSWER_FILE,
                 assignmentAnswerFile.getAssignmentFile().getSubLecture().getSubLectureName()
         );
 

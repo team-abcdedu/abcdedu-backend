@@ -34,8 +34,8 @@ public class AdminLectureController {
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
     @Operation(summary = "평가 파일 (이론/시험/자료) 등록 (admin)", description = """
-            평가 파일 (이론/시험/자료)를 등록합니다.
-            AssignmentType 종류는 `THEORY(이론)`, `EXAM(시험)`, `DATA(자료)`, `ANSWER(답안지)` 입니다""")
+            평가 파일 (이론/시험/자료/시험지)를 등록합니다.
+            AssignmentType 종류는 `THEORY(이론)`, `EXAM(시험)`, `DATA(자료)`, `ANSWER(시험지)` 입니다""")
     @PostMapping("/sub-lecture/{subLectureId}/file")
     public Response<Void> createAssignmentFile(@PathVariable Long subLectureId,
                                                @RequestParam AssignmentType assignmentType,
@@ -46,7 +46,7 @@ public class AdminLectureController {
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/자료/문제지) 수정 ", description = "평가 파일 (이론/시험/자료/답안지)를 수정합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 수정 ", description = "평가 파일 (이론/시험/자료/시험지)를 수정합니다.")
     @PatchMapping("/file/{assignmentFileId}")
     public Response<Void> updateAssignmentFile(@PathVariable Long assignmentFileId,
                                                @RequestPart("file") MultipartFile multipartFile){

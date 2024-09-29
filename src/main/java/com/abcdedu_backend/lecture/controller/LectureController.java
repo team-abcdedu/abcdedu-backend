@@ -40,9 +40,10 @@ public class LectureController {
         return Response.success(response);
     }
 
+    @Deprecated
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/자료) 등록 (admin) -----> ***** 관리자 기능으로 이전*****", description = """
+    @Operation(summary = "평가 파일 (이론/시험/자료) 등록 (admin) ", description = """
             평가 파일 (이론/시험/자료)를 등록합니다.
             AssignmentType 종류는 `THEORY(이론)`, `EXAM(시험)`, `DATA(자료)` 입니다""", deprecated = true)
     @PostMapping("/sub-lecture/{subLectureId}/file")
@@ -54,9 +55,10 @@ public class LectureController {
         return Response.success();
     }
 
+    @Deprecated
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다. (admin만 가능)", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/자료) 문제지 등록 (admin)", description = "평가 파일 (이론/시험/자료) 문제지를 등록합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 문제지 등록 (admin)", description = "평가 파일 (이론/시험/자료) 문제지를 등록합니다.", deprecated = true)
     @PostMapping("/assignment-file/{assignmentFileId}/answer")
     public Response<Void> createAssignmentAnswerFile(@PathVariable Long assignmentFileId,
                                                @JwtValidation Long memberId,
@@ -65,7 +67,7 @@ public class LectureController {
         return Response.success();
     }
 
-    @Operation(summary = "평가 파일 (이론/시험/자료) 리스트 조회", description = "평가 파일 (이론/시험/자료) 리스트를 조회합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 리스트 조회", description = "평가 파일 (이론/시험/자료/시험지) 리스트를 조회합니다.")
     @GetMapping("/sub-lecture/{subLectureId}")
     public Response<List<GetAssignmentResponseV1>> getAssignments(@PathVariable Long subLectureId){
         List<GetAssignmentResponseV1> response =lectureService.getAssignments(subLectureId);
@@ -73,21 +75,23 @@ public class LectureController {
     }
 
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (이론/시험/자료) 조회", description = "평가 파일 (이론/시험/자료)를 조회합니다.")
+    @Operation(summary = "평가 파일 (이론/시험/자료/시험지) 조회", description = "평가 파일 (이론/시험/자료/시험지)를 조회합니다.")
     @GetMapping("/file/{assignmentFileId}")
     public Response<GetAssignmentFileUrlResponse> getAssignmentFileUrl(@PathVariable Long assignmentFileId, @JwtValidation Long memberId){
         GetAssignmentFileUrlResponse response = lectureService.getAssignmentFileUrl(memberId, assignmentFileId);
         return Response.success(response);
     }
 
+    @Deprecated
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
-    @Operation(summary = "평가 파일 (시험) 문제지 조회", description = "평가 파일(시험) 문제지를 조회합니다.")
+    @Operation(summary = "평가 파일 (시험) 문제지 조회", description = "평가 파일(시험) 문제지를 조회합니다.", deprecated = true)
     @GetMapping("/answer-file/{assignmentAnswerFileId}")
     public Response<GetAssignmentAnswerFileUrlResponse> getAssignmentAnswerFileUrl(@PathVariable Long assignmentAnswerFileId, @JwtValidation Long memberId){
         GetAssignmentAnswerFileUrlResponse response = lectureService.getAssignmentAnswerFileUrl(memberId, assignmentAnswerFileId);
         return Response.success(response);
     }
 
+    @Deprecated
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
     @Operation(summary = "평가 파일 (이론/시험/자료) 수정 (admin) -----> ***** 관리자 기능으로 이전 *****", description = "평가 파일 (이론/시험/자료)를 수정합니다.", deprecated = true)
@@ -99,6 +103,7 @@ public class LectureController {
         return Response.success();
     }
 
+    @Deprecated
     @ApiResponse(responseCode = "403", description = "api 권한이 없습니다.", content = @Content)
     @ApiResponse(responseCode = "500", description = "S3 업로드에 실패하였습니다.", content = @Content)
     @Operation(summary = "평가 파일 (시험) 문제지 수정 (admin) -----> ***** 관리자 기능으로 이전 *****", description = "평가 파일 (시험) 문제지를 수정합니다.", deprecated = true)
