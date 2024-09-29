@@ -161,4 +161,10 @@ public class MemberService {
                 .email(member.getEmail())
                 .build();
     }
+
+    public void checkAdminPermission(Member member) {
+        if (!member.isAdmin()){
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
+        }
+    }
 }
