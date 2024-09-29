@@ -40,7 +40,7 @@ public class SubLecture {
         return lecture.getTitle() + "-" + this.orderNumber.toString();
     }
 
-    public boolean hasDuplicationFile(AssignmentType assignmentType) {
+    public boolean hasAssignmentType(AssignmentType assignmentType) {
         return assignmentFiles.stream()
                 .anyMatch(assignmentFile -> assignmentFile.getAssignmentType() == assignmentType);
     }

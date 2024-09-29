@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @Transactional(readOnly = true)
 @Service
@@ -54,12 +53,6 @@ public class LectureService {
         assignmentFileRepository.save(assignmentFile);
     }
 
-    private void checkDuplicationFile(AssignmentType assignmentType, SubLecture subLecture) {
-        if (subLecture.hasDuplicationFile(assignmentType)){
-            throw new ApplicationException(ErrorCode.ASSIGNMENT_FILE_DUPLICATION);
-        }
-    }
-
     public List<GetAssignmentResponseV1> getAssignments(Long subLectureId) {
         SubLecture findSublecture = subLectureRepository.getById(subLectureId);
         return findSublecture.getAssignmentFiles().stream()
@@ -69,7 +62,7 @@ public class LectureService {
 
     public GetAssignmentFileUrlResponse getAssignmentFileUrl(Long memberId, Long assignmentFileId) {
         Member findMember = memberService.checkMember(memberId);
-        AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
+        AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
         checkTheoryPermission(assignmentFile, findMember);
         checkBasicPermission(findMember);
         String objectKey = assignmentFile.getObjectKey();
@@ -87,7 +80,7 @@ public class LectureService {
     public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, MultipartFile file) {
         Member member = memberService.checkMember(memberId);
         checkAdminPermission(member);
-        AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
+        AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
 
         String objectKey = fileHandler.upload(
                 file, 
@@ -104,7 +97,7 @@ public class LectureService {
 
     public GetAssignmentAnswerFileUrlResponse getAssignmentAnswerFileUrl(Long memberId, Long assignmentAnswerFileId) {
         Member findMember = memberService.checkMember(memberId);
-        AssignmentAnswerFile assignmentAnswerFile = findAssignmentAnswerFile(assignmentAnswerFileId);
+        AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
         checkBasicPermission(findMember);
         String objectKey = assignmentAnswerFile.getObjectKey();
         String presignedUrl = fileHandler.getPresignedUrl(objectKey);
@@ -115,7 +108,7 @@ public class LectureService {
     public void updateAssignmentFile(Long memberId, Long assignmentFileId, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
-        AssignmentFile assignmentFile = findAssignmentFile(assignmentFileId);
+        AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
 
         String objectKey = fileHandler.upload(
                 file,
@@ -130,7 +123,7 @@ public class LectureService {
     public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
-        AssignmentAnswerFile assignmentAnswerFile = findAssignmentAnswerFile(assignmentAnswerFileId);
+        AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
 
         String objectKey = fileHandler.upload(
                 file,
@@ -141,15 +134,16 @@ public class LectureService {
         assignmentAnswerFile.updateObjectKey(objectKey);
     }
 
+    private void checkDuplicationFile(AssignmentType assignmentType, SubLecture subLecture) {
+        if (subLecture.hasAssignmentType(assignmentType)){
+            throw new ApplicationException(ErrorCode.ASSIGNMENT_FILE_DUPLICATION);
+        }
+    }
+
     private void checkAdminPermission(Member member) {
         if (!member.isAdmin()){
             throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
-    }
-
-    private AssignmentFile findAssignmentFile(Long assignmentFileId) {
-        return assignmentFileRepository.findById(assignmentFileId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_FILE_NOT_FOUND));
     }
 
     private void checkTheoryPermission(AssignmentFile assignmentFile, Member findMember) {
@@ -161,10 +155,5 @@ public class LectureService {
     private void checkBasicPermission(Member findMember) {
         if (findMember.isBasic()){throw new ApplicationException(ErrorCode.BASIC_INVALID_PERMISSION);
         }
-    }
-
-    private AssignmentAnswerFile findAssignmentAnswerFile(Long assignmentAnswerFileId) {
-        return assignmentAnswerFileRepository.findById(assignmentAnswerFileId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.ASSIGNMENT_ANSWER_FILE_NOT_FOUND));
     }
 }
