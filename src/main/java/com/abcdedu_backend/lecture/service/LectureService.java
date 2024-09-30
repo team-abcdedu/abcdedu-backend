@@ -178,7 +178,7 @@ public class LectureService {
 
     private void checkBasicPermission(Member findMember) {
         if (findMember.isBasic()){
-            throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
+            throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);=
         }
     }
 }

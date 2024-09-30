@@ -107,7 +107,7 @@ public class LectureControllerTest {
     void 평가_파일_URL_조회_권한_없음_실패() throws Exception {
         // Given
         final String url = "/lectures/file/1";
-
+      
         doThrow(new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION))
                 .when(lectureService)
                 .getAssignmentFileUrl(1L, 1L);
