@@ -108,7 +108,7 @@ public class LectureControllerTest {
         // Given
         final String url = "/lectures/file/1";
 
-        doThrow(new ApplicationException(ErrorCode.BASIC_INVALID_PERMISSION))
+        doThrow(new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION))
                 .when(lectureService)
                 .getAssignmentFileUrl(1L, 1L);
 
