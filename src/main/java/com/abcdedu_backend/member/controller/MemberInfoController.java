@@ -51,7 +51,6 @@ public class MemberInfoController {
     public Response<Void> updateMemberInfo(@JwtValidation Long memberId,
                                                  @Valid @ModelAttribute UpdateMemberInfoRequest updateMemberInfoRequest,
                                                  @RequestPart(value = "file", required = false) MultipartFile multipartFile){
-        System.out.println(multipartFile);
         memberService.updateMemberInfo(memberId, updateMemberInfoRequest, multipartFile);
         return Response.success();
     }
