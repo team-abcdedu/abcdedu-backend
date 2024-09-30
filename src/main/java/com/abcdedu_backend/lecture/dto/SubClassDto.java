@@ -10,7 +10,7 @@ public record SubClassDto (
         String description,
         Long subClassId
 ){
-    public static SubClassDto createSubClassDto(SubLecture subLecture) {
+    public static SubClassDto of(SubLecture subLecture) {
         return SubClassDto.builder()
                 .title(subLecture.getTitle())
                 .orderNumber(subLecture.getOrderNumber())

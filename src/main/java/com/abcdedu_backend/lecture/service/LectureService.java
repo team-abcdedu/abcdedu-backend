@@ -36,7 +36,7 @@ public class LectureService {
         List<Lecture> lectures = lectureRepository.findAll();
 
         return lectures.stream()
-                .map(GetClassResponse::createGetClassResponse)
+                .map(GetClassResponse::of)
                 .toList();
     }
 

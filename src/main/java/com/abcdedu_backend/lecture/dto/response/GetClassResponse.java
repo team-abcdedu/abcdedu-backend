@@ -15,7 +15,7 @@ public record GetClassResponse(
         List<SubClassDto> subClasses
 ){
 
-    public static GetClassResponse createGetClassResponse(Lecture lecture) {
+    public static GetClassResponse of(Lecture lecture) {
         return GetClassResponse.builder()
                 .title(lecture.getTitle())
                 .subTitle(lecture.getSubTitle())
@@ -26,7 +26,7 @@ public record GetClassResponse(
 
     private static List<SubClassDto> convertToSubClassesDto(List<SubLecture> subLectures) {
         return subLectures.stream()
-                .map(SubClassDto::createSubClassDto)
+                .map(SubClassDto::of)
                 .toList();
     }
 }
