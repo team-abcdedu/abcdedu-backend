@@ -172,12 +172,13 @@ public class LectureService {
 
     private void checkTheoryPermission(AssignmentFile assignmentFile, Member findMember) {
         if (assignmentFile.getAssignmentType() == AssignmentType.THEORY && !findMember.isAdmin()){
-            throw new ApplicationException(ErrorCode.ADMIN_INVALID_PERMISSION);
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
     }
 
     private void checkBasicPermission(Member findMember) {
-        if (findMember.isBasic()){throw new ApplicationException(ErrorCode.BASIC_INVALID_PERMISSION);
+        if (findMember.isBasic()){
+            throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);=
         }
     }
 }
