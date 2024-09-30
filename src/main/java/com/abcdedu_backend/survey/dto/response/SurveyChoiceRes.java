@@ -1,9 +1,20 @@
 package com.abcdedu_backend.survey.dto.response;
 
-public class SurveyChoiceRes {
+import com.abcdedu_backend.survey.entity.SurveyQuestionChoice;
+import lombok.Builder;
 
-    public record getDetail(String orderNumber,
-                            String description) {
+public class SurveyChoiceRes {
+    @Builder
+    public record Detail(
+            Integer orderNumber,
+            String description) {
+
+        public static Detail toDto(SurveyQuestionChoice choice) {
+            return Detail.builder()
+                    .orderNumber(choice.getOrderNumber())
+                    .description(choice.getDescription())
+                    .build();
+        }
     }
 
 
