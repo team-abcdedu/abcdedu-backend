@@ -70,7 +70,9 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers:1.19.0"
     testImplementation "org.testcontainers:junit-jupiter:1.19.0"
 
-
+    // DB 마이그레이션 툴 flyway 추가
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-mysql'
 
 }
 
