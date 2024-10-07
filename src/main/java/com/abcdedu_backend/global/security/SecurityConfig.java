@@ -83,7 +83,7 @@ public class SecurityConfig {
             .requestMatchers(
                 "/auth/**",
                 "/swagger-ui/**",
-                "/actuator/health"
+                "/actuator/**"
             ).permitAll()
             .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name()) // ADMIN 권한만 접근 가능
             .anyRequest().permitAll() // TODO

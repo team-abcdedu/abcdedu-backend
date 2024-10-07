@@ -15,6 +15,7 @@ if [ ${IS_BLUE} -eq 1 ]; then
   sudo nginx -s reload
   docker-compose stop blue
   docker-compose rm blue
+  docker image prune -a -f
 
 else
   docker-compose up -d blue
@@ -31,4 +32,5 @@ else
   sudo nginx -s reload
   docker-compose stop green
   docker-compose rm green
+  docker image prune -a -f
 fi
