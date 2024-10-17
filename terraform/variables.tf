@@ -56,3 +56,18 @@ variable "environment" {
   description = "The environment for the resources (e.g., dev, prod)"
   type        = string
 }
+
+variable "acm_domain_name" {
+  description = "acm 발급 도메인 이름"
+  type = string
+}
+
+variable "alb_name" {
+  description = "alb name" # todo: dev, prod 이름 통합
+  type = string
+}
+
+variable "target_group_name" {
+  description = "target group name" # todo: dev, prod 이름 통합
+  type = string
+}

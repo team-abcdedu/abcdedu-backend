@@ -1,5 +1,5 @@
 resource "aws_acm_certificate" "ssl_certificate" {
-  domain_name               = "*.abcdedu.com"
+  domain_name               = var.acm_domain_name
   key_algorithm             = "RSA_2048"
 
   options {

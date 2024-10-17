@@ -1,5 +1,5 @@
 resource "aws_lb" "alb"{
-  name = "${var.environment}-abcdedu-ALB"
+  name = var.alb_name
   internal = false
   load_balancer_type = "application"
   security_groups = [aws_security_group.vpc.id]
@@ -8,7 +8,7 @@ resource "aws_lb" "alb"{
 }
 
 resource "aws_lb_target_group" "target_group" {
-  name                              = "${var.environment}-abcdedu-target-group"
+  name                              = var.target_group_name
   ip_address_type                   = "ipv4"
   port                              = 80
   protocol                          = "HTTP"
