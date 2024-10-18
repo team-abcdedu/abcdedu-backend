@@ -1,6 +1,6 @@
-package com.abcdedu_backend.lecture.repository;
+package com.abcdedu_backend.lecture.repository.v2;
 
-import com.abcdedu_backend.lecture.entity.AssignmentSubmission;
+import com.abcdedu_backend.lecture.entity.v2.AssignmentSubmission;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

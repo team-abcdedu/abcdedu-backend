@@ -11,8 +11,6 @@ public enum ErrorCode {
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 오류"),
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "사용자가 권한이 없습니다."),
     // 역할별 에러
-    ADMIN_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "관리자만 가능한 기능 입니다."),
-    BASIC_INVALID_PERMISSION(HttpStatus.FORBIDDEN, "학생 이상만 가능한 기능 입니다."),
     STUDENT_VALID_PERMISSION(HttpStatus.FORBIDDEN, "학생등급 이상 가능"),
     ADMIN_VALID_PERMISSION(HttpStatus.FORBIDDEN, "관리자 전용"),
     ADMIN_OR_WRITER_PERMISSION(HttpStatus.FORBIDDEN, "본인과 관리자 전용"),
@@ -29,7 +27,7 @@ public enum ErrorCode {
 
     // 게시판
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 포스트가 없습니다."),
-    POST_NOT_ALLOWED_COMMENT(HttpStatus.FORBIDDEN, "댓글을 허용하지 않는 게시글 입니다."),
+    POST_NOT_ALLOWED_COMMENT(HttpStatus.BAD_REQUEST, "댓글을 허용하지 않는 게시글 입니다."),
 
     // 댓글
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다."),
@@ -64,7 +62,10 @@ public enum ErrorCode {
     FILE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 관련 서버 에러입니다"),
 
     // 공통 과제
-    HOMEWORK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공통과제를 찾을 수 없습니다.");
+    HOMEWORK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공통과제를 찾을 수 없습니다."),
+
+    //파일 에러
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다.");
 
     private HttpStatus status;
     private String message;

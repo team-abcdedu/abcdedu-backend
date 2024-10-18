@@ -1,5 +1,7 @@
 package com.abcdedu_backend.lecture.entity;
 
+import com.abcdedu_backend.lecture.entity.v2.AssignmentQuestion;
+import com.abcdedu_backend.lecture.entity.v2.AssignmentSubmission;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
