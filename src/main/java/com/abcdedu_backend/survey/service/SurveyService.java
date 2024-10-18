@@ -203,7 +203,7 @@ public class SurveyService {
             if (!findMember.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
         if (memberRole == MemberRole.STUDENT) {
-            if (!findMember.isStudent()) throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
+            if (findMember.isBasic()) throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
         }
         return findMember;
     }
