@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/homeworks")
 @RequiredArgsConstructor
-@Tag(name = "공통과제 기능", description = "조회, 응답 (학생 이상 가능), 응답 조회 (관리자만 이용 가능), 과제 생성 기능은 없습니다.")
+@Tag(name = "공통과제 기능", description = "조회, 응답 : 학생 등급 이상 가능")
 public class HomeworkController {
 
     private final HomeworkService homeworkService;
