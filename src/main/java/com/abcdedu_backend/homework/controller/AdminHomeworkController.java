@@ -3,6 +3,7 @@ package com.abcdedu_backend.homework.controller;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.common.page.request.PagingRequest;
 import com.abcdedu_backend.common.page.request.SortRequest;
+import com.abcdedu_backend.homework.service.HomeworkService;
 import com.abcdedu_backend.survey.dto.request.SurveyCreateRequest;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "관리자 공통과제 기능", description = "과제 생성 및 변경")
 public class AdminHomeworkController {
+    private final HomeworkService homeworkService;
 
     @Operation(summary = "공통 과제 등록", description = "여러 개의 질문을 담은 과제를 등록한다.")
     @PostMapping
@@ -38,8 +40,9 @@ public class AdminHomeworkController {
     }
 
     @Operation(summary = "대표 과제 등록", description = "과제로 띄울 대표 버전을 선택한다.")
-    @PatchMapping("/{homeworkId}/represent")
-    public Response<Void> putRepresentHomework(@PathVariable Long homeworkId, @JwtValidation Long memberId) {
+    @PostMapping("/{homeworkId}/representative")
+    public Response<Void> registerRepresentative(@PathVariable Long homeworkId, @JwtValidation Long memberId) {
+        homeworkService.registerRepresentative(homeworkId, memberId);
         return Response.success();
     }
 

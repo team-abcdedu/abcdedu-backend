@@ -1,5 +1,7 @@
 package com.abcdedu_backend.homework.service;
 
+import com.abcdedu_backend.homework.entity.HomeworkRepresentative;
+import com.abcdedu_backend.homework.repository.HomeworkRepresentativeRepository;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.homework.dto.response.HomeworkGetRes;
@@ -30,11 +32,19 @@ public class HomeworkService {
     private final HomeworkRepository homeworkRepository;
     private final HomeworkQuestionRepository questionRepository;
     private final HomeworkReplyRepository replyRepository;
+    private final HomeworkRepresentativeRepository representativeRepository;
 
     public HomeworkGetRes getHomework(Long memberId, Long homeworkId) {
         checkPermission(memberId, MemberRole.STUDENT);
         Homework homework = checkHomework(homeworkId);
         return homeworkToHomeworkGetRes(homework);
+    }
+
+    public HomeworkGetRes getHomeworkV2(Long memberId) {
+        checkPermission(memberId, MemberRole.STUDENT);
+        HomeworkRepresentative latestRepresentative = representativeRepository.findLatestRepresentative()
+                .orElseThrow(() -> new ApplicationException(ErrorCode.HOMEWORK_REPRESENTATIVE_NOT_FOUND));
+        return homeworkToHomeworkGetRes(latestRepresentative.getHomework());
     }
 
     @Transactional
@@ -44,6 +54,16 @@ public class HomeworkService {
         List<HomeworkQuestion> questions = checkQeustionsByHomework(homework);
         List<HomeworkReply> homeworkReplies = makeHomeworkReply(homework, questions, replyRequests, member);
         saveReplies(homeworkReplies);
+    }
+
+    public void registerRepresentative(Long homeworkId, Long memberId) {
+        Member member = checkPermission(memberId, MemberRole.ADMIN);
+        Homework homework = checkHomework(homeworkId);
+        HomeworkRepresentative representative = HomeworkRepresentative.builder()
+                .member(member)
+                .homework(homework)
+                .build();
+        representativeRepository.save(representative);
     }
 
     public HomeworkReplyGetRes getReplies(Long memberId, Long homeworkId) {
@@ -93,12 +113,10 @@ public class HomeworkService {
     public Member checkPermission(Long memberId, MemberRole memberRole) {
         Member member = memberService.checkMember(memberId);
         if (memberRole == MemberRole.STUDENT) {
-            if (!member.isStudent() && !member.isAdmin()) {
-                log.warn("사용자 역할 권한 검증 실패");
+            if (member.isBasic()) {
                 throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
             }
         } else if (memberRole == MemberRole.ADMIN) {
-            log.warn("사용자 역할 권한 검증 실패");
             if (!member.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
         log.info("checkPermission() : 권한 확인 성공");
@@ -150,6 +168,7 @@ public class HomeworkService {
         }
         return replies;
     }
+
 
 
 }

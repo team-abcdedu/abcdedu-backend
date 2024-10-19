@@ -13,24 +13,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 @Entity
-@Table(name = "homework_replys")
-public class HomeworkReply extends BaseTimeEntity {
+@Table(name = "representative_homework")
+public class HomeworkRepresentative extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "homework_id", nullable = false)
     private Homework homework;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "homework_question_id", nullable = false)
-    private HomeworkQuestion homeworkQuestion;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member; // 설문 응답자
-
-    @Column(length = 1000)
-    private String answer;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member; // 대표로 선정한 관리자(멤버)id
 }
