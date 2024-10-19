@@ -31,9 +31,21 @@ public class AdminHomeworkController {
         return Response.success();
     }
 
-    @Operation(summary = "공통 과제 조회", description = "과제, 질문이 함께 조회된다.")
+    @Operation(summary = "공통 과제 상세 조회", description = "과제, 질문이 함께 조회된다.")
     @GetMapping("/{homeworkId}")
     public Response<Void> getHomework(@JwtValidation Long memberId, @PathVariable Long homeworkId) {
+        return Response.success();
+    }
+
+    @Operation(summary = "대표 과제 등록", description = "과제로 띄울 대표 버전을 선택한다.")
+    @PatchMapping("/{homeworkId}/represent")
+    public Response<Void> putRepresentHomework(@PathVariable Long homeworkId, @JwtValidation Long memberId) {
+        return Response.success();
+    }
+
+    @Operation(summary = "공통 과제 수정", description = "과제 내용을 수정한다.")
+    @PatchMapping("/{homeworkId}")
+    public Response<Void> updateHomework(@PathVariable Long homeworkId, @JwtValidation Long memberId) {
         return Response.success();
     }
 

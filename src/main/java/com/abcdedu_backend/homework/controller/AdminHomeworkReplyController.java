@@ -13,19 +13,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/admin/homeworks/{homeworkId}/replies")
+@RequestMapping("/admin/homeworks")
 @RequiredArgsConstructor
 @Tag(name = "관리자 공통과제 응답 관련 기능", description = "응답 조회 및 엑셀로 다운로드")
 public class AdminHomeworkReplyController {
 
+    @Operation(summary = "과제 질문 조회", description = "과제에 대한 질문을 전체 조회 합니다.")
+    @GetMapping("/{homeworkId}/questions")
+    public Response<Void> getQuestions(@JwtValidation Long memberId, @PathVariable Long homeworkId) {
+        return Response.success();
+    }
+
     @Operation(summary = "과제 응답 조회", description = "과제에 대한 응답을 전체 조회 합니다.")
-    @GetMapping
+    @GetMapping("/{homeworkId}/replies")
     public Response<Void> getReplies(@JwtValidation Long memberId, @PathVariable Long homeworkId) {
         return Response.success();
     }
 
     @Operation(summary = "과제 응답 조회 (엑셀)", description = "과제에 대한 응답을 엑셀로 다운로드합니다.")
-    @GetMapping("/excel")
+    @GetMapping("/{homeworkId}/reply-excel")
     public Response<Void> getRepliesAsExcel(@JwtValidation Long memberId, @PathVariable Long homeworkId) {
         return Response.success();
     }
