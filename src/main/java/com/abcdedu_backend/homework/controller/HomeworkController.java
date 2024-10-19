@@ -23,10 +23,19 @@ public class HomeworkController {
 
     private final HomeworkService homeworkService;
 
-    @Operation(summary = "공통 과제 상세 조회", description = "응답을 하기 위해 문제 내용이 조회된다.")
+    @Deprecated
+    @Operation(summary = "공통 과제 상세 조회", description = "homeworkId를 요청에 넣지 않아도 관리자가 설정한 대표 과제가 뜨도록 변경함 " +
+            "GET : /homeworks")
     @GetMapping("/{homeworkId}")
     public Response<HomeworkGetRes> getHomework(@JwtValidation Long memberId, @PathVariable Long homeworkId) {
         HomeworkGetRes res = homeworkService.getHomework(memberId, homeworkId);
+        return Response.success(res);
+    }
+
+    @Operation(summary = "공통 과제 상세 조회", description = "응답을 하기 위해 문제 내용이 조회된다.")
+    @GetMapping
+    public Response<HomeworkGetRes> getHomework(@JwtValidation Long memberId) {
+        HomeworkGetRes res = homeworkService.getHomeworkV2(memberId);
         return Response.success(res);
     }
 
