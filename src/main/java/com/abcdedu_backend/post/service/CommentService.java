@@ -59,7 +59,6 @@ public class CommentService {
 
     public Page<CommentResponse> readComments(Long postId, Pageable pageable) {
         Post findpost = postService.checkPost(postId);
-        CheckPostAllowedComment(findpost);
         Page<Comment> comments = commentRepository.findByPost(findpost, pageable);
         return comments
                 .map(comment -> CommentResponse.builder()
