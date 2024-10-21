@@ -56,7 +56,7 @@ public class AuthControllerTest {
     void 회원가입_성공() throws Exception {
         //given
         final String url = "/auth/signup";
-        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567");
+        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567", "oo고등학교", 1234567L);
         doNothing().when(memberService).signUp(signUpRequest);
 
         //when
@@ -74,7 +74,7 @@ public class AuthControllerTest {
     void 중복메일_회원가입_실패() throws Exception {
         //given
         final String url = "/auth/signup";
-        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567");
+        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567", "oo고등학교", 1234567L);
         doThrow(new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS)).when(memberService).signUp(any(SignUpRequest.class));
 
         //when
@@ -92,7 +92,7 @@ public class AuthControllerTest {
     void 패스워드_6자미만_회원가입_실패() throws Exception {
         //given
         final String url = "/auth/signup";
-        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "12345");
+        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "12345", "oo고등학교", 1234567L);
 
         //when
         final ResultActions resultActions = mockMvc.perform(
@@ -141,20 +141,24 @@ public class AuthControllerTest {
 
     private static Stream<SignUpRequest> invalidSignUpRequests() {
         return Stream.of(
-                new SignUpRequest("John Doe", "invalid-email", "validPassword"), // Invalid email
-                new SignUpRequest("John Doe", "", "validPassword"), // Blank email
+                new SignUpRequest("John Doe", "invalid-email", "validPassword", "oo고등학교", 1234567L), // Invalid email
+                new SignUpRequest("John Doe", "", "validPassword", "oo고등학교", 1234567L), // Blank email
 
-                new SignUpRequest("John Doe", "test@example.com", "12345"), // Password too short
-                new SignUpRequest("John Doe", "test@example.com", "thisPasswordIsWayTooLongAndShouldFail"), // Password too long
+                new SignUpRequest("John Doe", "test@example.com", "12345", "oo고등학교", 1234567L), // Password too short
+                new SignUpRequest("John Doe", "test@example.com", "thisPasswordIsWayTooLongAndShouldFail", "oo고등학교", 1234567L), // Password too long
 
-                new SignUpRequest("", "test@example.com", "validPassword") // Blank name
+                new SignUpRequest("", "test@example.com", "validPassword", "oo고등학교", 1234567L), // Blank name
+
+                new SignUpRequest("", "test@example.com", "validPassword", null, null),
+                new SignUpRequest("", "test@example.com", "validPassword", "oo고등학교", null),
+                new SignUpRequest("", "test@example.com", "validPassword", null, 1234567L)
         );
     }
 
     private static Stream<SignUpRequest> validSignUpRequests() {
         return Stream.of(
-                new SignUpRequest("John Doe", "test@example.com", "validPassword"), // Valid case
-                new SignUpRequest("Jane Doe", "jane@example.com", "anotherValidPass123") // Another valid case
+                new SignUpRequest("John Doe", "test@example.com", "validPassword", "oo고등학교", 1234567L), // Valid case
+                new SignUpRequest("Jane Doe", "jane@example.com", "anotherValidPass123","oo고등학교", 1234567L) // Another valid case
         );
     }
 
@@ -162,7 +166,7 @@ public class AuthControllerTest {
     void 어드민_회원가입_성공() throws Exception {
         //given
         final String url = "/auth/signup/admin";
-        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567");
+        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567","oo고등학교", 1234567L);
         doNothing().when(memberService).adminSignUp(signUpRequest);
 
         //when
@@ -180,7 +184,7 @@ public class AuthControllerTest {
     void 중복메일_어드민_회원가입_실패() throws Exception {
         //given
         final String url = "/auth/signup/admin";
-        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567");
+        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567", "oo고등학교", 1234567L);
         doThrow(new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS)).when(memberService).adminSignUp(any(SignUpRequest.class));
 
         //when
