@@ -50,7 +50,7 @@ class MemberServiceTest {
     @Test
     public void 회원가입_성공(){
         //given
-        SignUpRequest request = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "123456");
+        SignUpRequest request = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "123456", "oo고등학교", 1234567L);
         Member savedMember = createMember();
 
         doReturn(Optional.empty()).when(memberRepository).findByEmail(request.email());
@@ -70,7 +70,7 @@ class MemberServiceTest {
     @Test
     public void 이미있는_유저로_인해_회원가입_실패(){
         //given
-        SignUpRequest request = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "123456");
+        SignUpRequest request = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "123456", "oo고등학교", 1234567L);
         doReturn(Optional.of(createMember())).when(memberRepository).findByEmail(request.email());
 
         //when
