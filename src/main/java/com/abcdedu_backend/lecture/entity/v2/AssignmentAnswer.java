@@ -1,4 +1,4 @@
-package com.abcdedu_backend.lecture.entity;
+package com.abcdedu_backend.lecture.entity.v2;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

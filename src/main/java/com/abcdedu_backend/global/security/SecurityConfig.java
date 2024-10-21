@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -26,12 +25,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -83,7 +78,7 @@ public class SecurityConfig {
             .requestMatchers(
                 "/auth/**",
                 "/swagger-ui/**",
-                "/actuator/health"
+                "/actuator/**"
             ).permitAll()
             .requestMatchers("/admin/**").hasRole(MemberRole.ADMIN.name()) // ADMIN 권한만 접근 가능
             .anyRequest().permitAll() // TODO
@@ -95,13 +90,13 @@ public class SecurityConfig {
          * 1. 인증 예외 처리 (인증되지 않은 사용자) 401
          * 2. 인가 예외 처리 (권한이 없는 사용자) 403
          */
-        http.exceptionHandling((exception) -> exception
-            .authenticationEntryPoint((request, response, authException) ->
-                responseError(response, "UNAUTHORIZED", "인증이 필요합니다.", 401)
-            )
-            .accessDeniedHandler((request, response, accessDeniedException) ->
-                responseError(response, "FORBIDDEN", "권한이 없습니다.", 403)
-            )
+        http.exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) ->
+                        responseError(response, "UNAUTHORIZED", "인증이 필요합니다.", 401)
+                )
+                .accessDeniedHandler((request, response, accessDeniedException) ->
+                        responseError(response, "FORBIDDEN", "권한이 없습니다.", 403)
+                )
         );
 
 
@@ -111,7 +106,7 @@ public class SecurityConfig {
          * 해당 필터는 Request Header에서 Authorization을 확인하여 JWT 토큰을 추출하고 Provider에게 인증을 요청한다.
          * JwtProvider은 JwtAuthenticationToken을 통해 인증을 시도한다.
          */
-        http.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(authenticationManager(), objectMapper), BasicAuthenticationFilter.class);
         http.addFilterAfter(roleQueryFilter, AuthorizationJwtHeaderFilter.class);
 
         return http.build();
@@ -139,8 +134,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthorizationJwtHeaderFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) {
-        return new AuthorizationJwtHeaderFilter(authenticationManager);
+    public AuthorizationJwtHeaderFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
+        return new AuthorizationJwtHeaderFilter(authenticationManager, objectMapper);
     }
 
 //    @Bean

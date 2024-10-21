@@ -1,4 +1,4 @@
-package com.abcdedu_backend.lecture.entity;
+package com.abcdedu_backend.lecture.entity.v2;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;

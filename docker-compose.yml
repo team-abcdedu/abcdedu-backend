@@ -1,13 +1,64 @@
 version: "3"
 services:
   blue:
-    image: 124355679627.dkr.ecr.ap-northeast-2.amazonaws.com/abcdedu-server-ecr-dev
+    image: abcdedu/dev
     container_name: blue
     ports:
       - 8081:8080
+#    logging:
+#      driver: awslogs
+#      options:
+#        awslogs-region: "ap-northeast-2"
+#        awslogs-group: "abcdedu-dev-log-group"
+#        awslogs-multiline-pattern: "^(INFO|WARN|ERROR)"
+#        awslogs-stream: "abcdedu-dev-docker-backend"
+    networks:
+      - abcdedu
 
   green:
-    image: 124355679627.dkr.ecr.ap-northeast-2.amazonaws.com/abcdedu-server-ecr-dev
+    image: abcdedu/dev
     container_name: green
     ports:
       - 8082:8080
+#    logging:
+#      driver: awslogs
+#      options:
+#        awslogs-region: "ap-northeast-2"
+#        awslogs-group: "abcdedu-dev-log-group"
+#        awslogs-multiline-pattern: "^(INFO|WARN|ERROR)"
+#        awslogs-stream: "abcdedu-dev-docker-backend"
+    networks:
+      - abcdedu
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Prometheus 설정 파일
+    ports:
+      - "9090:9090"  # Prometheus 웹 UI 접근 포트
+    networks:
+      - abcdedu
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    networks:
+      - abcdedu
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"  # Grafana 웹 UI 접근 포트
+    networks:
+      - abcdedu
+    volumes:
+      - grafana-data:/var/lib/grafana  # Grafana 데이터 유지용 볼륨
+
+networks:
+  abcdedu:
+    driver: bridge
+
+volumes:
+  grafana-data:

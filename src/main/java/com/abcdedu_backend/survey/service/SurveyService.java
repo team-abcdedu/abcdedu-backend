@@ -3,6 +3,7 @@ package com.abcdedu_backend.survey.service;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.survey.dto.request.SurveyCreateRequest;
 import com.abcdedu_backend.survey.dto.request.SurveyReplyCreateRequest;
@@ -34,7 +35,7 @@ public class SurveyService {
 
     @Transactional
     public Long createSurvey(SurveyCreateRequest request, Long memberId) {
-        Member member = checkSurveyPermmision(memberId);
+        Member member = checkSurveyPermmision(memberId, MemberRole.ADMIN);
 
         Survey survey = Survey.builder()
                 .title(request.title())
@@ -74,7 +75,7 @@ public class SurveyService {
      * 설문지 목록 조회
      */
     public Page<SurveyListResponse> getSurveys(Long memberId, Pageable pageable) {
-        checkSurveyPermmision(memberId);
+        checkSurveyPermmision(memberId, MemberRole.ADMIN);
         Page<Survey> surveys = surveyRepository.findAll(pageable);
         return surveys
                 .map(survey -> SurveyListResponse.builder()
@@ -89,7 +90,7 @@ public class SurveyService {
      * 선택한 설문지로 응답을 하기 위해 설문지를 조회한다. (질문-선택지 포함)
      */
     public SurveyGetResponse getSurvey(Long memberId, Long surveyId) {
-        // checkSurveyPermmision(memberId);
+        checkSurveyPermmision(memberId, MemberRole.STUDENT);
         Survey findSurvey = checkSurvey(surveyId);
         List<SurveyQuestion> findQuestions = questionRepository.findBySurvey(findSurvey);
 
@@ -124,7 +125,7 @@ public class SurveyService {
 
     @Transactional
     public void deleteSurvey(Long memberId, Long surveyId) {
-        checkSurveyPermmision(memberId);
+        checkSurveyPermmision(memberId, MemberRole.ADMIN);
         Survey findSurvey = checkSurvey(surveyId);
         surveyRepository.delete(findSurvey);
     }
@@ -133,7 +134,7 @@ public class SurveyService {
     // 응답 생성
     @Transactional
     public void createSurveyReply(Long memberId, Long surveyId, List<SurveyReplyCreateRequest> replysRequests) {
-        Member replyedMember = checkSurveyCreatePermmision(memberId);
+        Member replyedMember = checkSurveyPermmision(memberId, MemberRole.STUDENT);
         Survey findSurvey = checkSurvey(surveyId);
         List<SurveyQuestion> findQuestions = questionRepository.findBySurvey(findSurvey);
 
@@ -167,7 +168,7 @@ public class SurveyService {
 
     // 질문-응답 조회
     public SurveyRepliesGetResponse getSurveyReplies(Long memberId, Long surveyId) {
-        //checkSurveyPermmision(memberId);
+        checkSurveyPermmision(memberId, MemberRole.ADMIN);
         Survey findSurvey = checkSurvey(surveyId);
         List<SurveyQuestion> questions = questionRepository.findBySurvey(findSurvey);
         List<SurveyReply> replies = replyRepository.findBySurvey(findSurvey);
@@ -196,16 +197,14 @@ public class SurveyService {
         return new SurveyRepliesGetResponse(questionHeaders, records);
     }
 
-    private Member checkSurveyPermmision(Long memberId) {
+    private Member checkSurveyPermmision(Long memberId, MemberRole memberRole) {
         Member findMember = memberService.checkMember(memberId);
-        if (!findMember.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
-        return findMember;
-    }
-
-    private Member checkSurveyCreatePermmision(Long memberId) {
-        Member findMember = memberService.checkMember(memberId);
-        if (!findMember.isStudent() && !findMember.isAdmin())
-            throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
+        if (memberRole == MemberRole.ADMIN) {
+            if (!findMember.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
+        }
+        if (memberRole == MemberRole.STUDENT) {
+            if (findMember.isBasic()) throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
+        }
         return findMember;
     }
 

@@ -31,7 +31,6 @@ public class JwtProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String token = (String) authentication.getCredentials();
-
         Long memberId;
         try {
             memberId = jwtUtil.getMemberIdFromAccessToken(token);
