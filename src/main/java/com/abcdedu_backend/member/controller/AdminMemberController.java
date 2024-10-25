@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +31,9 @@ public class AdminMemberController {
     private final AdminMemberService adminMemberService;
     @Operation(summary = "멤버 조회", description = "필터링, ")
     @GetMapping("/search")
-    public Response<PagedResponse<AdminSearchMemberResponse>> getmembersByCondition(@JwtValidation Long memberId, @RequestBody PagingRequest pagingRequest, @RequestBody SortRequest sortRequest, @RequestBody MemberSearchCondition cond){
-        adminMemberService.searchMembers(memberId, new PageManager(pagingRequest, sortRequest).makePageRequest(), cond);
-        return Response.success(null);
+    public Response<PagedResponse<AdminSearchMemberResponse>> getmembersByCondition(@JwtValidation Long memberId, PagingRequest pagingRequest, SortRequest sortRequest, @ModelAttribute MemberSearchCondition cond){
+        Page<AdminSearchMemberResponse> responses = adminMemberService.searchMembers(memberId, new PageManager(pagingRequest, sortRequest).makePageRequest(), cond);
+        return Response.success(PagedResponse.from(responses));
     }
     @Operation(summary = "멤버 일괄 등업")
     @PatchMapping("/role/{roleName}")
