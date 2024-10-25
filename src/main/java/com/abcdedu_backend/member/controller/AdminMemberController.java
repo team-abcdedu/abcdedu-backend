@@ -25,7 +25,8 @@ import java.util.List;
 public class AdminMemberController {
     @Operation(summary = "멤버 조회", description = "필터링, ")
     @GetMapping("/search")
-    public Response<List<AdminSearchMemberResponse>> getmembersByCondition(@JwtValidation Long memberId, PagingRequest pagingRequest, SortRequest sortRequest, MemberSearchCondition cond){
+    public Response<List<AdminSearchMemberResponse>> getmembersByCondition(@JwtValidation Long memberId, @RequestBody PagingRequest pagingRequest,
+                                                                           @RequestBody SortRequest sortRequest, @RequestBody MemberSearchCondition cond){
         return Response.success(null);
     }
     @Operation(summary = "멤버 일괄 등업")
