@@ -167,4 +167,13 @@ public class MemberService {
             throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
     }
+
+    @Transactional
+    public void updatePassword(String email, String newPassword) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.EMAIL_NOT_FOUND));
+
+        String newEncodedPassword = passwordEncoder.encode(newPassword);
+        member.updatePassword(newEncodedPassword);
+    }
 }
