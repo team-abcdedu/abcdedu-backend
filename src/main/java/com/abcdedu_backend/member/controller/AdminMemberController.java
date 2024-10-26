@@ -28,12 +28,13 @@ import java.util.List;
 
 public class AdminMemberController {
 
-    private final AdminMemberService adminMemberService;
+    // private final AdminMemberService adminMemberService;
     @Operation(summary = "멤버 조회", description = "필터링을 통한 멤버 조회")
     @GetMapping
     public Response<PagedResponse<AdminSearchMemberResponse>> getmembersByCondition(@JwtValidation Long memberId, PagingRequest pagingRequest, SortRequest sortRequest, @ModelAttribute MemberSearchCondition cond){
-        Page<AdminSearchMemberResponse> responses = adminMemberService.searchMembers(memberId, new PageManager(pagingRequest, sortRequest).makePageRequest(), cond);
-        return Response.success(PagedResponse.from(responses));
+        // Page<AdminSearchMemberResponse> responses = adminMemberService.searchMembers(memberId, new PageManager(pagingRequest, sortRequest).makePageRequest(), cond);
+        // return Response.success(PagedResponse.from(responses));
+        return null;
     }
     @Operation(summary = "멤버 일괄 등급 변경", description = "현재 버전은 새싹 <-> 학생 변경만 가능합니다.")
     @PatchMapping("/role/{roleName}")
