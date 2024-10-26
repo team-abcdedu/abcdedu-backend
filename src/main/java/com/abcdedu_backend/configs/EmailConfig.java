@@ -44,7 +44,6 @@ public class EmailConfig {
         props.put("mail.smtp.auth", auth);
         props.put("mail.smtp.timeout", timeout);
         props.put("mail.smtp.starttls.enable", starttlsEnable);
-        props.put("mail.debug", "true");
 
         return mailSender;
     }
