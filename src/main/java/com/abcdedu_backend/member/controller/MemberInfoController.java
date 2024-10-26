@@ -72,7 +72,7 @@ public class MemberInfoController {
     }
 
     @ApiResponses(value ={
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 이메일입니다.", content = @Content),
     })
     @Operation(summary = "비밀번호 수정", description = "비밀번호를 수정합니다.")
     @PatchMapping("/password")
