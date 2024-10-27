@@ -75,6 +75,9 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
 
+    // email 인증 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 }
 
 tasks.named('test') {

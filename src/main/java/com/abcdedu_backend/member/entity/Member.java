@@ -72,4 +72,8 @@ public class Member extends BaseTimeEntity {
         this.role = memberRole;
     }
 
+    public void updatePassword(String newEncodedPassword){
+        this.encodedPassword = newEncodedPassword;
+    }
+
 }
