@@ -242,6 +242,19 @@ class MemberServiceTest {
         assertThat(memberBasicInfoResponse.email()).isEqualTo(member.getEmail());
     }
 
+    @Test
+    public void 비밀번호_변경_성공() {
+        Member member = createMember();
+        doReturn(Optional.of(member)).when(memberRepository).findByEmail(member.getEmail());
+        doReturn("newEncodedPassword").when(passwordEncoder).encode("123456");
+
+        target.updatePassword(member.getEmail(), "123456");
+
+        verify(memberRepository, times(1)).findByEmail(member.getEmail());
+        verify(passwordEncoder, times(1)).encode("123456");
+        assertThat(member.getEncodedPassword()).isEqualTo("newEncodedPassword");
+    }
+
 
     @Test
     public void 로그아웃_성공() {
