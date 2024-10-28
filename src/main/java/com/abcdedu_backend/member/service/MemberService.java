@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
@@ -42,14 +41,13 @@ public class MemberService {
 
     @Transactional
     public void signUp(SignUpRequest request){
-        checkDuplicateEmail(request);
+        checkDuplicateEmail(request.email());
         Member signUpMember = createBasicMember(request);
         memberRepository.save(signUpMember);
     }
-
     @Transactional
     public void adminSignUp(SignUpRequest request) {
-        checkDuplicateEmail(request);
+        checkDuplicateEmail(request.email());
         Member signUpMember = createAdminMember(request);
         memberRepository.save(signUpMember);
     }
@@ -136,12 +134,13 @@ public class MemberService {
                 .email(request.email())
                 .encodedPassword(passwordEncoder.encode(request.password()))
                 .role(role)
+                .school(request.school())
+                .studentId(request.studentId())
                 .build();
         return member;
     }
 
-    private void checkDuplicateEmail(SignUpRequest request) {
-        String signUpEmail = request.email();
+    private void checkDuplicateEmail(String signUpEmail) {
         Optional<Member> findMember = memberRepository.findByEmail(signUpEmail);
         if (findMember.isPresent()) {
             throw new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS);
@@ -161,7 +160,7 @@ public class MemberService {
                 .email(member.getEmail())
                 .build();
     }
-
+  
     public void checkAdminPermission(Member member) {
         if (!member.isAdmin()){
             throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
