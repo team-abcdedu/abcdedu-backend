@@ -236,13 +236,16 @@ class MemberInfoControllerTest {
         // given
         final String url = "/members/password";
 
-        UpdatePasswordRequest request = new UpdatePasswordRequest("ehdcjs159@gmail.com", "123456");
+        UpdatePasswordRequest request = new UpdatePasswordRequest("123456");
+        Long memberId = 1L;
 
-        doNothing().when(memberService).updatePassword(request.email(), request.newPassword());
+        doNothing().when(memberService).updatePassword(memberId, request.newPassword());
 
         // when
         final ResultActions resultActions = mockMvc.perform(
                 patch(url)
+                        .header("Authorization", "Bearer validToken")
+                        .param("memberId", memberId.toString())
                         .content(gson.toJson(request))
                         .contentType(MediaType.APPLICATION_JSON)
         );
@@ -252,16 +255,19 @@ class MemberInfoControllerTest {
     }
 
     @Test
-    void 잘못된_이메일로_비밀번호_변경_실패() throws Exception {
+    void 없는_유저로_비밀번호_변경_실패() throws Exception {
         // given
         final String url = "/members/password";
 
-        UpdatePasswordRequest request = new UpdatePasswordRequest("ehdcjs1259@gmail.com", "123456");
-        doThrow(new ApplicationException(ErrorCode.EMAIL_NOT_FOUND)).when(memberService).updatePassword(request.email(), request.newPassword());
+        UpdatePasswordRequest request = new UpdatePasswordRequest("123456");
+        Long notFoundMemberId = 2L;
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberService).updatePassword(notFoundMemberId, request.newPassword());
 
         // when
         final ResultActions resultActions = mockMvc.perform(
                 patch(url)
+                        .header("Authorization", "Bearer validToken")
+                        .param("memberId", notFoundMemberId.toString())
                         .content(gson.toJson(request))
                         .contentType(MediaType.APPLICATION_JSON)
         );
