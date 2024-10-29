@@ -9,12 +9,20 @@ public class RandomCodeGenerator {
 
     private static final String CHAR_SET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int CODE_LENGTH = 6;
+    private static final int PASSWORD_LENGTH = 20;
 
     public String generateAuthCode() {
-        SecureRandom random = new SecureRandom();
-        StringBuilder authCode = new StringBuilder(CODE_LENGTH);
+        return generateNum(CODE_LENGTH);
+    }
 
-        for (int i = 0; i < CODE_LENGTH; i++) {
+    public String generatePassword() {
+        return generateNum(PASSWORD_LENGTH);
+    }
+
+    private String generateNum(int length) {
+        SecureRandom random = new SecureRandom();
+        StringBuilder authCode = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
             int randomIndex = random.nextInt(CHAR_SET.length());
             authCode.append(CHAR_SET.charAt(randomIndex));
         }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -20,18 +21,34 @@ public class EmailService {
     private final JavaMailSender emailSender;
     private final RandomCodeGenerator randomCodeGenerator;
     private final EmailCodeRepository emailCodeRepository;
+    private final MemberService memberService;
 
-    private static final String TITLE = "[ABCDEdu] 회원 가입 인증 이메일 입니다.";
-    private static final String TEXT_FORM = "인증번호는 <b>%s</b> 입니다.";
+    private static final String TITLE = "[ABCDEdu] 비밀번호 찾기 안내 메일입니다.";
+    private static final String SEND_CODE_TEXT_FORM = "인증번호는 <b>%s</b> 입니다.";
+    private static final String SEND_TEMP_PASSWORD_TEXT_FORM = "임시 비밀번호는 <b>%s</b> 입니다.";
 
     public void sendCodeToEmail(String toEmail) {
         String code = randomCodeGenerator.generateAuthCode();
-        String text = String.format(TEXT_FORM, code);
+        String text = String.format(SEND_CODE_TEXT_FORM, code);
 
         try {
             MimeMessage emailForm = createEmailForm(toEmail, TITLE, text);
             emailSender.send(emailForm);
             emailCodeRepository.save(new EmailCode(toEmail, code));
+        } catch (Exception e) {
+            throw new ApplicationException(ErrorCode.EMAIL_SEND_FAILED);
+        }
+    }
+
+    @Transactional
+    public void sendTempPasswordToEmail(String toEmail) {
+        String tempPassword = randomCodeGenerator.generatePassword();
+        String text = String.format(SEND_TEMP_PASSWORD_TEXT_FORM, tempPassword);
+        memberService.updatePassword(toEmail, tempPassword);
+
+        try {
+            MimeMessage emailForm = createEmailForm(toEmail, TITLE, text);
+            emailSender.send(emailForm);
         } catch (Exception e) {
             throw new ApplicationException(ErrorCode.EMAIL_SEND_FAILED);
         }

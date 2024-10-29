@@ -72,12 +72,13 @@ public class MemberInfoController {
     }
 
     @ApiResponses(value ={
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 이메일입니다.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.", content = @Content),
     })
     @Operation(summary = "비밀번호 수정", description = "비밀번호를 수정합니다.")
     @PatchMapping("/password")
-    public Response<Void> updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest){
-        memberService.updatePassword(updatePasswordRequest.email(), updatePasswordRequest.newPassword());
+    public Response<Void> updatePassword(@JwtValidation Long memberId,
+                                         @Valid @RequestBody UpdatePasswordRequest updatePasswordRequest){
+        memberService.updatePassword(memberId, updatePasswordRequest.newPassword());
         return Response.success();
     }
 }

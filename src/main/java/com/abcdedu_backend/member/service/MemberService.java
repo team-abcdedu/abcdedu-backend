@@ -174,5 +174,19 @@ public class MemberService {
 
         String newEncodedPassword = passwordEncoder.encode(newPassword);
         member.updatePassword(newEncodedPassword);
+
+        log.info("멤버 ID : {} 의 비밀번호가 임시 비밀번호로 변경되었습니다.", member.getId());
     }
+
+    @Transactional
+    public void updatePassword(Long memberId, String newPassword) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        String newEncodedPassword = passwordEncoder.encode(newPassword);
+        member.updatePassword(newEncodedPassword);
+
+        log.info("멤버 ID : {} 의 비밀번호가 변경되었습니다.", memberId);
+    }
+
 }

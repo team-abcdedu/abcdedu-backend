@@ -1,6 +1,6 @@
 package com.abcdedu_backend.member.controller;
 
-import com.abcdedu_backend.member.dto.request.SendEmailCodeRequest;
+import com.abcdedu_backend.member.dto.request.SendMailRequest;
 import com.abcdedu_backend.member.service.EmailService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,16 +26,18 @@ import org.springframework.web.bind.annotation.*;
 public class EmailController {
     private final EmailService emailService;
 
+    @Deprecated
     @Operation(summary = "인증 메일 전송", description = "인증 메일을 전송합니다.")
     @ApiResponses(value ={
             @ApiResponse(responseCode = "500", description = "이메일 인증 메일 전송 실패하였습니다.", content = @Content)
     })
     @PostMapping("/code")
-    public Response<Void> sendCode(@Valid @RequestBody SendEmailCodeRequest sendEmailCodeRequest){
-        emailService.sendCodeToEmail(sendEmailCodeRequest.email());
+    public Response<Void> sendCode(@Valid @RequestBody SendMailRequest sendMailRequest){
+        emailService.sendCodeToEmail(sendMailRequest.email());
         return Response.success();
     }
 
+    @Deprecated
     @Operation(summary = "인증 코드 체크", description = "인증 코드를 체크합니다.")
     @ApiResponses(value ={
             @ApiResponse(responseCode = "400", description = "코드가 일치하지 않습니다.", content = @Content),
@@ -44,6 +46,17 @@ public class EmailController {
     @GetMapping("/code")
     public Response<Void> codeVerification(@RequestParam String email, @RequestParam String code){
         emailService.checkCode(email, code);
+        return Response.success();
+    }
+
+    @Operation(summary = "임시 비멀번호 전송", description = "메일로 임시 비밀번호를 전송합니다.")
+    @ApiResponses(value ={
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 이메일입니다.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "이메일 전송을 실패하였습니다.", content = @Content)
+    })
+    @PostMapping("/temp-password")
+    public Response<Void> sendTempPassword(@Valid @RequestBody SendMailRequest sendMailRequest){
+        emailService.sendTempPasswordToEmail(sendMailRequest.email());
         return Response.success();
     }
 }
