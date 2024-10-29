@@ -23,8 +23,9 @@ public class EmailService {
     private final EmailCodeRepository emailCodeRepository;
     private final MemberService memberService;
 
-    private static final String TITLE = "[ABCDEdu] 비밀번호 찾기 안내 메일입니다.";
+    private static final String SEND_CODE_TITLE = "[ABCDEdu] 회원가입 인증번호 안내 메일입니다.";
     private static final String SEND_CODE_TEXT_FORM = "인증번호는 <b>%s</b> 입니다.";
+    private static final String SEND_TEMP_PASSWORD_TITLE = "[ABCDEdu] 비밀번호 찾기 안내 메일입니다.";
     private static final String SEND_TEMP_PASSWORD_TEXT_FORM = "임시 비밀번호는 <b>%s</b> 입니다.";
 
     public void sendCodeToEmail(String toEmail) {
@@ -32,7 +33,7 @@ public class EmailService {
         String text = String.format(SEND_CODE_TEXT_FORM, code);
 
         try {
-            MimeMessage emailForm = createEmailForm(toEmail, TITLE, text);
+            MimeMessage emailForm = createEmailForm(toEmail, SEND_CODE_TITLE, text);
             emailSender.send(emailForm);
             emailCodeRepository.save(new EmailCode(toEmail, code));
         } catch (Exception e) {
@@ -47,7 +48,7 @@ public class EmailService {
         memberService.updatePassword(toEmail, tempPassword);
 
         try {
-            MimeMessage emailForm = createEmailForm(toEmail, TITLE, text);
+            MimeMessage emailForm = createEmailForm(toEmail, SEND_TEMP_PASSWORD_TITLE, text);
             emailSender.send(emailForm);
         } catch (Exception e) {
             throw new ApplicationException(ErrorCode.EMAIL_SEND_FAILED);
