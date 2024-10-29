@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -39,6 +40,7 @@ public class EmailService {
         }
     }
 
+    @Transactional
     public void sendTempPasswordToEmail(String toEmail) {
         String tempPassword = randomCodeGenerator.generatePassword();
         String text = String.format(SEND_TEMP_PASSWORD_TEXT_FORM, tempPassword);
