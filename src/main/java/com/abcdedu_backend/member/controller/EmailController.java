@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class EmailController {
     private final EmailService emailService;
 
+    @Deprecated
     @Operation(summary = "인증 메일 전송", description = "인증 메일을 전송합니다.")
     @ApiResponses(value ={
             @ApiResponse(responseCode = "500", description = "이메일 인증 메일 전송 실패하였습니다.", content = @Content)
@@ -36,6 +37,7 @@ public class EmailController {
         return Response.success();
     }
 
+    @Deprecated
     @Operation(summary = "인증 코드 체크", description = "인증 코드를 체크합니다.")
     @ApiResponses(value ={
             @ApiResponse(responseCode = "400", description = "코드가 일치하지 않습니다.", content = @Content),
