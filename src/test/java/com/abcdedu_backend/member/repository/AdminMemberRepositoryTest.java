@@ -23,9 +23,9 @@ class AdminMemberRepositoryTest {
     private MemberRepository memberRepository;
 
     void setUp() {
-        Member member1 = new Member(1L, "basic1", "basic1@example.com", "password1004", "Basic School", 1001L, "key1", MemberRole.BASIC, null, null);
-        Member member2 = new Member(2L, "basic2", "basic2@example.com", "password1004", "Basic School", 1002L, "key2", MemberRole.BASIC, null, null);
-        Member member3 = new Member(3L, "admin", "admin@example.com", "password1004", "Admin School", 1003L, "key3", MemberRole.ADMIN, null, null);
+        Member member1 = new Member(null, "basic1", "basic1@example.com", "password1004", "Basic School", 1001L, "key1", MemberRole.BASIC, null, null);
+        Member member2 = new Member(null, "basic2", "basic2@example.com", "password1004", "Basic School", 1002L, "key2", MemberRole.BASIC, null, null);
+        Member member3 = new Member(null, "admin", "admin@example.com", "password1004", "Admin School", 1003L, "key3", MemberRole.ADMIN, null, null);
         memberRepository.save(member1);
         memberRepository.save(member2);
         memberRepository.save(member3);
