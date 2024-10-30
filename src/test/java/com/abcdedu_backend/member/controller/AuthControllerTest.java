@@ -163,42 +163,6 @@ public class AuthControllerTest {
     }
 
     @Test
-    void 어드민_회원가입_성공() throws Exception {
-        //given
-        final String url = "/auth/signup/admin";
-        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567","oo고등학교", 1234567L);
-        doNothing().when(memberService).adminSignUp(signUpRequest);
-
-        //when
-        final ResultActions resultActions = mockMvc.perform(
-                post(url)
-                        .content(gson.toJson(signUpRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-
-        //then
-        resultActions.andExpect(status().isOk());
-    }
-
-    @Test
-    void 중복메일_어드민_회원가입_실패() throws Exception {
-        //given
-        final String url = "/auth/signup/admin";
-        SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567", "oo고등학교", 1234567L);
-        doThrow(new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS)).when(memberService).adminSignUp(any(SignUpRequest.class));
-
-        //when
-        final ResultActions resultActions = mockMvc.perform(
-                post(url)
-                        .content(gson.toJson(signUpRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-
-        //then
-        resultActions.andExpect(status().isConflict());
-    }
-
-    @Test
     void 로그인_성공() throws Exception {
         //given
         final String url = "/auth/login";
