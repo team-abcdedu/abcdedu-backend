@@ -45,7 +45,6 @@ public class MemberService {
         Member signUpMember = createBasicMember(request);
         memberRepository.save(signUpMember);
     }
-
     @Transactional
     public LoginTokenDTO login(LoginRequest request) {
         Member findMember = memberRepository.findByEmail(request.email())
