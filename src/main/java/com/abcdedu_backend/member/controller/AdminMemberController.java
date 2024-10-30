@@ -24,8 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/members")
 @RequiredArgsConstructor
-@Tag(name = "관리자 멤버 관리 기능")
-
+@Tag(name = "관리자 기능")
 public class AdminMemberController {
 
     private final AdminMemberService adminMemberService;
