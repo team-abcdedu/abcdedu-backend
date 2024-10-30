@@ -43,7 +43,6 @@ public class AdminMemberService {
                 .toList();
         List<Member> members = memberRepository.findAllByIdIn(ids);
         members.forEach(member -> member.updateRole(roleName));
-        memberRepository.saveAll(members);
     }
 
     private void checkIsAllowedRoleChange(MemberRole roleName) {
