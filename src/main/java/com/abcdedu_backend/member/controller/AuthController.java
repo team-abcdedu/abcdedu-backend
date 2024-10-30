@@ -2,7 +2,6 @@ package com.abcdedu_backend.member.controller;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.exception.ErrorResponse;
 import com.abcdedu_backend.member.dto.LoginTokenDTO;
 import com.abcdedu_backend.member.dto.request.LoginRequest;
 import com.abcdedu_backend.member.dto.request.SignUpRequest;
@@ -12,7 +11,6 @@ import com.abcdedu_backend.member.service.MemberService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,8 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -57,16 +53,6 @@ public class AuthController {
     @PostMapping("/signup")
     public Response<Void> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
         memberService.signUp(signUpRequest);
-        return Response.success();
-    }
-
-    @Operation(summary = "관리자 회원 가입", description = "관리자 회원가입을 합니다.")
-    @ApiResponses(value ={
-            @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일입니다.", content = @Content),
-    })
-    @PostMapping("/signup/admin")
-    public Response<Void> adminSignUp(@Valid @RequestBody SignUpRequest signUpRequest){
-        memberService.adminSignUp(signUpRequest);
         return Response.success();
     }
 

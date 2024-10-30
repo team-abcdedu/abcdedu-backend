@@ -45,12 +45,6 @@ public class MemberService {
         Member signUpMember = createBasicMember(request);
         memberRepository.save(signUpMember);
     }
-    @Transactional
-    public void adminSignUp(SignUpRequest request) {
-        checkDuplicateEmail(request.email());
-        Member signUpMember = createAdminMember(request);
-        memberRepository.save(signUpMember);
-    }
 
     @Transactional
     public LoginTokenDTO login(LoginRequest request) {
@@ -113,10 +107,6 @@ public class MemberService {
                 .name(member.getName())
                 .role(member.getRole().getName())
                 .build();
-    }
-
-    private Member createAdminMember(SignUpRequest request) {
-       return createMember(request, MemberRole.ADMIN);
     }
 
     private Member createBasicMember(SignUpRequest request) {
