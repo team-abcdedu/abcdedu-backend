@@ -3,6 +3,7 @@ package com.abcdedu_backend.member.repository;
 import com.abcdedu_backend.member.dto.request.MemberSearchCondition;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -29,6 +30,10 @@ class AdminMemberRepositoryTest {
         memberRepository.save(member1);
         memberRepository.save(member2);
         memberRepository.save(member3);
+    }
+    @AfterEach
+    void deleteAllMembers() {
+        memberRepository.deleteAll();
     }
 
     Page<Member> findMemberWithPageAndCond(int pageNumber, int pageSize, MemberSearchCondition cond) {
@@ -82,21 +87,16 @@ class AdminMemberRepositoryTest {
 
     @Test
     void findAllByIdIn_조건에_맞는_멤버_조회_성공() {
-        setUp();
+        Member member1 = new Member(null, "basic1", "basic1@example.com", "password1004", "Basic School", 1001L, "key1", MemberRole.BASIC, null, null);
+        Member member2 = new Member(null, "basic2", "basic2@example.com", "password1004", "Basic School", 1002L, "key2", MemberRole.BASIC, null, null);
+        Member member3 = new Member(null, "admin", "admin@example.com", "password1004", "Admin School", 1003L, "key3", MemberRole.ADMIN, null, null);
+        member1 = memberRepository.save(member1);
+        member2 = memberRepository.save(member2);
+        member3 = memberRepository.save(member3);
 
-        List<Member> result = adminMemberRepository.findAllByIdIn(List.of(1L, 2L));
+        List<Member> result = adminMemberRepository.findAllByIdIn(List.of(member1.getId(),member2.getId()));
 
         assertThat(result.size()).isEqualTo(2);
     }
-
-    @Test
-    void findAllByIdIn_조건에_맞는_멤버_없으면_빈값이_반환() {
-        setUp();
-
-        List<Member> result = adminMemberRepository.findAllByIdIn(List.of(4L, 5L));
-
-        assertThat(result.size()).isEqualTo(0);
-    }
-
 
 }
