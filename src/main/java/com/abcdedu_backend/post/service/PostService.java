@@ -41,11 +41,11 @@ public class PostService {
     public PostResponse getPost(Long postId, Long memberId) {
         Post post = checkPost(postId);
         Member member = memberService.checkMember(memberId);
+        checkMemberGradeHigherThanBasic(member);
         if (post.getSecret()) {
             checkPermission(member, post);
-
         }
-
+        post.increaseViewCount(); // 조회수 증가
         return postToPostResponse(post);
     }
 

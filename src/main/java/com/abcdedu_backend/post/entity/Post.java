@@ -82,6 +82,9 @@ public class Post extends BaseTimeEntity {
     public void decrementCommentCount() {
         this.commentCount--;
     }
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
 
     public void changeBoard(Board board) {
         board.getPosts().add(this);

@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
@@ -42,14 +41,13 @@ public class MemberService {
 
     @Transactional
     public void signUp(SignUpRequest request){
-        checkDuplicateEmail(request);
+        checkDuplicateEmail(request.email());
         Member signUpMember = createBasicMember(request);
         memberRepository.save(signUpMember);
     }
-
     @Transactional
     public void adminSignUp(SignUpRequest request) {
-        checkDuplicateEmail(request);
+        checkDuplicateEmail(request.email());
         Member signUpMember = createAdminMember(request);
         memberRepository.save(signUpMember);
     }
@@ -78,9 +76,9 @@ public class MemberService {
         refreshTokenRepository.findById(refreshToken)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_REFRESH_TOKEN));
 
-        Long userId = jwtUtil.getMemberIdFromRefreshToken(refreshToken);
+        Long memberId = jwtUtil.getMemberIdFromRefreshToken(refreshToken);
 
-        String accessToken = jwtUtil.createAccessToken(userId);
+        String accessToken = jwtUtil.createAccessToken(memberId);
 
         return new ReissueResponse(accessToken);
     }
@@ -136,12 +134,13 @@ public class MemberService {
                 .email(request.email())
                 .encodedPassword(passwordEncoder.encode(request.password()))
                 .role(role)
+                .school(request.school())
+                .studentId(request.studentId())
                 .build();
         return member;
     }
 
-    private void checkDuplicateEmail(SignUpRequest request) {
-        String signUpEmail = request.email();
+    private void checkDuplicateEmail(String signUpEmail) {
         Optional<Member> findMember = memberRepository.findByEmail(signUpEmail);
         if (findMember.isPresent()) {
             throw new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS);
@@ -161,4 +160,33 @@ public class MemberService {
                 .email(member.getEmail())
                 .build();
     }
+  
+    public void checkAdminPermission(Member member) {
+        if (!member.isAdmin()){
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
+        }
+    }
+
+    @Transactional
+    public void updatePassword(String email, String newPassword) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.EMAIL_NOT_FOUND));
+
+        String newEncodedPassword = passwordEncoder.encode(newPassword);
+        member.updatePassword(newEncodedPassword);
+
+        log.info("멤버 ID : {} 의 비밀번호가 임시 비밀번호로 변경되었습니다.", member.getId());
+    }
+
+    @Transactional
+    public void updatePassword(Long memberId, String newPassword) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        String newEncodedPassword = passwordEncoder.encode(newPassword);
+        member.updatePassword(newEncodedPassword);
+
+        log.info("멤버 ID : {} 의 비밀번호가 변경되었습니다.", memberId);
+    }
+
 }

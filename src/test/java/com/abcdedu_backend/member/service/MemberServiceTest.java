@@ -50,7 +50,7 @@ class MemberServiceTest {
     @Test
     public void 회원가입_성공(){
         //given
-        SignUpRequest request = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "123456");
+        SignUpRequest request = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "123456", "oo고등학교", 1234567L);
         Member savedMember = createMember();
 
         doReturn(Optional.empty()).when(memberRepository).findByEmail(request.email());
@@ -70,7 +70,7 @@ class MemberServiceTest {
     @Test
     public void 이미있는_유저로_인해_회원가입_실패(){
         //given
-        SignUpRequest request = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "123456");
+        SignUpRequest request = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "123456", "oo고등학교", 1234567L);
         doReturn(Optional.of(createMember())).when(memberRepository).findByEmail(request.email());
 
         //when
@@ -240,6 +240,19 @@ class MemberServiceTest {
         assertThat(memberBasicInfoResponse.name()).isEqualTo(member.getName());
         assertThat(memberBasicInfoResponse.role()).isEqualTo(member.getRole().getName());
         assertThat(memberBasicInfoResponse.email()).isEqualTo(member.getEmail());
+    }
+
+    @Test
+    public void 비밀번호_변경_성공() {
+        Member member = createMember();
+        doReturn(Optional.of(member)).when(memberRepository).findByEmail(member.getEmail());
+        doReturn("newEncodedPassword").when(passwordEncoder).encode("123456");
+
+        target.updatePassword(member.getEmail(), "123456");
+
+        verify(memberRepository, times(1)).findByEmail(member.getEmail());
+        verify(passwordEncoder, times(1)).encode("123456");
+        assertThat(member.getEncodedPassword()).isEqualTo("newEncodedPassword");
     }
 
 

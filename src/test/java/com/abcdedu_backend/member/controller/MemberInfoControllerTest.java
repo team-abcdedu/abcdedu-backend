@@ -4,11 +4,13 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.exception.ExceptionManager;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
+import com.abcdedu_backend.member.dto.request.UpdatePasswordRequest;
 import com.abcdedu_backend.member.dto.response.MemberBasicInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.member.service.MemberService;
 import com.amazonaws.HttpMethod;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,9 +44,12 @@ class MemberInfoControllerTest {
 
     private MockMvc mockMvc;
 
+    private Gson gson;
+
 
     @BeforeEach
     public void init() {
+        gson = new Gson();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
                 .setControllerAdvice(new ExceptionManager())
                 .build();
@@ -219,6 +224,51 @@ class MemberInfoControllerTest {
                 get(url)
                         .header("Authorization", "Bearer validToken")
                         .param("memberId", memberId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions.andExpect(status().isNotFound());
+    }
+
+    @Test
+    void 비밀번호_변경_성공() throws Exception {
+        // given
+        final String url = "/members/password";
+
+        UpdatePasswordRequest request = new UpdatePasswordRequest("123456");
+        Long memberId = 1L;
+
+        doNothing().when(memberService).updatePassword(memberId, request.newPassword());
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                patch(url)
+                        .header("Authorization", "Bearer validToken")
+                        .param("memberId", memberId.toString())
+                        .content(gson.toJson(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    void 없는_유저로_비밀번호_변경_실패() throws Exception {
+        // given
+        final String url = "/members/password";
+
+        UpdatePasswordRequest request = new UpdatePasswordRequest("123456");
+        Long notFoundMemberId = 2L;
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberService).updatePassword(notFoundMemberId, request.newPassword());
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                patch(url)
+                        .header("Authorization", "Bearer validToken")
+                        .param("memberId", notFoundMemberId.toString())
+                        .content(gson.toJson(request))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 

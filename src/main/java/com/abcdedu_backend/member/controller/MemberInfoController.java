@@ -2,6 +2,7 @@ package com.abcdedu_backend.member.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
+import com.abcdedu_backend.member.dto.request.UpdatePasswordRequest;
 import com.abcdedu_backend.member.dto.response.MemberBasicInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
 import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
@@ -51,7 +52,6 @@ public class MemberInfoController {
     public Response<Void> updateMemberInfo(@JwtValidation Long memberId,
                                                  @Valid @ModelAttribute UpdateMemberInfoRequest updateMemberInfoRequest,
                                                  @RequestPart(value = "file", required = false) MultipartFile multipartFile){
-        System.out.println(multipartFile);
         memberService.updateMemberInfo(memberId, updateMemberInfoRequest, multipartFile);
         return Response.success();
     }
@@ -69,5 +69,16 @@ public class MemberInfoController {
     public Response<MemberBasicInfoResponse> getMemberBasicInfo(@JwtValidation Long memberId){
         MemberBasicInfoResponse memberBasicInfoResponse = memberService.getMemberBasicInfo(memberId);
         return Response.success(memberBasicInfoResponse);
+    }
+
+    @ApiResponses(value ={
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.", content = @Content),
+    })
+    @Operation(summary = "비밀번호 수정", description = "비밀번호를 수정합니다.")
+    @PatchMapping("/password")
+    public Response<Void> updatePassword(@JwtValidation Long memberId,
+                                         @Valid @RequestBody UpdatePasswordRequest updatePasswordRequest){
+        memberService.updatePassword(memberId, updatePasswordRequest.newPassword());
+        return Response.success();
     }
 }

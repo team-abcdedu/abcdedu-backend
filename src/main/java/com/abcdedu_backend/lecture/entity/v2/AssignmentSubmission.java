@@ -1,5 +1,6 @@
-package com.abcdedu_backend.lecture.entity;
+package com.abcdedu_backend.lecture.entity.v2;
 
+import com.abcdedu_backend.lecture.entity.Assignment;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import jakarta.persistence.*;
