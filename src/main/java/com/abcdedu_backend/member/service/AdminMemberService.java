@@ -1,13 +1,20 @@
 package com.abcdedu_backend.member.service;
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
+import com.abcdedu_backend.member.dto.request.ChangeMemberRoleRequest;
 import com.abcdedu_backend.member.dto.request.MemberSearchCondition;
 import com.abcdedu_backend.member.dto.response.AdminSearchMemberResponse;
 import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.repository.AdminMemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -25,5 +32,23 @@ public class AdminMemberService {
                 pageable);
         log.info("필터에 맞는 member 조회 성공");
         return members.map(AdminSearchMemberResponse::fromMember);
+    }
+
+    @Transactional
+    public void updateMembersRole(MemberRole roleName, List<ChangeMemberRoleRequest> requests) {
+        checkIsAllowedRoleChange(roleName); // to관리자 변경 방지
+
+        List<Long> ids = requests.stream()
+                .map(ChangeMemberRoleRequest::memberId)
+                .toList();
+        List<Member> members = memberRepository.findAllByIdIn(ids);
+        members.forEach(member -> member.updateRole(roleName));
+        memberRepository.saveAll(members);
+    }
+
+    private void checkIsAllowedRoleChange(MemberRole roleName) {
+        if (roleName == MemberRole.ADMIN) {
+            throw new ApplicationException(ErrorCode.TO_ADMIN_REQUEST_IS_NOT_ALLOWED);
+        }
     }
 }
