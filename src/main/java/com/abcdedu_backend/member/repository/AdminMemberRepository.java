@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface AdminMemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m " +
             "WHERE (:school IS NULL OR m.school LIKE %:school%) " +
@@ -19,4 +21,6 @@ public interface AdminMemberRepository extends JpaRepository<Member, Long> {
                                     @Param("name") String name,
                                     @Param("role") MemberRole role,
                                     Pageable pageable);
+
+    List<Member> findAllByIdIn(List<Long> memberIds);
 }
