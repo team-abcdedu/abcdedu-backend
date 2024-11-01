@@ -38,6 +38,7 @@ public class PostService {
         return findPostList.map(this::postToPostListResponse);
     }
 
+    @Transactional
     public PostResponse getPost(Long postId, Long memberId) {
         Post post = checkPost(postId);
         Member member = memberService.checkMember(memberId);
