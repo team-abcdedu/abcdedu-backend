@@ -1,6 +1,5 @@
 package com.abcdedu_backend.member.controller;
 
-import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.common.page.PageManager;
 import com.abcdedu_backend.common.page.request.PagingRequest;
 import com.abcdedu_backend.common.page.request.SortRequest;
@@ -36,7 +35,8 @@ public class AdminMemberController {
     }
     @Operation(summary = "멤버 일괄 등급 변경", description = "현재 버전은 새싹 <-> 학생 변경만 가능합니다.")
     @PatchMapping("/role/{roleName}")
-    public Response<Void> changeMembersRole(@JwtValidation Long memberId, @PathVariable MemberRole roleName,  @RequestBody List<ChangeMemberRoleRequest> requests) {
+    public Response<Void> changeMembersRole(@PathVariable MemberRole roleName,  @RequestBody List<ChangeMemberRoleRequest> requests) {
+        adminMemberService.updateMembersRole(roleName, requests);
         return Response.success();
     }
 
