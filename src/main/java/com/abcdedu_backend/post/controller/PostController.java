@@ -1,5 +1,6 @@
 package com.abcdedu_backend.post.controller;
 
+import com.abcdedu_backend.board.BoardType;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.common.page.PageManager;
 import com.abcdedu_backend.common.page.request.PagingRequest;
@@ -9,6 +10,7 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
+import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.service.CommentService;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
 import com.abcdedu_backend.post.dto.response.CommentResponse;
@@ -44,6 +46,12 @@ public class PostController {
     private final PostService postService;
     private final CommentService commentService;
 
+    @GetMapping
+    @Operation(summary = "카테고리별 게시글 목록", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다.")
+    public Response<PagedResponse<PostListResponse>> getPostList(@PathVariable BoardType boardType, PagingRequest pagingRequest, SortRequest sortRequest) {
+        Page<PostListResponse> allPosts = postService.getPosts(boardType, new PageManager(pagingRequest, sortRequest).makePageRequest());
+        return Response.success(PagedResponse.from(allPosts));
+    }
 
     @GetMapping("/{postId}")
     @Operation(summary = "특정 게시글 조회", description = "특정 게시글을 조회합니다. 비밀글은 관리자와 글쓴이만 볼 수 있습니다.")

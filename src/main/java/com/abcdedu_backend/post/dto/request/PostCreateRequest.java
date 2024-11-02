@@ -1,12 +1,15 @@
 package com.abcdedu_backend.post.dto.request;
+import com.abcdedu_backend.board.BoardType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record PostCreateRequest (
-        @NotNull
+        @Deprecated
         @Schema(example = "1")
         Long boardId,
+
+        BoardType boardType,
         @NotBlank
         @Schema(example = "게시글 제목입니다.")
         String title,

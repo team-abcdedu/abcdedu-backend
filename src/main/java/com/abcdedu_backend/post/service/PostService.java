@@ -1,6 +1,5 @@
 package com.abcdedu_backend.post.service;
-import com.abcdedu_backend.board.Board;
-import com.abcdedu_backend.board.BoardService;
+import com.abcdedu_backend.board.BoardType;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.infra.file.FileDirectory;
@@ -28,13 +27,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class PostService {
     private final PostReposiroty postReposiroty;
-    private final BoardService boardService;
     private final MemberService memberService;
     private final FileHandler fileHandler;
 
 
-    public Page<PostListResponse> getPosts(Long boardId, Pageable pageable) {
-        Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable); // TODO. REVIEW. findByBoard 방식과 findByBoardId 방식 중 어느것이 나을지 고민
+    public Page<PostListResponse> getPosts(BoardType boardType, Pageable pageable) {
+        Page<Post> findPostList = postReposiroty.findByBoardType(boardType, pageable);
         return findPostList.map(this::postToPostListResponse);
     }
 
@@ -51,12 +49,10 @@ public class PostService {
 
     @Transactional
     public Long createPost(PostCreateRequest req, Long memberId, MultipartFile file) {
-        Board findBoard = boardService.checkBoard(req.boardId());
-        Member findMember = memberService.checkMember(memberId);
-        if (hasPostingRestrictedByRole(findBoard)) checkMemberGradeHigherThanBasic(findMember);
+        Member member = memberService.checkMember(memberId);
+        if (hasPostingRestrictedByRole(req.boardType())) checkMemberGradeHigherThanBasic(member);
         // 게시글 저장
-        Post post = Post.of(findMember, findBoard, req);
-        post.changeBoard(findBoard);
+        Post post = Post.of(member, req);
         postReposiroty.save(post);
         // 파일
         if (hasFile(file)) post.updateFileUrl(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, post.getId().toString()));
@@ -159,12 +155,8 @@ public class PostService {
             throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
         }
     }
-    private boolean hasPostingRestrictedByRole(Board board) {
-        return !boardIdToName(board.getId()).equals("rating");
-    }
-
-    private String boardIdToName(Long boardId) {
-        return boardService.boardIdToName(boardId);
+    private boolean hasPostingRestrictedByRole(BoardType boardType) {
+        return !(boardType == BoardType.RATING);
     }
 
     private boolean hasFile(MultipartFile file) {

@@ -1,10 +1,10 @@
 package com.abcdedu_backend.post.entity;
 
+import com.abcdedu_backend.board.BoardType;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.utils.BaseTimeEntity;
-import com.abcdedu_backend.board.Board;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,9 +28,8 @@ public class Post extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
+    @Enumerated(EnumType.STRING)
+    private BoardType boardType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -60,9 +59,9 @@ public class Post extends BaseTimeEntity {
     @Column(name = "file_url")
     private String fileUrl;
 
-    public static Post of(Member member, Board board, PostCreateRequest req) {
+    public static Post of(Member member, PostCreateRequest req) {
         return Post.builder()
-                .board(board)
+                .board(req.boardType())
                 .member(member)
                 .title(req.title())
                 .viewCount(0L)
@@ -86,10 +85,6 @@ public class Post extends BaseTimeEntity {
         this.viewCount++;
     }
 
-    public void changeBoard(Board board) {
-        board.getPosts().add(this);
-        this.board = board;
-    }
 
     public void update(PostUpdateRequest updateReq) {
         this.title = updateReq.title();

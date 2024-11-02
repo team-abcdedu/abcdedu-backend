@@ -4,10 +4,8 @@ import com.abcdedu_backend.board.dto.request.BoardCreateRequest;
 import com.abcdedu_backend.board.dto.response.BoardResponse;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.common.page.request.PagingRequest;
-import com.abcdedu_backend.common.page.PageManager;
 import com.abcdedu_backend.common.page.request.SortRequest;
 import com.abcdedu_backend.common.page.response.PagedResponse;
-import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.service.PostService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,12 +36,14 @@ public class BoardController {
     private final BoardService boardService;
     private final PostService postService;
 
+    @Deprecated
     @Operation(summary = "게시판 카테고리 추가", description = "카테고리를 추가합니다. 관리자 이상만 가능합니다.")
     @PostMapping("/")
     public Response<Long> addBoard(@Valid @RequestBody BoardCreateRequest req, @JwtValidation Long memberId) {
         return Response.success(boardService.addBoard(req, memberId));
     }
 
+    @Deprecated
     @Operation(summary = "게시판 카테고리 삭제", description = "카테고리를 삭제합니다. 관리자 이상만 가능합니다.")
     @DeleteMapping("/{boardId}")
     public Response<Void> deleteBoard(@PathVariable Long boardId, @JwtValidation Long memberId) {
@@ -52,23 +51,27 @@ public class BoardController {
         return Response.success();
     }
 
+    @Deprecated
     @Operation(summary = "모든 게시판 카테고리 조회", description = "카테고리를 모두 조회합니다.")
     @GetMapping("/")
     public Response<List<BoardResponse>> findAllBoard() {
         return Response.success(boardService.findAllBoard());
     }
 
+    @Deprecated
     @Operation(summary = "게시판 카테고리 조회", description = "카테고리 ID를 통해 개별 조회합니다.")
     @GetMapping("/{boardId}")
     public Response<BoardResponse> findBoard(@PathVariable Long boardId) {
         return Response.success(boardService.findBoard(boardId));
     }
-
+    @Deprecated
     @GetMapping("/{boardId}/posts")
-    @Operation(summary = "카테고리별 게시글 목록", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다.")
-    public Response<PagedResponse<PostListResponse>> getPostList(@PathVariable Long boardId, PagingRequest pagingRequest, SortRequest sortRequest) {
-        Page<PostListResponse> allPosts = postService.getPosts(boardId, new PageManager(pagingRequest, sortRequest).makePageRequest());
-        return Response.success(PagedResponse.from(allPosts));
+    @Operation(summary = "카테고리별 게시글 목록", description = "" +
+            "해당 기능은 GET /posts 로 옮겨 졌습니다." +
+            "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다.")
+    public Response<PagedResponse<Void>> getPostList(@PathVariable Long boardId, PagingRequest pagingRequest, SortRequest sortRequest) {
+        // Page<PostListResponse> allPosts = postService.getPosts(boardId, new PageManager(pagingRequest, sortRequest).makePageRequest());
+        return Response.success();
     }
 
 }
