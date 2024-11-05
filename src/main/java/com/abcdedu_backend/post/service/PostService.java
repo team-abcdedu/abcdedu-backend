@@ -32,9 +32,14 @@ public class PostService {
     private final MemberService memberService;
     private final FileHandler fileHandler;
 
-
+    // 삭제 예정
     public Page<PostListResponse> getPosts(Long boardId, Pageable pageable) {
-        Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable); // TODO. REVIEW. findByBoard 방식과 findByBoardId 방식 중 어느것이 나을지 고민
+        Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable);
+        return findPostList.map(this::postToPostListResponse);
+    }
+
+    public Page<PostListResponse> getPostsV2(String boardName, Pageable pageable) {
+        Page<Post> findPostList = postReposiroty.findAllByBoardName(boardName, pageable);
         return findPostList.map(this::postToPostListResponse);
     }
 
