@@ -10,6 +10,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,9 @@ public class EmailService {
     private static final String SEND_TEMP_PASSWORD_TITLE = "[ABCDEdu] 비밀번호 찾기 안내 메일입니다.";
     private static final String SEND_TEMP_PASSWORD_TEXT_FORM = "임시 비밀번호는 <b>%s</b> 입니다.";
 
+    private static final String ENCODING_BASE = "UTF-8";
+
+    @Async
     public void sendCodeToEmail(String toEmail) {
         String code = randomCodeGenerator.generateAuthCode();
         String text = String.format(SEND_CODE_TEXT_FORM, code);
@@ -41,6 +45,7 @@ public class EmailService {
         }
     }
 
+    @Async
     @Transactional
     public void sendTempPasswordToEmail(String toEmail) {
         String tempPassword = randomCodeGenerator.generatePassword();
@@ -66,7 +71,7 @@ public class EmailService {
 
     private MimeMessage createEmailForm(String toEmail, String title, String text) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
+        MimeMessageHelper helper = new MimeMessageHelper(message, ENCODING_BASE);
         helper.setTo(toEmail);
         helper.setSubject(title);
         helper.setText(text, true);
