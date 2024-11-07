@@ -27,7 +27,6 @@ public class EmailService {
         emailCodeRepository.save(new EmailCode(toEmail, code));
     }
 
-    @Async
     @Transactional
     public void sendTempPasswordToEmail(String toEmail) {
         String tempPassword = randomCodeGenerator.generatePassword();
