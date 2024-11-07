@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin/homeworks")
 @RequiredArgsConstructor
-@Tag(name = "관리자 공통과제 기능", description = "과제 생성 및 변경")
+@Tag(name = "관리자 기능 - 공통과제", description = "제작중입니다.")
 public class AdminHomeworkController {
     private final HomeworkService homeworkService;
 
