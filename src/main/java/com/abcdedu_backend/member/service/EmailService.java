@@ -6,7 +6,6 @@ import com.abcdedu_backend.member.entity.EmailCode;
 import com.abcdedu_backend.member.repository.EmailCodeRepository;
 import com.abcdedu_backend.utils.RandomCodeGenerator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,6 @@ public class EmailService {
         emailCodeRepository.save(new EmailCode(toEmail, code));
     }
 
-    @Async
     @Transactional
     public void sendTempPasswordToEmail(String toEmail) {
         String tempPassword = randomCodeGenerator.generatePassword();
