@@ -3,4 +3,4 @@ ALTER TABLE boards
     ADD CONSTRAINT unique_boardName UNIQUE (name);
 
 insert into boards (name)
-values ("document");
+values ('document');

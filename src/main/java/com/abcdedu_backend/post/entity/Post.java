@@ -2,6 +2,7 @@ package com.abcdedu_backend.post.entity;
 
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
+import com.abcdedu_backend.post.dto.request.PostCreateRequestV2;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import com.abcdedu_backend.board.Board;
@@ -59,8 +60,20 @@ public class Post extends BaseTimeEntity {
 
     @Column(name = "file_url")
     private String fileUrl;
-
+    // Todo. ofV2로 대체 예정, 삭제 해야함
     public static Post of(Member member, Board board, PostCreateRequest req) {
+        return Post.builder()
+                .board(board)
+                .member(member)
+                .title(req.title())
+                .viewCount(0L)
+                .commentCount(0L)
+                .content(req.content())
+                .secret(req.secret())
+                .commentAllow(req.commentAllow())
+                .build();
+    }
+    public static Post ofV2(Member member, Board board, PostCreateRequestV2 req) {
         return Post.builder()
                 .board(board)
                 .member(member)
