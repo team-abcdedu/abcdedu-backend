@@ -73,7 +73,7 @@ public class Post extends BaseTimeEntity {
                 .commentAllow(req.commentAllow())
                 .build();
     }
-    public static Post ofV2(Member member, Board board, PostCreateRequestV2 req) {
+    public static Post of(Member member, Board board, PostCreateRequestV2 req) {
         return Post.builder()
                 .board(board)
                 .member(member)

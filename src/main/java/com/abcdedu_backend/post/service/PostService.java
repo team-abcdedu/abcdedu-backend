@@ -72,13 +72,13 @@ public class PostService {
     }
 
     @Transactional
-    public Long createPostV2(PostCreateRequestV2 req, Long memberId, MultipartFile file) {
+    public Long createPost(PostCreateRequestV2 req, Long memberId, MultipartFile file) {
         Member member = memberService.checkMember(memberId);
         Board board = boardService.checkBoardThroughName(req.boardName());
         if (hasPostingRestrictedByRole(board)) checkMemberGradeHigherThanBasic(member); // 게시글은 학생 등급 이상만 생성할 수 있다, 예외 (등업게시판) : 모두 생성 가능
         if (hasPostingRestrictedByBoardType(board)) checkMemberGradeHigherThanAdmin(member); // 자료실 게시글 생성은 관리자만 가능하다.
         // 게시글 저장
-        Post post = Post.ofV2(member, board, req);
+        Post post = Post.of(member, board, req);
         post.changeBoard(board);
         postReposiroty.save(post);
         // 파일

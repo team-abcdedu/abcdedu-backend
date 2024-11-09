@@ -77,7 +77,7 @@ public class PostController {
                                      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                      @JwtValidation Long memberId) {
         if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
-        return Response.success(postService.createPostV2(req, memberId, multipartFile));
+        return Response.success(postService.createPost(req, memberId, multipartFile));
     }
 
 
