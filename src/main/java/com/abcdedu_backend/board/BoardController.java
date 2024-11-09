@@ -58,16 +58,20 @@ public class BoardController {
         return Response.success(boardService.findAllBoard());
     }
 
-    @Operation(summary = "게시판 카테고리 조회", description = "카테고리 ID를 통해 개별 조회합니다.")
-    @GetMapping("/{boardId}")
-    public Response<BoardResponse> findBoard(@PathVariable Long boardId) {
-        return Response.success(boardService.findBoard(boardId));
-    }
 
-    @GetMapping("/{boardId}/posts")
-    @Operation(summary = "카테고리별 게시글 목록", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다.")
+    @Deprecated
+    @GetMapping("v1/{boardId}/posts")
+    @Operation(summary = "카테고리별 게시글 목록", description = "해당 기능은 V2 로 대체됩니다.")
     public Response<PagedResponse<PostListResponse>> getPostList(@PathVariable Long boardId, PagingRequest pagingRequest, SortRequest sortRequest) {
         Page<PostListResponse> allPosts = postService.getPosts(boardId, new PageManager(pagingRequest, sortRequest).makePageRequest());
+        return Response.success(PagedResponse.from(allPosts));
+    }
+
+    @GetMapping("/{boardName}/posts")
+    @Operation(summary = "카테고리별 게시글 목록V2", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다." +
+            "boardName은 대소문자 상관 없이 이름만 맞으면 조회 가능합니다.")
+    public Response<PagedResponse<PostListResponse>> getPostListV2(@PathVariable String boardName, PagingRequest pagingRequest, SortRequest sortRequest) {
+        Page<PostListResponse> allPosts = postService.getPostsV2(boardName, new PageManager(pagingRequest, sortRequest).makePageRequest());
         return Response.success(PagedResponse.from(allPosts));
     }
 

@@ -8,6 +8,7 @@ import com.abcdedu_backend.infra.file.FileHandler;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.post.dto.request.PostCreateRequestV2;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
@@ -32,9 +33,14 @@ public class PostService {
     private final MemberService memberService;
     private final FileHandler fileHandler;
 
-
+    // 삭제 예정
     public Page<PostListResponse> getPosts(Long boardId, Pageable pageable) {
-        Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable); // TODO. REVIEW. findByBoard 방식과 findByBoardId 방식 중 어느것이 나을지 고민
+        Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable);
+        return findPostList.map(this::postToPostListResponse);
+    }
+
+    public Page<PostListResponse> getPostsV2(String boardName, Pageable pageable) {
+        Page<Post> findPostList = postReposiroty.findAllByBoardName(boardName, pageable);
         return findPostList.map(this::postToPostListResponse);
     }
 
@@ -50,6 +56,7 @@ public class PostService {
         return postToPostResponse(post);
     }
 
+    // Todo. 삭제 예정
     @Transactional
     public Long createPost(PostCreateRequest req, Long memberId, MultipartFile file) {
         Board findBoard = boardService.checkBoard(req.boardId());
@@ -58,6 +65,22 @@ public class PostService {
         // 게시글 저장
         Post post = Post.of(findMember, findBoard, req);
         post.changeBoard(findBoard);
+        postReposiroty.save(post);
+        // 파일
+        if (hasFile(file)) post.updateFileUrl(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, post.getId().toString()));
+        else post.updateFileUrl(""); // NULL을 방지하기 위한 공백 삽입
+        return post.getId();
+    }
+
+    @Transactional
+    public Long createPost(PostCreateRequestV2 req, Long memberId, MultipartFile file) {
+        Member member = memberService.checkMember(memberId);
+        Board board = boardService.checkBoardThroughName(req.boardName());
+        if (hasPostingRestrictedByRole(board)) checkMemberGradeHigherThanBasic(member); // 게시글은 학생 등급 이상만 생성할 수 있다, 예외 (등업게시판) : 모두 생성 가능
+        if (hasPostingRestrictedByBoardType(board)) checkMemberGradeHigherThanAdmin(member); // 자료실 게시글 생성은 관리자만 가능하다.
+        // 게시글 저장
+        Post post = Post.of(member, board, req);
+        post.changeBoard(board);
         postReposiroty.save(post);
         // 파일
         if (hasFile(file)) post.updateFileUrl(fileHandler.upload(file, FileDirectory.POST_ATTACHMENT, post.getId().toString()));
@@ -160,13 +183,23 @@ public class PostService {
             throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
         }
     }
+    // role이 관리자 이상인지
+    private void checkMemberGradeHigherThanAdmin(Member member) {
+        if (!member.isAdmin()) {
+            throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
+        }
+    }
     private boolean hasPostingRestrictedByRole(Board board) {
-        return !boardIdToName(board.getId()).equals("rating");
+        return !(board.getName().equals("rating"));
     }
 
-    private String boardIdToName(Long boardId) {
-        return boardService.boardIdToName(boardId);
+    private boolean hasPostingRestrictedByBoardType(Board board) {
+        return board.getName().equals("document");
     }
+
+//    private String boardIdToName(Board board) {
+//        return boardService.boardIdToName(board);
+//    }
 
     private boolean hasFile(MultipartFile file) {
         return file != null && !file.isEmpty();

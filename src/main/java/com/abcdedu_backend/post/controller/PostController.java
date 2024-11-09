@@ -8,6 +8,7 @@ import com.abcdedu_backend.common.page.response.PagedResponse;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.MemberRole;
+import com.abcdedu_backend.post.dto.request.PostCreateRequestV2;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.service.CommentService;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
@@ -56,12 +57,10 @@ public class PostController {
         return Response.success(postService.getPost(postId, memberId));
     }
 
-    @PostMapping()
-    @Operation(summary = "게시글 생성", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다.")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "400", description = "공백 요청 불가 : 제목", content = @Content),
-//            @ApiResponse(responseCode = "403", description = "학생 등급 이하가 기능을 요청할 때 발생합니다.", content = @Content)
-//    })
+    @Deprecated
+    @PostMapping("/v1")
+    @Operation(summary = "게시글 생성", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다." +
+            "게시글 생성V2 으로 업그레이드")
     public Response<Long> createPost(@Valid @ModelAttribute PostCreateRequest req,
                                      BindingResult bindingResult,
                                      @RequestPart(value = "file", required = false) MultipartFile multipartFile,
@@ -69,6 +68,18 @@ public class PostController {
         if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
         return Response.success(postService.createPost(req, memberId, multipartFile));
     }
+
+    @PostMapping()
+    @Operation(summary = "게시글 생성V2", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다." +
+            "자료실 카테고리에선 게시글 작성이 관리자등급 이상에게만 허용됩니다. ")
+    public Response<Long> createPostV2(@Valid @ModelAttribute PostCreateRequestV2 req,
+                                     BindingResult bindingResult,
+                                     @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+                                     @JwtValidation Long memberId) {
+        if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
+        return Response.success(postService.createPost(req, memberId, multipartFile));
+    }
+
 
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다. 작성자 본인과 관리자만 삭제가 가능합니다.")
