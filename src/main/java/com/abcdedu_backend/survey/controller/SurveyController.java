@@ -69,12 +69,4 @@ public class SurveyController {
         return Response.success();
     }
 
-    @Operation(summary = "설문-질문-응답조회", description = "관리자가 설문별로 보는 설문-질문-응답 조회")
-    @GetMapping("/{surveyId}/replies")
-    public Response<SurveyRepliesGetResponse> getSurveyReply(@JwtValidation Long memberId, @PathVariable Long surveyId) {
-        SurveyRepliesGetResponse surveyReplys = surveyService.getSurveyReplies(memberId, surveyId);
-        return Response.success(surveyReplys);
-    }
-
-
 }
