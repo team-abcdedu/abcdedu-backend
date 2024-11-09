@@ -1,6 +1,7 @@
 package com.abcdedu_backend.homework.entity;
 
 import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.utils.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "homeworks")
-public class Homework {
+public class Homework extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
