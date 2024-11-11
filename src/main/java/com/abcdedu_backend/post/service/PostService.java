@@ -36,8 +36,6 @@ public class PostService {
 
     public Page<PostListResponse> getPosts(Long boardId, Pageable pageable) {
         Page<Post> findPostList = postReposiroty.findAllByBoardId(boardId, pageable);// TODO. REVIEW. findByBoard 방식과 findByBoardId 방식 중 어느것이 나을지 고민
-        System.out.println(findPostList.getSize());
-        System.out.println(findPostList.get());
         return findPostList.map(this::postToPostListResponse);
     }
 
