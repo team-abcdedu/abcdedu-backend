@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface PostReposiroty extends JpaRepository<Post, Long> {
 
-    @EntityGraph(attributePaths = {"member"})
+//    @EntityGraph(attributePaths = {"member"})
     @Query("SELECT p FROM Post p WHERE p.board.id = :boardId")
     Page<Post> findAllByBoardId(@Param("boardId") Long boardId, Pageable pageable);
 

@@ -45,6 +45,7 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
     TO_ADMIN_REQUEST_IS_NOT_ALLOWED(HttpStatus.FORBIDDEN, "관리자로의 역할 변경은 불가합니다. 개발자에게 문의해주세요."),
+    USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 이메일 또는 회원 탈퇴한 유저입니다."),
     //클래스
     CLASS_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 클래스입니다."),
     SUB_CLASS_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 서브클래스입니다."),
