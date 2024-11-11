@@ -15,7 +15,7 @@ public interface PostReposiroty extends JpaRepository<Post, Long> {
     Page<Post> findAllByBoardId(@Param("boardId") Long boardId, Pageable pageable);
 
 
-    @EntityGraph(attributePaths = {"member"})
+//    @EntityGraph(attributePaths = {"member"})
     @Query("SELECT p FROM Post p WHERE p.board.name = :boardName")
     Page<Post> findAllByBoardName(@Param("boardName") String boardName, Pageable pageable);
 
