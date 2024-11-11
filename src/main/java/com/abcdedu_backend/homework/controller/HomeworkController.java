@@ -3,7 +3,6 @@ package com.abcdedu_backend.homework.controller;
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.homework.dto.response.HomeworkGetRes;
 import com.abcdedu_backend.homework.dto.request.HomeworkReplyCreateReq;
-import com.abcdedu_backend.homework.dto.response.HomeworkReplyGetRes;
 import com.abcdedu_backend.homework.service.HomeworkService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,13 +37,5 @@ public class HomeworkController {
         homeworkService.createHomeworkReply(memberId, homeworkId, replyRequests);
         return Response.success();
     }
-
-    @Operation(summary = "과제 응답 조회", description = "과제에 대한 응답을 전체 조회 합니다. (설문과 같은 양식)")
-    @GetMapping("/{homeworkId}/replies")
-    public Response<HomeworkReplyGetRes> getReplies(@JwtValidation Long memberId, @PathVariable Long homeworkId) {
-        HomeworkReplyGetRes homeworkReplyGetRes = homeworkService.getReplies(memberId, homeworkId);
-        return Response.success(homeworkReplyGetRes);
-    }
-
 
 }

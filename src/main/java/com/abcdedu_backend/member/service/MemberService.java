@@ -137,8 +137,8 @@ public class MemberService {
         return member;
     }
 
-    private void checkDuplicateEmail(String signUpEmail) {
-        Optional<Member> findMember = memberRepository.findByEmail(signUpEmail);
+    public void checkDuplicateEmail(String email) {
+        Optional<Member> findMember = memberRepository.findByEmail(email);
         if (findMember.isPresent()) {
             throw new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
