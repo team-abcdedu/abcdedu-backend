@@ -4,7 +4,7 @@ package com.abcdedu_backend.global.security;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.global.jwt.JwtUtil;
-import com.abcdedu_backend.member.entity.MemberRole;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;

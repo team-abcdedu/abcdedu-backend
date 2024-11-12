@@ -1,13 +1,13 @@
-package com.abcdedu_backend.member.controller;
+package com.abcdedu_backend.memberv2.adapter.in;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.dto.LoginTokenDTO;
-import com.abcdedu_backend.member.dto.request.LoginRequest;
-import com.abcdedu_backend.member.dto.request.SignUpRequest;
-import com.abcdedu_backend.member.dto.response.LoginResponse;
-import com.abcdedu_backend.member.dto.response.ReissueResponse;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.domain.LoginToken;
+import com.abcdedu_backend.memberv2.adapter.in.dto.request.LoginRequest;
+import com.abcdedu_backend.memberv2.adapter.in.dto.request.SignUpRequest;
+import com.abcdedu_backend.memberv2.adapter.in.dto.response.LoginResponse;
+import com.abcdedu_backend.memberv2.adapter.in.dto.response.ReissueResponse;
+import com.abcdedu_backend.memberv2.application.AuthUseCase;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -44,7 +44,7 @@ public class AuthController {
     @Value("${cookie.secure}")
     private boolean isCookieHttpSecure;
 
-    private final MemberService memberService;
+    private final AuthUseCase authUseCase;
 
     @Operation(summary = "회원 가입", description = "회원가입을 합니다.")
     @ApiResponses(value ={
@@ -52,7 +52,7 @@ public class AuthController {
     })
     @PostMapping("/signup")
     public Response<Void> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
-        memberService.signUp(signUpRequest);
+        authUseCase.signUp(signUpRequest.toCommand());
         return Response.success();
     }
 
@@ -62,17 +62,17 @@ public class AuthController {
     })
     @PostMapping("/login")
     public Response<LoginResponse> login(HttpServletResponse response, @Valid @RequestBody LoginRequest loginRequest){
-        LoginTokenDTO loginTokenDto = memberService.login(loginRequest);
-        setRefreshTokenCookie(response, loginTokenDto.refreshToken(), Duration.ofDays(14).toSeconds());
-        LoginResponse loginResponse = new LoginResponse(loginTokenDto.accessToken());
+        LoginToken loginToken = authUseCase.login(loginRequest.email(), loginRequest.password());
+        setRefreshTokenCookie(response, loginToken.refreshToken(), Duration.ofDays(14).toSeconds());
+        LoginResponse loginResponse = new LoginResponse(loginToken.accessToken());
         return Response.success(loginResponse);
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
     @DeleteMapping("/logout")
-    public Response<LoginResponse> logout(HttpServletRequest request, HttpServletResponse response){
+    public Response<Void> logout(HttpServletRequest request, HttpServletResponse response){
         String refreshToken = parseRefreshToken(request);
-        memberService.logout(refreshToken);
+        authUseCase.logout(refreshToken);
         setRefreshTokenCookie(response, "", 0L);
         return Response.success();
     }
@@ -98,7 +98,8 @@ public class AuthController {
     @GetMapping("/reissue")
     public Response<ReissueResponse> reissue(HttpServletRequest request) {
         String refreshToken = parseRefreshToken(request);
-        ReissueResponse reissueResponse = memberService.reissue(refreshToken);
+        String reissueAccessToken = authUseCase.reissue(refreshToken);
+        ReissueResponse reissueResponse = new ReissueResponse(reissueAccessToken);
         return Response.success(reissueResponse);
     }
 

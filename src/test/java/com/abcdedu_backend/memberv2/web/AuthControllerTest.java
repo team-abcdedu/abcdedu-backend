@@ -1,14 +1,15 @@
-package com.abcdedu_backend.member.controller;
+package com.abcdedu_backend.memberv2.web;
+
 
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.exception.ExceptionManager;
-import com.abcdedu_backend.member.dto.LoginTokenDTO;
-import com.abcdedu_backend.member.dto.request.LoginRequest;
-import com.abcdedu_backend.member.dto.request.SignUpRequest;
-import com.abcdedu_backend.member.dto.response.ReissueResponse;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.domain.LoginToken;
+import com.abcdedu_backend.memberv2.adapter.in.dto.request.LoginRequest;
+import com.abcdedu_backend.memberv2.adapter.in.dto.request.SignUpRequest;
+import com.abcdedu_backend.memberv2.adapter.in.AuthController;
+import com.abcdedu_backend.memberv2.application.AuthUseCase;
 import com.google.gson.Gson;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.stream.Stream;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
@@ -38,7 +38,7 @@ public class AuthControllerTest {
     @InjectMocks
     private AuthController target;
     @Mock
-    private MemberService memberService;
+    private AuthUseCase authUseCase;
 
     private MockMvc mockMvc;
     private Gson gson;
@@ -57,7 +57,7 @@ public class AuthControllerTest {
         //given
         final String url = "/auth/signup";
         SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567", "oo고등학교", 1234567L);
-        doNothing().when(memberService).signUp(signUpRequest);
+        doNothing().when(authUseCase).signUp(signUpRequest.toCommand());
 
         //when
         final ResultActions resultActions = mockMvc.perform(
@@ -75,7 +75,7 @@ public class AuthControllerTest {
         //given
         final String url = "/auth/signup";
         SignUpRequest signUpRequest = new SignUpRequest("고동천", "ehdcjs159@gmail.com", "1234567", "oo고등학교", 1234567L);
-        doThrow(new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS)).when(memberService).signUp(any(SignUpRequest.class));
+        doThrow(new ApplicationException(ErrorCode.EMAIL_ALREADY_EXISTS)).when(authUseCase).signUp(signUpRequest.toCommand());
 
         //when
         final ResultActions resultActions = mockMvc.perform(
@@ -167,9 +167,9 @@ public class AuthControllerTest {
         //given
         final String url = "/auth/login";
         LoginRequest loginRequest = new LoginRequest("ehdcjs159@gmail.com", "1234567");
-        LoginTokenDTO loginTokenDto = new LoginTokenDTO("accessTokenValue", "refreshTokenValue");
+        LoginToken loginToken = new LoginToken("accessTokenValue", "refreshTokenValue");
 
-        when(memberService.login(loginRequest)).thenReturn(loginTokenDto);
+        when(authUseCase.login(loginRequest.email(), loginRequest.password())).thenReturn(loginToken);
 
         //when
         final ResultActions resultActions = mockMvc.perform(
@@ -190,7 +190,7 @@ public class AuthControllerTest {
         final String url = "/auth/login";
         LoginRequest loginRequest = new LoginRequest("ehdcjs159@gmail.com", "wrongpassword");
 
-        doThrow(new ApplicationException(ErrorCode.LOGIN_FAILED)).when(memberService).login(any(LoginRequest.class));
+        doThrow(new ApplicationException(ErrorCode.LOGIN_FAILED)).when(authUseCase).login(loginRequest.email(), loginRequest.password());
 
         //when
         final ResultActions resultActions = mockMvc.perform(
@@ -209,7 +209,7 @@ public class AuthControllerTest {
         final String url = "/auth/login";
         LoginRequest loginRequest = new LoginRequest("wrongemail@gmail.com", "1234567");
 
-        doThrow(new ApplicationException(ErrorCode.LOGIN_FAILED)).when(memberService).login(any(LoginRequest.class));
+        doThrow(new ApplicationException(ErrorCode.LOGIN_FAILED)).when(authUseCase).login(loginRequest.email(), loginRequest.password());
 
         //when
         final ResultActions resultActions = mockMvc.perform(
@@ -228,7 +228,7 @@ public class AuthControllerTest {
         final String url = "/auth/logout";
         String refreshToken = "someRefreshToken";
 
-        doNothing().when(memberService).logout(refreshToken);
+        doNothing().when(authUseCase).logout(refreshToken);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -248,9 +248,9 @@ public class AuthControllerTest {
         // given
         final String url = "/auth/reissue";
         String refreshToken = "validRefreshToken";
-        ReissueResponse reissueResponse = new ReissueResponse("newAccessToken");
+        String accessToken = "newAccessToken";
 
-        when(memberService.reissue(refreshToken)).thenReturn(reissueResponse);
+        when(authUseCase.reissue(refreshToken)).thenReturn(accessToken);
 
         final ResultActions resultActions = mockMvc.perform(
                 get(url)
@@ -280,7 +280,7 @@ public class AuthControllerTest {
         final String url = "/auth/reissue";
         String invalidRefreshToken = "invalidRefreshToken";
 
-        doThrow(new ApplicationException(ErrorCode.INVALID_REFRESH_TOKEN)).when(memberService).reissue(invalidRefreshToken);
+        doThrow(new ApplicationException(ErrorCode.INVALID_REFRESH_TOKEN)).when(authUseCase).reissue(invalidRefreshToken);
 
         final ResultActions resultActions = mockMvc.perform(
                 get(url)

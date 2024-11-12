@@ -1,9 +1,9 @@
-package com.abcdedu_backend.member.dto;
+package com.abcdedu_backend.memberv2.application.domain;
 
 import lombok.Builder;
 
 @Builder
-public record LoginTokenDTO(
+public record LoginToken(
         String accessToken,
         String refreshToken
 ) {

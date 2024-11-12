@@ -3,6 +3,7 @@ package com.abcdedu_backend.member.repository;
 import com.abcdedu_backend.member.dto.request.MemberSearchCondition;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
+import com.abcdedu_backend.memberv2.adapter.out.MemberJpaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,8 @@
-package com.abcdedu_backend.member.repository;
+package com.abcdedu_backend.memberv2.adapter;
 
 import com.abcdedu_backend.config.RedisTestContainer;
-import com.abcdedu_backend.member.entity.RefreshToken;
+import com.abcdedu_backend.memberv2.application.domain.RefreshToken;
+import com.abcdedu_backend.memberv2.application.out.RefreshTokenRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

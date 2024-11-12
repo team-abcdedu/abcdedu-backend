@@ -1,5 +1,6 @@
-package com.abcdedu_backend.member.dto.request;
+package com.abcdedu_backend.memberv2.adapter.in.dto.request;
 
+import com.abcdedu_backend.memberv2.application.command.SignupCommand;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -19,4 +20,7 @@ public record SignUpRequest(
         @Nullable
         Long studentId
 ){
+        public SignupCommand toCommand() {
+                return new SignupCommand(name, email, password, school, studentId);
+        }
 }
