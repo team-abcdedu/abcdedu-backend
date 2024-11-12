@@ -4,6 +4,7 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.entity.EmailCode;
 import com.abcdedu_backend.member.repository.EmailCodeRepository;
+import com.abcdedu_backend.memberv2.application.MemberInfoUseCase;
 import com.abcdedu_backend.utils.RandomCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,11 @@ public class EmailService {
     private final EmailSender emailSender;
     private final RandomCodeGenerator randomCodeGenerator;
     private final EmailCodeRepository emailCodeRepository;
-    private final MemberService memberService;
+    private final MemberInfoUseCase memberInfoUseCase;
 
     public void sendCodeToEmail(String toEmail) {
         String code = randomCodeGenerator.generateAuthCode();
-        memberService.checkDuplicateEmail(toEmail);
+        memberInfoUseCase.checkDuplicateEmail(toEmail);
         emailSender.sendCodeToEmail(code, toEmail);
         emailCodeRepository.save(new EmailCode(toEmail, code));
     }
@@ -29,7 +30,7 @@ public class EmailService {
     @Transactional
     public void sendTempPasswordToEmail(String toEmail) {
         String tempPassword = randomCodeGenerator.generatePassword();
-        memberService.updatePassword(toEmail, tempPassword);
+        memberInfoUseCase.updatePassword(toEmail, tempPassword);
         emailSender.sendTempPasswordToEmail(tempPassword, toEmail);
     }
 

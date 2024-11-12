@@ -3,7 +3,7 @@ package com.abcdedu_backend.memberv2.application;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.global.jwt.JwtUtil;
-import com.abcdedu_backend.memberv2.application.command.SignupCommand;
+import com.abcdedu_backend.memberv2.application.dto.command.SignupCommand;
 import com.abcdedu_backend.memberv2.application.domain.LoginToken;
 import com.abcdedu_backend.memberv2.application.domain.Member;
 import com.abcdedu_backend.memberv2.application.domain.MemberRole;

@@ -1,6 +1,6 @@
 package com.abcdedu_backend.memberv2.application;
 
-import com.abcdedu_backend.memberv2.application.command.SignupCommand;
+import com.abcdedu_backend.memberv2.application.dto.command.SignupCommand;
 import com.abcdedu_backend.memberv2.application.domain.LoginToken;
 public interface AuthUseCase {
 

@@ -1,6 +1,6 @@
 package com.abcdedu_backend.memberv2.adapter.in.dto.request;
 
-import com.abcdedu_backend.memberv2.application.command.SignupCommand;
+import com.abcdedu_backend.memberv2.application.dto.command.SignupCommand;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

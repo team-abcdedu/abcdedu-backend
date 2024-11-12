@@ -63,9 +63,9 @@ public class MemberEntity extends BaseTimeEntity {
         return this.role == MemberRole.STUDENT;
     }
 
-    public void updateProfile(String name, String imageUrl, String school, Long studentId){
+    public void updateProfile(String name, String school, Long studentId, String imageObjectKey){
         this.name = name;
-        this.imageObjectKey = imageUrl;
+        this.imageObjectKey = imageObjectKey;
         this.school = school;
         this.studentId = studentId;
     }
@@ -101,6 +101,9 @@ public class MemberEntity extends BaseTimeEntity {
                 .imageObjectKey(imageObjectKey)
                 .school(school)
                 .studentId(studentId)
+                .createdAt(getCreatedAt())
+                .postCount(getPosts().size())
+                .commentCount(getComments().size())
                 .build();
     }
 

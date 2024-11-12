@@ -3,12 +3,17 @@ package com.abcdedu_backend.member.controller;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.exception.ExceptionManager;
-import com.abcdedu_backend.member.dto.request.UpdateMemberInfoRequest;
-import com.abcdedu_backend.member.dto.request.UpdatePasswordRequest;
-import com.abcdedu_backend.member.dto.response.MemberBasicInfoResponse;
-import com.abcdedu_backend.member.dto.response.MemberInfoResponse;
-import com.abcdedu_backend.member.dto.response.MemberNameAndRoleResponse;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.adapter.in.dto.request.UpdateMemberInfoRequest;
+import com.abcdedu_backend.memberv2.adapter.in.dto.request.UpdatePasswordRequest;
+import com.abcdedu_backend.memberv2.adapter.in.dto.response.MemberBasicInfoResponse;
+import com.abcdedu_backend.memberv2.adapter.in.dto.response.MemberInfoResponse;
+import com.abcdedu_backend.memberv2.adapter.in.dto.response.MemberNameAndRoleResponse;
+import com.abcdedu_backend.memberv2.adapter.in.MemberInfoController;
+import com.abcdedu_backend.memberv2.application.MemberInfoService;
+import com.abcdedu_backend.memberv2.application.dto.MemberBasicInfoDto;
+import com.abcdedu_backend.memberv2.application.dto.MemberInfoDto;
+import com.abcdedu_backend.memberv2.application.dto.NameAndRoleDto;
+import com.abcdedu_backend.memberv2.application.dto.command.UpdateMemberInfoCommand;
 import com.amazonaws.HttpMethod;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +31,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -40,7 +44,7 @@ class MemberInfoControllerTest {
     @InjectMocks
     private MemberInfoController target;
     @Mock
-    private MemberService memberService;
+    private MemberInfoService memberInfoService;
 
     private MockMvc mockMvc;
 
@@ -61,7 +65,7 @@ class MemberInfoControllerTest {
         final String url = "/members/info";
         Long memberId = 1L;
         LocalDateTime now = LocalDateTime.now();
-        MemberInfoResponse memberInfoResponse = MemberInfoResponse.builder()
+        MemberInfoDto memberInfoDto = MemberInfoDto.builder()
                 .name("고동천")
                 .email("ehdcjs159@gmail.com")
                 .school("~~대학교")
@@ -73,7 +77,7 @@ class MemberInfoControllerTest {
                 .createCommentCount(5)
                 .build();
 
-        doReturn(memberInfoResponse).when(memberService).getMemberInfo(memberId);
+        doReturn(memberInfoDto).when(memberInfoService).getMemberInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -101,7 +105,7 @@ class MemberInfoControllerTest {
         final String url = "/members/info";
         Long memberId = 2L;
 
-        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberService).getMemberInfo(memberId);
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoService).getMemberInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -123,11 +127,14 @@ class MemberInfoControllerTest {
         UpdateMemberInfoRequest updateRequest = new UpdateMemberInfoRequest("고동천", "!!대학교", 202356789L);
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt", "text/plain", "file content".getBytes());
 
-        doNothing().when(memberService).updateMemberInfo(
-                any(Long.class),
-                any(UpdateMemberInfoRequest.class),
-                any(MultipartFile.class)
-        );
+        UpdateMemberInfoCommand updateMemberInfoCommand = UpdateMemberInfoCommand.of(
+                memberId,
+                updateRequest.name(),
+                updateRequest.school(),
+                updateRequest.studentId(),
+                file);
+
+        doNothing().when(memberInfoService).updateMemberInfo(updateMemberInfoCommand);
 
         // when
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart(url)
@@ -153,8 +160,8 @@ class MemberInfoControllerTest {
         // given
         final String url = "/members/info/name-and-role";
         Long memberId = 1L;
-        MemberNameAndRoleResponse nameAndRoleResponse = new MemberNameAndRoleResponse("고동천", "관리자");
-        doReturn(nameAndRoleResponse).when(memberService).getMemberNameAndRoleInfo(memberId);
+        NameAndRoleDto nameAndRoleDto = new NameAndRoleDto("고동천", "관리자");
+        doReturn(nameAndRoleDto).when(memberInfoService).getMemberNameAndRoleInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -166,8 +173,8 @@ class MemberInfoControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.name").value(nameAndRoleResponse.name()))
-                .andExpect(jsonPath("$.result.role").value(nameAndRoleResponse.role()));
+                .andExpect(jsonPath("$.result.name").value(nameAndRoleDto.name()))
+                .andExpect(jsonPath("$.result.role").value(nameAndRoleDto.role()));
     }
 
     @Test
@@ -175,7 +182,7 @@ class MemberInfoControllerTest {
         // given
         final String url = "/members/info/name-and-role";
         Long memberId = 2L;
-        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberService).getMemberNameAndRoleInfo(memberId);
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoService).getMemberNameAndRoleInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -194,8 +201,8 @@ class MemberInfoControllerTest {
         // given
         final String url = "/members/basic-info";
         Long memberId = 1L;
-        MemberBasicInfoResponse memberBasicInfoResponse = new MemberBasicInfoResponse("고동천", "관리자", "ehdcjs159@gmail.com");
-        doReturn(memberBasicInfoResponse).when(memberService).getMemberBasicInfo(memberId);
+        MemberBasicInfoDto memberBasicInfoDto = new MemberBasicInfoDto("고동천", "관리자", "ehdcjs159@gmail.com");
+        doReturn(memberBasicInfoDto).when(memberInfoService).getMemberBasicInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -207,9 +214,9 @@ class MemberInfoControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.name").value(memberBasicInfoResponse.name()))
-                .andExpect(jsonPath("$.result.role").value(memberBasicInfoResponse.role()))
-                .andExpect(jsonPath("$.result.email").value(memberBasicInfoResponse.email()));
+                .andExpect(jsonPath("$.result.name").value(memberBasicInfoDto.name()))
+                .andExpect(jsonPath("$.result.role").value(memberBasicInfoDto.role()))
+                .andExpect(jsonPath("$.result.email").value(memberBasicInfoDto.email()));
     }
 
     @Test
@@ -217,7 +224,7 @@ class MemberInfoControllerTest {
         // given
         final String url = "/members/basic-info";
         Long memberId = 2L;
-        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberService).getMemberBasicInfo(memberId);
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoService).getMemberBasicInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -239,7 +246,7 @@ class MemberInfoControllerTest {
         UpdatePasswordRequest request = new UpdatePasswordRequest("123456");
         Long memberId = 1L;
 
-        doNothing().when(memberService).updatePassword(memberId, request.newPassword());
+        doNothing().when(memberInfoService).updatePassword(memberId, request.newPassword());
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -261,7 +268,7 @@ class MemberInfoControllerTest {
 
         UpdatePasswordRequest request = new UpdatePasswordRequest("123456");
         Long notFoundMemberId = 2L;
-        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberService).updatePassword(notFoundMemberId, request.newPassword());
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoService).updatePassword(notFoundMemberId, request.newPassword());
 
         // when
         final ResultActions resultActions = mockMvc.perform(

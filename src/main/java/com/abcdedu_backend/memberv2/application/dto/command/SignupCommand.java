@@ -1,4 +1,4 @@
-package com.abcdedu_backend.memberv2.application.command;
+package com.abcdedu_backend.memberv2.application.dto.command;
 
 public record SignupCommand(
         String name,

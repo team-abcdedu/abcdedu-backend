@@ -3,6 +3,8 @@ package com.abcdedu_backend.memberv2.application.domain;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 public class Member {
@@ -22,6 +24,12 @@ public class Member {
     private String imageObjectKey;
 
     private MemberRole role;
+
+    private Integer postCount;
+
+    private Integer commentCount;
+
+    private LocalDateTime createdAt;
 
     public boolean isAdmin(){
         return this.role == MemberRole.ADMIN;

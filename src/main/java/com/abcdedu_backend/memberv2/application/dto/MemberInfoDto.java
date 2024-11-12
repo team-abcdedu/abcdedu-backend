@@ -1,12 +1,12 @@
-package com.abcdedu_backend.member.dto.response;
+package com.abcdedu_backend.memberv2.application.dto;
 
-import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.memberv2.application.domain.Member;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 
 @Builder
-public record MemberInfoResponse(
+public record MemberInfoDto (
         String name,
         String email,
         String school,
@@ -16,9 +16,9 @@ public record MemberInfoResponse(
         LocalDateTime createdAt,
         Integer createPostCount,
         Integer createCommentCount
-) {
-    public static MemberInfoResponse of(Member member, String imageUrl) {
-        return MemberInfoResponse.builder()
+){
+    public static MemberInfoDto of(Member member, String imageUrl) {
+        return MemberInfoDto.builder()
                 .studentId(member.getStudentId())
                 .email(member.getEmail())
                 .name(member.getName())
@@ -26,9 +26,8 @@ public record MemberInfoResponse(
                 .school(member.getSchool())
                 .imageUrl(imageUrl)
                 .createdAt(member.getCreatedAt())
-                .createPostCount(member.getPosts().size())
-                .createCommentCount(member.getComments().size())
+                .createPostCount(member.getPostCount())
+                .createCommentCount(member.getCommentCount())
                 .build();
     }
-
 }

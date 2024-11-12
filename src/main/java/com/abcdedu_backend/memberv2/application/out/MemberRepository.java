@@ -11,4 +11,10 @@ public interface MemberRepository {
     Optional<Member> findByEmail(String email);
 
     Optional<Member> findById(Long memberId);
+
+    Member updatePassword(String email, String newEncodedPassword);
+
+    Member updatePassword(Long memberId, String newEncodedPassword);
+
+    Member updateMemberInfo(Long memberId, String name, String school, Long studentId, String uploadImageObjectKey);
 }
