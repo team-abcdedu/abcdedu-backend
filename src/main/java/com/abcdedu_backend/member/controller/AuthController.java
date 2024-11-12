@@ -49,6 +49,7 @@ public class AuthController {
     @Operation(summary = "회원 가입", description = "회원가입을 합니다.")
     @ApiResponses(value ={
             @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일입니다.", content = @Content),
+            @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일 또는 회원 탈퇴한 유저입니다.", content = @Content),
     })
     @PostMapping("/signup")
     public Response<Void> signUp(@Valid @RequestBody SignUpRequest signUpRequest){

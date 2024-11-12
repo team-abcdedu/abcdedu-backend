@@ -20,6 +20,7 @@ import com.abcdedu_backend.member.repository.RefreshTokenRepository;
 import com.abcdedu_backend.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +44,15 @@ public class MemberService {
     public void signUp(SignUpRequest request){
         checkDuplicateEmail(request.email());
         Member signUpMember = createBasicMember(request);
-        memberRepository.save(signUpMember);
+        try {
+            memberRepository.save(signUpMember);
+        } catch (DataIntegrityViolationException e) {
+            throw new ApplicationException(ErrorCode.USER_ALREADY_EXISTS);
+        } catch (Exception e) {
+            throw new ApplicationException(ErrorCode.DATABASE_ERROR);
+        }
     }
+
     @Transactional
     public LoginTokenDTO login(LoginRequest request) {
         Member findMember = memberRepository.findByEmail(request.email())
@@ -178,4 +186,8 @@ public class MemberService {
         log.info("멤버 ID : {} 의 비밀번호가 변경되었습니다.", memberId);
     }
 
+    @Transactional
+    public void deleteMember(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
 }
