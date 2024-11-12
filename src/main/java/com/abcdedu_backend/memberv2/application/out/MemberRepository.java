@@ -17,4 +17,6 @@ public interface MemberRepository {
     Member updatePassword(Long memberId, String newEncodedPassword);
 
     Member updateMemberInfo(Long memberId, String name, String school, Long studentId, String uploadImageObjectKey);
+
+    Boolean checkDuplicateEmail(String toEmail);
 }

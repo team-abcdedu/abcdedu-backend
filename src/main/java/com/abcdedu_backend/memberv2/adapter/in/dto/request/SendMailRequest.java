@@ -1,4 +1,4 @@
-package com.abcdedu_backend.member.dto.request;
+package com.abcdedu_backend.memberv2.adapter.in.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

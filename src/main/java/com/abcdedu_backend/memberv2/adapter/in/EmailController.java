@@ -1,7 +1,7 @@
-package com.abcdedu_backend.member.controller;
+package com.abcdedu_backend.memberv2.adapter.in;
 
-import com.abcdedu_backend.member.dto.request.SendMailRequest;
-import com.abcdedu_backend.member.service.EmailService;
+import com.abcdedu_backend.memberv2.adapter.in.dto.request.SendMailRequest;
+import com.abcdedu_backend.memberv2.application.EmailUseCase;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 })
 @Tag(name = "이메일 인증 기능", description = "이메일 인증 기능입니다.")
 public class EmailController {
-    private final EmailService emailService;
+    private final EmailUseCase emailUseCase;
 
     @Operation(summary = "인증 메일 전송", description = "인증 메일을 전송합니다.")
     @ApiResponses(value ={
@@ -33,7 +33,7 @@ public class EmailController {
     })
     @PostMapping("/code")
     public Response<Void> sendCode(@Valid @RequestBody SendMailRequest sendMailRequest){
-        emailService.sendCodeToEmail(sendMailRequest.email());
+        emailUseCase.sendCodeToEmail(sendMailRequest.email());
         return Response.success();
     }
 
@@ -44,7 +44,7 @@ public class EmailController {
     })
     @GetMapping("/code")
     public Response<Void> codeVerification(@RequestParam String email, @RequestParam String code){
-        emailService.checkCode(email, code);
+        emailUseCase.checkCode(email, code);
         return Response.success();
     }
 
@@ -55,7 +55,7 @@ public class EmailController {
     })
     @PostMapping("/temp-password")
     public Response<Void> sendTempPassword(@Valid @RequestBody SendMailRequest sendMailRequest){
-        emailService.sendTempPasswordToEmail(sendMailRequest.email());
+        emailUseCase.sendTempPasswordToEmail(sendMailRequest.email());
         return Response.success();
     }
 }

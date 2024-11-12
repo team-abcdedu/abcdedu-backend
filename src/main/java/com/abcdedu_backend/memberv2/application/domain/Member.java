@@ -38,22 +38,4 @@ public class Member {
     public boolean isBasic() {
         return this.role == MemberRole.BASIC;
     }
-    public boolean isStudent() {
-        return this.role == MemberRole.STUDENT;
-    }
-
-    public void updateProfile(String name, String imageUrl, String school, Long studentId){
-        this.name = name;
-        this.imageObjectKey = imageUrl;
-        this.school = school;
-        this.studentId = studentId;
-    }
-
-    public void updateRole(MemberRole memberRole) {
-        this.role = memberRole;
-    }
-
-    public void updatePassword(String newEncodedPassword){
-        this.encodedPassword = newEncodedPassword;
-    }
 }

@@ -20,8 +20,6 @@ public interface MemberInfoUseCase {
 
     void updatePassword(String toEmail, String newPassword);
 
-    void checkDuplicateEmail(String toEmail);
-
     Member checkMember(Long memberId);
 
 }

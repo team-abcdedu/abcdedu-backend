@@ -1,7 +1,8 @@
-package com.abcdedu_backend.member.service;
+package com.abcdedu_backend.memberv2.adapter.out;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
+import com.abcdedu_backend.memberv2.application.out.EmailSender;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class EmailSender {
+public class EmailSenderImpl implements EmailSender {
 
     private final JavaMailSender emailSender;
 
@@ -24,11 +25,12 @@ public class EmailSender {
     private static final String ENCODING_BASE = "UTF-8";
 
     @Async
-    public void sendCodeToEmail(String code, String toEmail) {
-        String text = String.format(SEND_CODE_TEXT_FORM, code);
+    @Override
+    public void sendTempPassword(String toEmail, String tempPassword) {
+        String text = String.format(SEND_TEMP_PASSWORD_TEXT_FORM, tempPassword);
 
         try {
-            MimeMessage emailForm = createEmailForm(toEmail, SEND_CODE_TITLE, text);
+            MimeMessage emailForm = createEmailForm(toEmail, SEND_TEMP_PASSWORD_TITLE, text);
             emailSender.send(emailForm);
         } catch (Exception e) {
             throw new ApplicationException(ErrorCode.EMAIL_SEND_FAILED);
@@ -36,11 +38,12 @@ public class EmailSender {
     }
 
     @Async
-    public void sendTempPasswordToEmail(String tempPassword,String toEmail) {
-        String text = String.format(SEND_TEMP_PASSWORD_TEXT_FORM, tempPassword);
+    @Override
+    public void sendCode(String toEmail, String code) {
+        String text = String.format(SEND_CODE_TEXT_FORM, code);
 
         try {
-            MimeMessage emailForm = createEmailForm(toEmail, SEND_TEMP_PASSWORD_TITLE, text);
+            MimeMessage emailForm = createEmailForm(toEmail, SEND_CODE_TITLE, text);
             emailSender.send(emailForm);
         } catch (Exception e) {
             throw new ApplicationException(ErrorCode.EMAIL_SEND_FAILED);

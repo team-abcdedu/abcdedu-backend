@@ -51,4 +51,9 @@ public class MemberPersistence implements MemberRepository {
         member.updateProfile(name, school, studentId, uploadImageObjectKey);
         return member.toDomain();
     }
+
+    @Override
+    public Boolean checkDuplicateEmail(String toEmail) {
+        return memberJpaRepository.findByEmail(toEmail).isPresent();
+    }
 }
