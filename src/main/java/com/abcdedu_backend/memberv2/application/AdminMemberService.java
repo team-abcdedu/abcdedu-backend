@@ -1,9 +1,9 @@
-package com.abcdedu_backend.member.service;
+package com.abcdedu_backend.memberv2.application;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.dto.request.ChangeMemberRoleRequest;
-import com.abcdedu_backend.member.dto.request.MemberSearchCondition;
-import com.abcdedu_backend.member.dto.response.AdminSearchMemberResponse;
+import com.abcdedu_backend.memberv2.adapter.in.dto.request.ChangeMemberRoleRequest;
+import com.abcdedu_backend.memberv2.adapter.in.dto.request.MemberSearchCondition;
+import com.abcdedu_backend.memberv2.adapter.in.dto.response.AdminSearchMemberResponse;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.repository.AdminMemberRepository;
@@ -19,10 +19,11 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class AdminMemberService {
+public class AdminMemberService implements AdminMemberUseCase{
 
     private final AdminMemberRepository memberRepository;
 
+    @Override
     public Page<AdminSearchMemberResponse> searchMembers(Pageable pageable, MemberSearchCondition cond) {
         Page<Member> members = memberRepository.findAllByCondition(
                 cond.school(),

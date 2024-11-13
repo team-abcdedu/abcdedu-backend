@@ -1,4 +1,4 @@
-package com.abcdedu_backend.member.dto.response;
+package com.abcdedu_backend.memberv2.adapter.in.dto.response;
 
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.member.entity.MemberRole;
