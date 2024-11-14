@@ -52,7 +52,7 @@ public class MemberService {
             throw new ApplicationException(ErrorCode.DATABASE_ERROR);
         }
     }
-
+  
     @Transactional
     public LoginTokenDTO login(LoginRequest request) {
         Member findMember = memberRepository.findByEmail(request.email())
