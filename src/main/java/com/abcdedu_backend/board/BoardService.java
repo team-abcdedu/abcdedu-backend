@@ -20,14 +20,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberService memberService;
 
-    public BoardResponse findBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
-        return BoardToBoardResponse(board);
-    }
-
-
-
     @Transactional
     public Long addBoard(BoardCreateRequest req, Long memberId) {
         Member findMember = memberService.checkMember(memberId);
@@ -68,8 +60,9 @@ public class BoardService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
     }
 
-    public String boardIdToName(Long boardId) {
-        return checkBoard(boardId).getName();
+    public Board checkBoardThroughName(String boardName) {
+        return boardRepository.findByName(boardName)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
     }
 
     // ======= DTO 변환 메서드들

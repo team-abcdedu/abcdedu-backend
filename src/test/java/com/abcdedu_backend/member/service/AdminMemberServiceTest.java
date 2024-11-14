@@ -36,8 +36,8 @@ class AdminMemberServiceTest {
 
         MemberRole newRole = MemberRole.STUDENT;
         List<Member> members = List.of(
-                new Member(1L, "user1", "user1@example.com", "password123", "School A", 1001L, "key1", MemberRole.BASIC, null, null),
-                new Member(2L, "user2", "user2@example.com", "password123", "School B", 1002L, "key2", MemberRole.BASIC, null, null)
+                new Member(1L, "user1", "user1@example.com", "password123", "School A", 1001L, "key1", MemberRole.BASIC,false,  null, null),
+                new Member(2L, "user2", "user2@example.com", "password123", "School B", 1002L, "key2", MemberRole.BASIC,false, null, null)
         );
 
         // Mock 동작 정의: findAllByIdIn이 호출되면 members 반환

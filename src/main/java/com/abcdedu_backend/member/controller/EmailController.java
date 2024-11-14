@@ -28,6 +28,7 @@ public class EmailController {
 
     @Operation(summary = "인증 메일 전송", description = "인증 메일을 전송합니다.")
     @ApiResponses(value ={
+            @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일입니다.", content = @Content),
             @ApiResponse(responseCode = "500", description = "이메일 인증 메일 전송 실패하였습니다.", content = @Content)
     })
     @PostMapping("/code")
