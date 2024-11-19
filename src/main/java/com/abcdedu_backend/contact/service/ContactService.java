@@ -8,7 +8,7 @@ import com.abcdedu_backend.contact.entity.ContactType;
 import com.abcdedu_backend.contact.repository.ContactRepository;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.memberv2.application.MemberService;
+import com.abcdedu_backend.member.application.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

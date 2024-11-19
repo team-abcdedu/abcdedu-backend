@@ -1,13 +1,13 @@
 package com.abcdedu_backend.post.service;
 
-import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
-import com.abcdedu_backend.memberv2.application.domain.MemberRole;
+import com.abcdedu_backend.member.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.member.application.domain.MemberRole;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
 import com.abcdedu_backend.post.dto.request.CommentUpdateRequest;
 import com.abcdedu_backend.post.dto.response.CommentResponse;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.memberv2.application.MemberService;
+import com.abcdedu_backend.member.application.MemberService;
 import com.abcdedu_backend.post.entity.Comment;
 import com.abcdedu_backend.post.entity.Post;
 import com.abcdedu_backend.post.repository.CommentRepository;

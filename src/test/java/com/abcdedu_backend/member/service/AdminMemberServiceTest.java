@@ -1,10 +1,10 @@
 package com.abcdedu_backend.member.service;
 import com.abcdedu_backend.exception.ApplicationException;
-import com.abcdedu_backend.memberv2.adapter.in.dto.request.ChangeMemberRoleRequest;
-import com.abcdedu_backend.memberv2.application.AdminMemberService;
-import com.abcdedu_backend.memberv2.application.domain.Member;
-import com.abcdedu_backend.memberv2.application.domain.MemberRole;
-import com.abcdedu_backend.memberv2.application.out.MemberRepository;
+import com.abcdedu_backend.member.adapter.in.dto.request.ChangeMemberRoleRequest;
+import com.abcdedu_backend.member.application.AdminMemberService;
+import com.abcdedu_backend.member.application.domain.Member;
+import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.application.out.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

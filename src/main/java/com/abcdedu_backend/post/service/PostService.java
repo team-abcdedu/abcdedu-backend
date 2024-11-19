@@ -5,9 +5,9 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.infra.file.FileDirectory;
 import com.abcdedu_backend.infra.file.FileHandler;
-import com.abcdedu_backend.memberv2.application.MemberService;
-import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
-import com.abcdedu_backend.memberv2.application.domain.MemberRole;
+import com.abcdedu_backend.member.application.MemberService;
+import com.abcdedu_backend.member.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.member.application.domain.MemberRole;
 import com.abcdedu_backend.post.dto.request.PostCreateRequestV2;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
@@ -171,7 +171,7 @@ public class PostService {
 
     // post 게시자 본인과 관리자만 할 수 있는 기능에 추가
     private void checkPermission(MemberEntity member, Post post) {
-        if (member.getRole() != com.abcdedu_backend.memberv2.application.domain.MemberRole.ADMIN && !member.getId().equals(post.getMember().getId())) {
+        if (member.getRole() != MemberRole.ADMIN && !member.getId().equals(post.getMember().getId())) {
             log.error("checkPermission() 실패 - member_role : {}, post_writer_id : {}, logined_member_id : {}", member.getRole(), post.getMember().getId(), member.getId());
             throw new ApplicationException(ErrorCode.ADMIN_OR_WRITER_PERMISSION);
         }

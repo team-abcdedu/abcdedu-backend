@@ -1,6 +1,6 @@
 package com.abcdedu_backend.homework.entity;
 
-import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.member.adapter.out.entity.MemberEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

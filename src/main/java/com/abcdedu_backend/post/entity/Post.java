@@ -1,6 +1,6 @@
 package com.abcdedu_backend.post.entity;
 
-import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.member.adapter.out.entity.MemberEntity;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.request.PostCreateRequestV2;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
