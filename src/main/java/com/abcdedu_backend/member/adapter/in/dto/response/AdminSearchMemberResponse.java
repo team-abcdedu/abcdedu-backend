@@ -1,8 +1,8 @@
 package com.abcdedu_backend.member.adapter.in.dto.response;
 
 
-import com.abcdedu_backend.member.application.domain.Member;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.Member;
+import com.abcdedu_backend.member.domain.MemberRole;
 
 import java.time.LocalDateTime;
 

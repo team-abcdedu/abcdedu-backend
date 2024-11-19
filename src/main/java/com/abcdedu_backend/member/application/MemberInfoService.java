@@ -5,7 +5,7 @@ import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.infra.file.FileDirectory;
 import com.abcdedu_backend.infra.file.FileHandler;
 
-import com.abcdedu_backend.member.application.domain.Member;
+import com.abcdedu_backend.member.domain.Member;
 import com.abcdedu_backend.member.application.dto.MemberBasicInfoDto;
 import com.abcdedu_backend.member.application.dto.MemberInfoDto;
 import com.abcdedu_backend.member.application.dto.NameAndRoleDto;

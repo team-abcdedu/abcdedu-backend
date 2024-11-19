@@ -7,7 +7,7 @@ import com.abcdedu_backend.infra.file.FileDirectory;
 import com.abcdedu_backend.infra.file.FileHandler;
 import com.abcdedu_backend.member.application.MemberService;
 import com.abcdedu_backend.member.adapter.out.entity.MemberEntity;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.MemberRole;
 import com.abcdedu_backend.post.dto.request.PostCreateRequestV2;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.dto.response.PostListResponse;

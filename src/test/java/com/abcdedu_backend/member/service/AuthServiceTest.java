@@ -2,13 +2,13 @@ package com.abcdedu_backend.member.service;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.global.jwt.JwtUtil;
-import com.abcdedu_backend.member.application.domain.LoginToken;
+import com.abcdedu_backend.member.domain.LoginToken;
 import com.abcdedu_backend.member.adapter.in.dto.request.LoginRequest;
 import com.abcdedu_backend.member.adapter.in.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.application.AuthService;
-import com.abcdedu_backend.member.application.domain.Member;
-import com.abcdedu_backend.member.application.domain.MemberRole;
-import com.abcdedu_backend.member.application.domain.RefreshToken;
+import com.abcdedu_backend.member.domain.Member;
+import com.abcdedu_backend.member.domain.MemberRole;
+import com.abcdedu_backend.member.domain.RefreshToken;
 import com.abcdedu_backend.member.application.out.MemberRepository;
 import com.abcdedu_backend.member.application.out.RefreshTokenRepository;
 import org.junit.jupiter.api.Assertions;

@@ -1,7 +1,7 @@
 package com.abcdedu_backend.member.adapter.out.entity;
 
-import com.abcdedu_backend.member.application.domain.Member;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.Member;
+import com.abcdedu_backend.member.domain.MemberRole;
 import com.abcdedu_backend.post.entity.Comment;
 import com.abcdedu_backend.post.entity.Post;
 import com.abcdedu_backend.utils.BaseTimeEntity;

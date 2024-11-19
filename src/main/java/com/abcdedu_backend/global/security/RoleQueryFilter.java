@@ -2,7 +2,7 @@ package com.abcdedu_backend.global.security;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.application.domain.Member;
+import com.abcdedu_backend.member.domain.Member;
 import com.abcdedu_backend.member.application.out.MemberRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

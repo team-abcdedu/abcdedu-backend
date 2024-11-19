@@ -2,7 +2,7 @@ package com.abcdedu_backend.member.application;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.application.domain.EmailCode;
+import com.abcdedu_backend.member.domain.EmailCode;
 import com.abcdedu_backend.member.application.out.EmailCodeRepository;
 import com.abcdedu_backend.member.application.out.EmailSender;
 import com.abcdedu_backend.member.application.out.MemberRepository;

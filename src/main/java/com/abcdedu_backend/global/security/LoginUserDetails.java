@@ -1,6 +1,6 @@
 package com.abcdedu_backend.global.security;
 
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.MemberRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

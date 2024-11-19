@@ -1,7 +1,7 @@
 package com.abcdedu_backend.member.adapter.out;
 
 import com.abcdedu_backend.member.adapter.out.entity.EmailCodeEntity;
-import com.abcdedu_backend.member.application.domain.EmailCode;
+import com.abcdedu_backend.member.domain.EmailCode;
 import com.abcdedu_backend.member.application.out.EmailCodeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;

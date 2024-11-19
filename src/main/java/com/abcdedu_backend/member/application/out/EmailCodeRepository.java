@@ -1,6 +1,6 @@
 package com.abcdedu_backend.member.application.out;
 
-import com.abcdedu_backend.member.application.domain.EmailCode;
+import com.abcdedu_backend.member.domain.EmailCode;
 
 import java.util.Optional;
 

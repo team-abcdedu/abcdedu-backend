@@ -1,6 +1,6 @@
 package com.abcdedu_backend.member.adapter.out.entity;
 
-import com.abcdedu_backend.member.application.domain.EmailCode;
+import com.abcdedu_backend.member.domain.EmailCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;

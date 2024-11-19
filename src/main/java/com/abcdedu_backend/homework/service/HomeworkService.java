@@ -14,7 +14,7 @@ import com.abcdedu_backend.homework.repository.HomeworkReplyRepository;
 import com.abcdedu_backend.homework.repository.HomeworkRepository;
 import com.abcdedu_backend.member.application.MemberService;
 import com.abcdedu_backend.member.adapter.out.entity.MemberEntity;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.MemberRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

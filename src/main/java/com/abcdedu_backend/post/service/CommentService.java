@@ -1,7 +1,7 @@
 package com.abcdedu_backend.post.service;
 
 import com.abcdedu_backend.member.adapter.out.entity.MemberEntity;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.MemberRole;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
 import com.abcdedu_backend.post.dto.request.CommentUpdateRequest;
 import com.abcdedu_backend.post.dto.response.CommentResponse;

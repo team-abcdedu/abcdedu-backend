@@ -8,7 +8,7 @@ import com.abcdedu_backend.member.adapter.in.dto.request.ChangeMemberRoleRequest
 import com.abcdedu_backend.member.adapter.in.dto.request.MemberSearchCondition;
 import com.abcdedu_backend.member.adapter.in.dto.response.AdminSearchMemberResponse;
 import com.abcdedu_backend.member.application.AdminMemberUseCase;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.MemberRole;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

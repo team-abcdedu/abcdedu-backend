@@ -4,7 +4,7 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.member.application.MemberService;
 import com.abcdedu_backend.member.adapter.out.entity.MemberEntity;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.MemberRole;
 import com.abcdedu_backend.survey.dto.request.SurveyCreateRequest;
 import com.abcdedu_backend.survey.dto.request.SurveyReplyCreateRequest;
 import com.abcdedu_backend.survey.dto.response.*;

@@ -1,6 +1,6 @@
 package com.abcdedu_backend.member.adapter.out.entity;
 
-import com.abcdedu_backend.member.application.domain.RefreshToken;
+import com.abcdedu_backend.member.domain.RefreshToken;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package com.abcdedu_backend.global.security;
 
 import com.abcdedu_backend.exception.ErrorResponse;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.MemberRole;
 import com.abcdedu_backend.utils.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;

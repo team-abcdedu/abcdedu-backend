@@ -15,7 +15,7 @@ import com.abcdedu_backend.lecture.repository.LectureRepository;
 import com.abcdedu_backend.lecture.repository.SubLectureRepository;
 import com.abcdedu_backend.member.application.MemberService;
 import com.abcdedu_backend.member.adapter.out.entity.MemberEntity;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.MemberRole;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

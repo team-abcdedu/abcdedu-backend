@@ -1,4 +1,4 @@
-package com.abcdedu_backend.member.application.domain;
+package com.abcdedu_backend.member.domain;
 
 public record EmailCode (
         String email,

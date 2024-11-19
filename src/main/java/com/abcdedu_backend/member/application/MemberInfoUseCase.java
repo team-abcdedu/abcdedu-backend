@@ -1,6 +1,6 @@
 package com.abcdedu_backend.member.application;
 
-import com.abcdedu_backend.member.application.domain.Member;
+import com.abcdedu_backend.member.domain.Member;
 import com.abcdedu_backend.member.application.dto.MemberBasicInfoDto;
 import com.abcdedu_backend.member.application.dto.MemberInfoDto;
 import com.abcdedu_backend.member.application.dto.NameAndRoleDto;

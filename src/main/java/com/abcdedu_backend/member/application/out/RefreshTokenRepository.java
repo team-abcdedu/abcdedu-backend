@@ -1,6 +1,6 @@
 package com.abcdedu_backend.member.application.out;
 
-import com.abcdedu_backend.member.application.domain.RefreshToken;
+import com.abcdedu_backend.member.domain.RefreshToken;
 
 import java.util.Optional;
 

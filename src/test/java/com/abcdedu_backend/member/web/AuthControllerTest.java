@@ -5,7 +5,7 @@ package com.abcdedu_backend.member.web;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.exception.ExceptionManager;
-import com.abcdedu_backend.member.application.domain.LoginToken;
+import com.abcdedu_backend.member.domain.LoginToken;
 import com.abcdedu_backend.member.adapter.in.dto.request.LoginRequest;
 import com.abcdedu_backend.member.adapter.in.dto.request.SignUpRequest;
 import com.abcdedu_backend.member.adapter.in.AuthController;

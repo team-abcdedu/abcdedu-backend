@@ -1,6 +1,6 @@
 package com.abcdedu_backend.member.application.dto;
 
-import com.abcdedu_backend.member.application.domain.Member;
+import com.abcdedu_backend.member.domain.Member;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

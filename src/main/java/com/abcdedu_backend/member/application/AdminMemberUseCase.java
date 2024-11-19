@@ -3,7 +3,7 @@ package com.abcdedu_backend.member.application;
 import com.abcdedu_backend.member.adapter.in.dto.request.ChangeMemberRoleRequest;
 import com.abcdedu_backend.member.adapter.in.dto.request.MemberSearchCondition;
 import com.abcdedu_backend.member.adapter.in.dto.response.AdminSearchMemberResponse;
-import com.abcdedu_backend.member.application.domain.MemberRole;
+import com.abcdedu_backend.member.domain.MemberRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

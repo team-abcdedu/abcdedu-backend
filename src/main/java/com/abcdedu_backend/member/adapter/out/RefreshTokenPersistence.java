@@ -1,7 +1,7 @@
 package com.abcdedu_backend.member.adapter.out;
 
 import com.abcdedu_backend.member.adapter.out.entity.RefreshTokenEntity;
-import com.abcdedu_backend.member.application.domain.RefreshToken;
+import com.abcdedu_backend.member.domain.RefreshToken;
 import com.abcdedu_backend.member.application.out.RefreshTokenRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;

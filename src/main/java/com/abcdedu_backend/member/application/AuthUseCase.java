@@ -1,7 +1,7 @@
 package com.abcdedu_backend.member.application;
 
 import com.abcdedu_backend.member.application.dto.command.SignupCommand;
-import com.abcdedu_backend.member.application.domain.LoginToken;
+import com.abcdedu_backend.member.domain.LoginToken;
 public interface AuthUseCase {
 
     void signUp(SignupCommand command);

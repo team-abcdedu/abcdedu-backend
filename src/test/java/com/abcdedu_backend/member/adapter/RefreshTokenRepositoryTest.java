@@ -1,7 +1,7 @@
 package com.abcdedu_backend.member.adapter;
 
 import com.abcdedu_backend.config.RedisTestContainer;
-import com.abcdedu_backend.member.application.domain.RefreshToken;
+import com.abcdedu_backend.member.domain.RefreshToken;
 import com.abcdedu_backend.member.application.out.RefreshTokenRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
