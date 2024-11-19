@@ -47,7 +47,7 @@ public class AuthServiceTest {
 
         doReturn(Optional.empty()).when(memberRepository).findByEmail(request.email());
         doReturn("encodedPassword").when(passwordEncoder).encode("123456");
-        doNothing().when(memberRepository).save(any(Member.class));
+        doReturn(savedMember).when(memberRepository).save(any(Member.class));
 
         //when
         target.signUp(request.toCommand());

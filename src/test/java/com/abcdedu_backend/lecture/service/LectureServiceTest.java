@@ -13,9 +13,9 @@ import com.abcdedu_backend.lecture.entity.SubLecture;
 import com.abcdedu_backend.lecture.repository.AssignmentFileRepository;
 import com.abcdedu_backend.lecture.repository.LectureRepository;
 import com.abcdedu_backend.lecture.repository.SubLectureRepository;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.MemberService;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -85,7 +85,7 @@ class LectureServiceTest {
         Long memberId = 1L;
         MockMultipartFile mockFile = new MockMultipartFile("file", "test.txt", "text/plain", "".getBytes());
 
-        Member member = createMember();
+        MemberEntity member = createMember();
         SubLecture subLecture = createSubLecture(createLecture());
 
         // When: 의존성 모킹 설정
@@ -111,7 +111,7 @@ class LectureServiceTest {
         AssignmentType assignmentType = AssignmentType.DATA;
         MockMultipartFile mockFile = new MockMultipartFile("file", "test.txt", "text/plain", "".getBytes());
 
-        Member member = createMember();
+        MemberEntity member = createMember();
         SubLecture subLecture = createSubLecture(createLecture());
         subLecture.getAssignmentFiles().add(AssignmentFile.of(subLecture, assignmentType, "objectKey"));
 
@@ -156,7 +156,7 @@ class LectureServiceTest {
         // Given
         Long memberId = 1L;
         Long assignmentFileId = 1L;
-        Member mockMember = mock(Member.class);
+        MemberEntity mockMember = mock(MemberEntity.class);
         AssignmentFile assignmentFile = createAssignmentFile(assignmentType, 1L);
         String presignedUrl = "http://example.com/presigned-url";
 
@@ -177,7 +177,7 @@ class LectureServiceTest {
         // Given
         Long memberId = 1L;
         Long assignmentFileId = 1L;
-        Member mockMember = createMember();
+        MemberEntity mockMember = createMember();
         AssignmentFile assignmentFile = createAssignmentFile(AssignmentType.THEORY, 1L);
         String presignedUrl = "http://example.com/presigned-url";
 
@@ -199,7 +199,7 @@ class LectureServiceTest {
         // Given
         Long memberId = 1L;
         Long assignmentFileId = 1L;
-        Member mockMember = createBasicMember();
+        MemberEntity mockMember = createBasicMember();
         AssignmentFile assignmentFile = createAssignmentFile(AssignmentType.THEORY, 1L);
 
         doReturn(mockMember).when(memberService).checkMember(memberId);
@@ -218,7 +218,7 @@ class LectureServiceTest {
         Long memberId = 1L;
         MockMultipartFile mockFile = new MockMultipartFile("file", "test.txt", "text/plain", "".getBytes());
 
-        Member member = createMember();
+        MemberEntity member = createMember();
         SubLecture subLecture = createSubLecture(createLecture());
 
         // When
@@ -274,16 +274,16 @@ class LectureServiceTest {
                 .build();
     }
 
-    private Member createMember() {
-        return Member.builder()
+    private MemberEntity createMember() {
+        return MemberEntity.builder()
                 .id(1L)
                 .name("관리자")
                 .role(MemberRole.ADMIN)
                 .build();
     }
 
-    private Member createBasicMember() {
-        return Member.builder()
+    private MemberEntity createBasicMember() {
+        return MemberEntity.builder()
                 .id(1L)
                 .name("새싹")
                 .role(MemberRole.BASIC)

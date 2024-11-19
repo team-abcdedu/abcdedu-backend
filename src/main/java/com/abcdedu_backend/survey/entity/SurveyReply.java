@@ -1,7 +1,7 @@
 package com.abcdedu_backend.survey.entity;
 
 
-import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,7 +31,7 @@ public class SurveyReply extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member; // 설문 응답자
+    private MemberEntity member; // 설문 응답자
 
     @Column(length = 400)
     private String answer;

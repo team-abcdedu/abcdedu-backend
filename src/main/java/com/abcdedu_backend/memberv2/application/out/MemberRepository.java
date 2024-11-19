@@ -1,12 +1,15 @@
 package com.abcdedu_backend.memberv2.application.out;
 
 import com.abcdedu_backend.memberv2.application.domain.Member;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
 public interface MemberRepository {
 
-    void save(Member signUpMember);
+    Member save(Member signUpMember);
 
     Optional<Member> findByEmail(String email);
 
@@ -19,4 +22,8 @@ public interface MemberRepository {
     Member updateMemberInfo(Long memberId, String name, String school, Long studentId, String uploadImageObjectKey);
 
     Boolean checkDuplicateEmail(String toEmail);
+
+    Page<Member> findAllByCondition(String school, Long aLong, String name, MemberRole role, Pageable pageable);
+
+    Member updateMemberRole(Long id, MemberRole roleName);
 }

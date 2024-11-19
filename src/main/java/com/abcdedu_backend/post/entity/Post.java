@@ -1,6 +1,6 @@
 package com.abcdedu_backend.post.entity;
 
-import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
 import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.request.PostCreateRequestV2;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
@@ -35,7 +35,7 @@ public class Post extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    private MemberEntity member;
 
     @Column(name = "comment_count")  // 댓글이 생성되거나 삭제될 때 마다 업데이트 해줘야 하는 필드
     private Long commentCount;
@@ -61,7 +61,7 @@ public class Post extends BaseTimeEntity {
     @Column(name = "file_url")
     private String fileUrl;
     // Todo. ofV2로 대체 예정, 삭제 해야함
-    public static Post of(Member member, Board board, PostCreateRequest req) {
+    public static Post of(MemberEntity member, Board board, PostCreateRequest req) {
         return Post.builder()
                 .board(board)
                 .member(member)
@@ -73,7 +73,7 @@ public class Post extends BaseTimeEntity {
                 .commentAllow(req.commentAllow())
                 .build();
     }
-    public static Post of(Member member, Board board, PostCreateRequestV2 req) {
+    public static Post of(MemberEntity member, Board board, PostCreateRequestV2 req) {
         return Post.builder()
                 .board(board)
                 .member(member)

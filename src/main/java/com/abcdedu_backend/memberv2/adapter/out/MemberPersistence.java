@@ -4,8 +4,11 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
 import com.abcdedu_backend.memberv2.application.domain.Member;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import com.abcdedu_backend.memberv2.application.out.MemberRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -17,8 +20,9 @@ public class MemberPersistence implements MemberRepository {
     private final MemberJpaRepository memberJpaRepository;
 
     @Override
-    public void save(Member member) {
-        memberJpaRepository.save(MemberEntity.from(member));
+    public Member save(Member member) {
+        MemberEntity savedMember = memberJpaRepository.save(MemberEntity.from(member));
+        return savedMember.toDomain();
     }
 
     @Override
@@ -56,4 +60,23 @@ public class MemberPersistence implements MemberRepository {
     public Boolean checkDuplicateEmail(String toEmail) {
         return memberJpaRepository.findByEmail(toEmail).isPresent();
     }
+
+    @Override
+    public Page<Member> findAllByCondition(String school, Long studentId, String name, MemberRole role, Pageable pageable) {
+        Page<MemberEntity> members = memberJpaRepository.findAllByCondition(
+                school,
+                studentId,
+                name,
+                role,
+                pageable);
+        return members.map(MemberEntity::toDomain);
+    }
+
+    @Override
+    public Member updateMemberRole(Long id, MemberRole roleName) {
+        MemberEntity member = memberJpaRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        member.updateRole(roleName);
+        return member.toDomain();
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.abcdedu_backend.homework.entity;
 
-import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,5 +29,5 @@ public class Homework {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member; // 과제를 만든 작성자, *관리자만 가능하다.*
+    private MemberEntity member; // 과제를 만든 작성자, *관리자만 가능하다.*
 }

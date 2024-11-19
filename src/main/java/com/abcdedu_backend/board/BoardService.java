@@ -4,9 +4,9 @@ import com.abcdedu_backend.board.dto.request.BoardCreateRequest;
 import com.abcdedu_backend.board.dto.response.BoardResponse;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.MemberService;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ public class BoardService {
 
     @Transactional
     public Long addBoard(BoardCreateRequest req, Long memberId) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         checkPermission(findMember);
         checkBoardDuplicate(req);
         Board board = Board.of(req.name());
@@ -31,7 +31,7 @@ public class BoardService {
     }
     @Transactional
     public void removeBoard(Long boardId, Long memberId) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         checkPermission(findMember);
         Board findBoard = boardRepository.findById(boardId).orElseThrow(() -> new ApplicationException(ErrorCode.BOARD_NOT_FOUND));
         boardRepository.delete(findBoard);
@@ -43,7 +43,7 @@ public class BoardService {
     // ======== 유효성 검사, 서비스 로직
 
     // 카테고리 수정은 관리자만 가능하다.
-    private void checkPermission(Member member) {
+    private void checkPermission(MemberEntity member) {
         if (!member.getRole().equals(MemberRole.ADMIN)) {
             throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }

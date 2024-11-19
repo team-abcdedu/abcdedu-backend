@@ -1,10 +1,10 @@
 package com.abcdedu_backend.member.service;
 import com.abcdedu_backend.exception.ApplicationException;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.repository.AdminMemberRepository;
 import com.abcdedu_backend.memberv2.adapter.in.dto.request.ChangeMemberRoleRequest;
 import com.abcdedu_backend.memberv2.application.AdminMemberService;
+import com.abcdedu_backend.memberv2.application.domain.Member;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
+import com.abcdedu_backend.memberv2.application.out.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,16 +13,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AdminMemberServiceTest {
 
     @Mock
-    private AdminMemberRepository memberRepository;
+    private MemberRepository memberRepository;
 
     @InjectMocks
     private AdminMemberService target;
@@ -36,19 +34,19 @@ class AdminMemberServiceTest {
         );
 
         MemberRole newRole = MemberRole.STUDENT;
-        List<Member> members = List.of(
-                new Member(1L, "user1", "user1@example.com", "password123", "School A", 1001L, "key1", MemberRole.BASIC, null, null),
-                new Member(2L, "user2", "user2@example.com", "password123", "School B", 1002L, "key2", MemberRole.BASIC, null, null)
+        List<Member> updatedMembers = List.of(
+                new Member(1L, "user1", "user1@example.com", "password123", "School A", 1001L, "key1", newRole, null, null, null),
+                new Member(2L, "user2", "user2@example.com", "password123", "School B", 1002L, "key2", newRole, null, null, null)
         );
-
-        // Mock 동작 정의: findAllByIdIn이 호출되면 members 반환
-        when(memberRepository.findAllByIdIn(anyList())).thenReturn(members);
+        doReturn(updatedMembers.get(0)).when(memberRepository).updateMemberRole(1L, newRole);
+        doReturn(updatedMembers.get(1)).when(memberRepository).updateMemberRole(2L, newRole);
 
         // when
         target.updateMembersRole(newRole, requests);
 
         // then
-        assertThat(members).allMatch(member -> member.getRole() == newRole);
+        verify(memberRepository, times(1)).updateMemberRole(1L, newRole);
+        verify(memberRepository, times(1)).updateMemberRole(2L, newRole);
     }
 
     @Test

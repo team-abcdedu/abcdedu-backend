@@ -12,9 +12,9 @@ import com.abcdedu_backend.homework.entity.HomeworkReply;
 import com.abcdedu_backend.homework.repository.HomeworkQuestionRepository;
 import com.abcdedu_backend.homework.repository.HomeworkReplyRepository;
 import com.abcdedu_backend.homework.repository.HomeworkRepository;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.MemberService;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class HomeworkService {
 
     @Transactional
     public void createHomeworkReply(Long memberId, Long homeworkId, List<HomeworkReplyCreateReq> replyRequests) {
-        Member member = checkPermission(memberId, MemberRole.STUDENT);
+        MemberEntity member = checkPermission(memberId, MemberRole.STUDENT);
         Homework homework = checkHomework(homeworkId);
         List<HomeworkQuestion> questions = checkQeustionsByHomework(homework);
         List<HomeworkReply> homeworkReplies = makeHomeworkReply(homework, questions, replyRequests, member);
@@ -90,8 +90,8 @@ public class HomeworkService {
     }
 
 
-    public Member checkPermission(Long memberId, MemberRole memberRole) {
-        Member member = memberService.checkMember(memberId);
+    public MemberEntity checkPermission(Long memberId, MemberRole memberRole) {
+        MemberEntity member = memberService.checkMember(memberId);
         if (memberRole == MemberRole.STUDENT) {
             if (!member.isStudent() && !member.isAdmin()) {
                 log.warn("사용자 역할 권한 검증 실패");
@@ -136,7 +136,7 @@ public class HomeworkService {
                 .build();
     }
 
-    private List<HomeworkReply> makeHomeworkReply(Homework homework, List<HomeworkQuestion> questions, List<HomeworkReplyCreateReq> replyRequests, Member member) {
+    private List<HomeworkReply> makeHomeworkReply(Homework homework, List<HomeworkQuestion> questions, List<HomeworkReplyCreateReq> replyRequests, MemberEntity member) {
         List<HomeworkReply> replies = new ArrayList<>();
         for (int i = 0; i < questions.size(); i++) {
             replies.add(

@@ -5,11 +5,8 @@ import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.exception.ExceptionManager;
 import com.abcdedu_backend.memberv2.adapter.in.dto.request.UpdateMemberInfoRequest;
 import com.abcdedu_backend.memberv2.adapter.in.dto.request.UpdatePasswordRequest;
-import com.abcdedu_backend.memberv2.adapter.in.dto.response.MemberBasicInfoResponse;
-import com.abcdedu_backend.memberv2.adapter.in.dto.response.MemberInfoResponse;
-import com.abcdedu_backend.memberv2.adapter.in.dto.response.MemberNameAndRoleResponse;
 import com.abcdedu_backend.memberv2.adapter.in.MemberInfoController;
-import com.abcdedu_backend.memberv2.application.MemberInfoService;
+import com.abcdedu_backend.memberv2.application.MemberInfoUseCase;
 import com.abcdedu_backend.memberv2.application.dto.MemberBasicInfoDto;
 import com.abcdedu_backend.memberv2.application.dto.MemberInfoDto;
 import com.abcdedu_backend.memberv2.application.dto.NameAndRoleDto;
@@ -29,11 +26,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,7 +39,7 @@ class MemberInfoControllerTest {
     @InjectMocks
     private MemberInfoController target;
     @Mock
-    private MemberInfoService memberInfoService;
+    private MemberInfoUseCase memberInfoUseCase;
 
     private MockMvc mockMvc;
 
@@ -77,7 +72,7 @@ class MemberInfoControllerTest {
                 .createCommentCount(5)
                 .build();
 
-        doReturn(memberInfoDto).when(memberInfoService).getMemberInfo(memberId);
+        doReturn(memberInfoDto).when(memberInfoUseCase).getMemberInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -105,7 +100,7 @@ class MemberInfoControllerTest {
         final String url = "/members/info";
         Long memberId = 2L;
 
-        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoService).getMemberInfo(memberId);
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoUseCase).getMemberInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -134,7 +129,7 @@ class MemberInfoControllerTest {
                 updateRequest.studentId(),
                 file);
 
-        doNothing().when(memberInfoService).updateMemberInfo(updateMemberInfoCommand);
+        doNothing().when(memberInfoUseCase).updateMemberInfo(updateMemberInfoCommand);
 
         // when
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart(url)
@@ -161,7 +156,7 @@ class MemberInfoControllerTest {
         final String url = "/members/info/name-and-role";
         Long memberId = 1L;
         NameAndRoleDto nameAndRoleDto = new NameAndRoleDto("고동천", "관리자");
-        doReturn(nameAndRoleDto).when(memberInfoService).getMemberNameAndRoleInfo(memberId);
+        doReturn(nameAndRoleDto).when(memberInfoUseCase).getMemberNameAndRoleInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -182,7 +177,7 @@ class MemberInfoControllerTest {
         // given
         final String url = "/members/info/name-and-role";
         Long memberId = 2L;
-        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoService).getMemberNameAndRoleInfo(memberId);
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoUseCase).getMemberNameAndRoleInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -202,7 +197,7 @@ class MemberInfoControllerTest {
         final String url = "/members/basic-info";
         Long memberId = 1L;
         MemberBasicInfoDto memberBasicInfoDto = new MemberBasicInfoDto("고동천", "관리자", "ehdcjs159@gmail.com");
-        doReturn(memberBasicInfoDto).when(memberInfoService).getMemberBasicInfo(memberId);
+        doReturn(memberBasicInfoDto).when(memberInfoUseCase).getMemberBasicInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -224,7 +219,7 @@ class MemberInfoControllerTest {
         // given
         final String url = "/members/basic-info";
         Long memberId = 2L;
-        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoService).getMemberBasicInfo(memberId);
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoUseCase).getMemberBasicInfo(memberId);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -246,7 +241,7 @@ class MemberInfoControllerTest {
         UpdatePasswordRequest request = new UpdatePasswordRequest("123456");
         Long memberId = 1L;
 
-        doNothing().when(memberInfoService).updatePassword(memberId, request.newPassword());
+        doNothing().when(memberInfoUseCase).updatePassword(memberId, request.newPassword());
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -268,7 +263,7 @@ class MemberInfoControllerTest {
 
         UpdatePasswordRequest request = new UpdatePasswordRequest("123456");
         Long notFoundMemberId = 2L;
-        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoService).updatePassword(notFoundMemberId, request.newPassword());
+        doThrow(new ApplicationException(ErrorCode.USER_NOT_FOUND)).when(memberInfoUseCase).updatePassword(notFoundMemberId, request.newPassword());
 
         // when
         final ResultActions resultActions = mockMvc.perform(

@@ -1,6 +1,6 @@
 package com.abcdedu_backend.post.entity;
 
-import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class Comment extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member; // 작성자를 나타낸다.
+    private MemberEntity member; // 작성자를 나타낸다.
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)

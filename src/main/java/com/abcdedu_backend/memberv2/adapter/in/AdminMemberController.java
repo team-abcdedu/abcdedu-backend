@@ -7,8 +7,8 @@ import com.abcdedu_backend.common.page.response.PagedResponse;
 import com.abcdedu_backend.memberv2.adapter.in.dto.request.ChangeMemberRoleRequest;
 import com.abcdedu_backend.memberv2.adapter.in.dto.request.MemberSearchCondition;
 import com.abcdedu_backend.memberv2.adapter.in.dto.response.AdminSearchMemberResponse;
-import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.memberv2.application.AdminMemberUseCase;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,7 +35,7 @@ public class AdminMemberController {
     }
     @Operation(summary = "멤버 일괄 등급 변경", description = "현재 버전은 새싹 <-> 학생 변경만 가능합니다.")
     @PatchMapping("/role/{roleName}")
-    public Response<Void> changeMembersRole(@PathVariable MemberRole roleName,  @RequestBody List<ChangeMemberRoleRequest> requests) {
+    public Response<Void> changeMembersRole(@PathVariable MemberRole roleName, @RequestBody List<ChangeMemberRoleRequest> requests) {
         adminMemberUseCase.updateMembersRole(roleName, requests);
         return Response.success();
     }

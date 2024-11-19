@@ -5,9 +5,9 @@ import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.infra.file.FileDirectory;
 import com.abcdedu_backend.infra.file.FileHandler;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.MemberService;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import com.abcdedu_backend.post.dto.request.PostCreateRequestV2;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.dto.response.PostListResponse;
@@ -47,7 +47,7 @@ public class PostService {
     @Transactional
     public PostResponse getPost(Long postId, Long memberId) {
         Post post = checkPost(postId);
-        Member member = memberService.checkMember(memberId);
+        MemberEntity member = memberService.checkMember(memberId);
         checkMemberGradeHigherThanBasic(member);
         if (post.getSecret()) {
             checkPermission(member, post);
@@ -60,7 +60,7 @@ public class PostService {
     @Transactional
     public Long createPost(PostCreateRequest req, Long memberId, MultipartFile file) {
         Board findBoard = boardService.checkBoard(req.boardId());
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         if (hasPostingRestrictedByRole(findBoard)) checkMemberGradeHigherThanBasic(findMember);
         // 게시글 저장
         Post post = Post.of(findMember, findBoard, req);
@@ -74,7 +74,7 @@ public class PostService {
 
     @Transactional
     public Long createPost(PostCreateRequestV2 req, Long memberId, MultipartFile file) {
-        Member member = memberService.checkMember(memberId);
+        MemberEntity member = memberService.checkMember(memberId);
         Board board = boardService.checkBoardThroughName(req.boardName());
         if (hasPostingRestrictedByRole(board)) checkMemberGradeHigherThanBasic(member); // 게시글은 학생 등급 이상만 생성할 수 있다, 예외 (등업게시판) : 모두 생성 가능
         if (hasPostingRestrictedByBoardType(board)) checkMemberGradeHigherThanAdmin(member); // 자료실 게시글 생성은 관리자만 가능하다.
@@ -91,7 +91,7 @@ public class PostService {
 
     @Transactional
     public void removePost(Long postId, Long memberId) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         Post findPost = checkPost(postId);
         checkPermission(findMember, findPost);
         postReposiroty.delete(findPost);
@@ -99,7 +99,7 @@ public class PostService {
 
     @Transactional
     public Long updatePost(Long postId, Long memberId, PostUpdateRequest updateRequest, MultipartFile file) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         Post post = checkPost(postId);
         checkPermission(findMember, post);
         // 게시글 수정
@@ -110,7 +110,7 @@ public class PostService {
     }
     @Transactional
     public void deletePostFile(Long postId, Long memberId) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         Post post = checkPost(postId);
         checkPermission(findMember, post);
 
@@ -145,11 +145,11 @@ public class PostService {
 
     @Transactional
     public void levelUpPostWriter(Long memberId, Long postId, MemberRole memberRole) {
-        Member loginedMember = memberService.checkMember(memberId);
+        MemberEntity loginedMember = memberService.checkMember(memberId);
         if (!loginedMember.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
 
         Post post = checkPost(postId);
-        Member writer = memberService.checkMember(post.getMember().getId());
+        MemberEntity writer = memberService.checkMember(post.getMember().getId());
 
         try {
             writer.updateRole(memberRole);
@@ -170,21 +170,21 @@ public class PostService {
     }
 
     // post 게시자 본인과 관리자만 할 수 있는 기능에 추가
-    private void checkPermission(Member member, Post post) {
-        if (member.getRole() != MemberRole.ADMIN && !member.getId().equals(post.getMember().getId())) {
+    private void checkPermission(MemberEntity member, Post post) {
+        if (member.getRole() != com.abcdedu_backend.memberv2.application.domain.MemberRole.ADMIN && !member.getId().equals(post.getMember().getId())) {
             log.error("checkPermission() 실패 - member_role : {}, post_writer_id : {}, logined_member_id : {}", member.getRole(), post.getMember().getId(), member.getId());
             throw new ApplicationException(ErrorCode.ADMIN_OR_WRITER_PERMISSION);
         }
         log.info("checkPermission() 성공");
     }
     // role이 학생 이상인지
-    private void checkMemberGradeHigherThanBasic(Member member) {
+    private void checkMemberGradeHigherThanBasic(MemberEntity member) {
         if (!member.isStudent() && !member.isAdmin()) {
             throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
         }
     }
     // role이 관리자 이상인지
-    private void checkMemberGradeHigherThanAdmin(Member member) {
+    private void checkMemberGradeHigherThanAdmin(MemberEntity member) {
         if (!member.isAdmin()) {
             throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }

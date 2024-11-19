@@ -1,7 +1,7 @@
 package com.abcdedu_backend.lecture.entity.v2;
 
 import com.abcdedu_backend.lecture.entity.Assignment;
-import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
 import com.abcdedu_backend.utils.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class AssignmentSubmission extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    private MemberEntity member;
 
     @OneToMany(mappedBy = "assignmentSubmission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AssignmentAnswer> assignmentAnswers;

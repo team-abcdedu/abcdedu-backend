@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -46,10 +47,10 @@ public class MemberEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     public boolean isAdmin(){
@@ -88,6 +89,8 @@ public class MemberEntity extends BaseTimeEntity {
                 .imageObjectKey(member.getImageObjectKey())
                 .school(member.getSchool())
                 .studentId(member.getStudentId())
+                .posts(new ArrayList<>())
+                .comments(new ArrayList<>())
                 .build();
     }
 
@@ -97,13 +100,12 @@ public class MemberEntity extends BaseTimeEntity {
                 .name(name)
                 .email(email)
                 .role(role)
-                .encodedPassword(encodedPassword)
                 .imageObjectKey(imageObjectKey)
                 .school(school)
                 .studentId(studentId)
-                .createdAt(getCreatedAt())
-                .postCount(getPosts().size())
-                .commentCount(getComments().size())
+                .createdAt(this.getCreatedAt())
+                .postCount(this.posts.size())
+                .commentCount(this.comments.size())
                 .build();
     }
 

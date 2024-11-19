@@ -4,9 +4,9 @@ import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.memberv2.adapter.in.dto.request.ChangeMemberRoleRequest;
 import com.abcdedu_backend.memberv2.adapter.in.dto.request.MemberSearchCondition;
 import com.abcdedu_backend.memberv2.adapter.in.dto.response.AdminSearchMemberResponse;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.repository.AdminMemberRepository;
+import com.abcdedu_backend.memberv2.application.domain.Member;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
+import com.abcdedu_backend.memberv2.application.out.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminMemberService implements AdminMemberUseCase{
 
-    private final AdminMemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public Page<AdminSearchMemberResponse> searchMembers(Pageable pageable, MemberSearchCondition cond) {
@@ -42,8 +42,7 @@ public class AdminMemberService implements AdminMemberUseCase{
         List<Long> ids = requests.stream()
                 .map(ChangeMemberRoleRequest::memberId)
                 .toList();
-        List<Member> members = memberRepository.findAllByIdIn(ids);
-        members.forEach(member -> member.updateRole(roleName));
+        ids.forEach(id -> memberRepository.updateMemberRole(id, roleName));
     }
 
     private void checkIsAllowedRoleChange(MemberRole roleName) {

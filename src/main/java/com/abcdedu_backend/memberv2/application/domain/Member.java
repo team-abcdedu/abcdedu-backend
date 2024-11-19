@@ -1,5 +1,6 @@
 package com.abcdedu_backend.memberv2.application.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class Member {
 
     private Long id;

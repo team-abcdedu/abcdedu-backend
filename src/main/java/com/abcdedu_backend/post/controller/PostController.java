@@ -7,7 +7,7 @@ import com.abcdedu_backend.common.page.request.SortRequest;
 import com.abcdedu_backend.common.page.response.PagedResponse;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.entity.MemberRole;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import com.abcdedu_backend.post.dto.request.PostCreateRequestV2;
 import com.abcdedu_backend.post.dto.request.PostUpdateRequest;
 import com.abcdedu_backend.post.service.CommentService;

@@ -7,8 +7,8 @@ import com.abcdedu_backend.infra.file.FileHandler;
 import com.abcdedu_backend.lecture.dto.response.*;
 import com.abcdedu_backend.lecture.entity.*;
 import com.abcdedu_backend.lecture.repository.*;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.MemberService;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,7 +59,7 @@ public class LectureService {
     }
 
     public GetAssignmentFileUrlResponse getAssignmentFileUrl(Long memberId, Long assignmentFileId) {
-        Member member = memberService.checkMember(memberId);
+        MemberEntity member = memberService.checkMember(memberId);
         AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
         checkTheoryPermission(assignmentFile, member);
         checkBasicPermission(member);
@@ -85,7 +85,7 @@ public class LectureService {
     @Deprecated
     @Transactional
     public void updateAssignmentAnswerFile(Long memberId, Long assignmentAnswerFileId, MultipartFile file) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
 
@@ -101,7 +101,7 @@ public class LectureService {
     @Deprecated
     @Transactional
     public void createAssignmentAnswerFile(Long assignmentFileId, Long memberId, MultipartFile file) {
-        Member member = memberService.checkMember(memberId);
+        MemberEntity member = memberService.checkMember(memberId);
         checkAdminPermission(member);
         AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
 
@@ -120,7 +120,7 @@ public class LectureService {
 
     @Deprecated
     public GetAssignmentAnswerFileUrlResponse getAssignmentAnswerFileUrl(Long memberId, Long assignmentAnswerFileId) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         AssignmentAnswerFile assignmentAnswerFile = assignmentAnswerFileRepository.getById(assignmentAnswerFileId);
         checkBasicPermission(findMember);
         String objectKey = assignmentAnswerFile.getObjectKey();
@@ -131,7 +131,7 @@ public class LectureService {
     @Deprecated
     @Transactional
     public void createAssignmentsFile(Long subLectureId, Long memberId, AssignmentType assignmentType, MultipartFile file) {
-        Member member = memberService.checkMember(memberId);
+        MemberEntity member = memberService.checkMember(memberId);
         checkAdminPermission(member);
         SubLecture subLecture = subLectureRepository.getById(subLectureId);
         checkDuplicationFile(assignmentType, subLecture);
@@ -145,7 +145,7 @@ public class LectureService {
     @Deprecated
     @Transactional
     public void updateAssignmentFile(Long memberId, Long assignmentFileId, MultipartFile file) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         AssignmentFile assignmentFile = assignmentFileRepository.getById(assignmentFileId);
 
@@ -164,19 +164,19 @@ public class LectureService {
         }
     }
 
-    private void checkAdminPermission(Member member) {
+    private void checkAdminPermission(MemberEntity member) {
         if (!member.isAdmin()){
             throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
     }
 
-    private void checkTheoryPermission(AssignmentFile assignmentFile, Member findMember) {
+    private void checkTheoryPermission(AssignmentFile assignmentFile, MemberEntity findMember) {
         if (assignmentFile.getAssignmentType() == AssignmentType.THEORY && !findMember.isAdmin()){
             throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
     }
 
-    private void checkBasicPermission(Member findMember) {
+    private void checkBasicPermission(MemberEntity findMember) {
         if (findMember.isBasic()){
             throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
         }

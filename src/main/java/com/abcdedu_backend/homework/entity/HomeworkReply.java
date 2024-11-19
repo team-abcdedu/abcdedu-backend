@@ -1,6 +1,6 @@
 package com.abcdedu_backend.homework.entity;
 
-import com.abcdedu_backend.member.entity.Member;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +28,7 @@ public class HomeworkReply {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member; // 설문 응답자
+    private MemberEntity member; // 설문 응답자
 
     @Column(length = 1000)
     private String answer;

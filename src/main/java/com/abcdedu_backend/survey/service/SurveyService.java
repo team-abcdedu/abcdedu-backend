@@ -2,9 +2,9 @@ package com.abcdedu_backend.survey.service;
 
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.MemberService;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import com.abcdedu_backend.survey.dto.request.SurveyCreateRequest;
 import com.abcdedu_backend.survey.dto.request.SurveyReplyCreateRequest;
 import com.abcdedu_backend.survey.dto.response.*;
@@ -35,7 +35,7 @@ public class SurveyService {
 
     @Transactional
     public Long createSurvey(SurveyCreateRequest request, Long memberId) {
-        Member member = checkSurveyPermmision(memberId, MemberRole.ADMIN);
+        MemberEntity member = checkSurveyPermmision(memberId, MemberRole.ADMIN);
 
         Survey survey = Survey.builder()
                 .title(request.title())
@@ -134,7 +134,7 @@ public class SurveyService {
     // 응답 생성
     @Transactional
     public void createSurveyReply(Long memberId, Long surveyId, List<SurveyReplyCreateRequest> replysRequests) {
-        Member replyedMember = checkSurveyPermmision(memberId, MemberRole.STUDENT);
+        MemberEntity replyedMember = checkSurveyPermmision(memberId, MemberRole.STUDENT);
         Survey findSurvey = checkSurvey(surveyId);
         List<SurveyQuestion> findQuestions = questionRepository.findBySurvey(findSurvey);
 
@@ -197,8 +197,8 @@ public class SurveyService {
         return new SurveyRepliesGetResponse(questionHeaders, records);
     }
 
-    private Member checkSurveyPermmision(Long memberId, MemberRole memberRole) {
-        Member findMember = memberService.checkMember(memberId);
+    private MemberEntity checkSurveyPermmision(Long memberId, MemberRole memberRole) {
+        MemberEntity findMember = memberService.checkMember(memberId);
         if (memberRole == MemberRole.ADMIN) {
             if (!findMember.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }

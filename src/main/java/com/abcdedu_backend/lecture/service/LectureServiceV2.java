@@ -19,8 +19,8 @@ import com.abcdedu_backend.lecture.repository.*;
 import com.abcdedu_backend.lecture.repository.v2.AssignmentAnswerRepository;
 import com.abcdedu_backend.lecture.repository.v2.AssignmentQuestionRepository;
 import com.abcdedu_backend.lecture.repository.v2.AssignmentSubmissionRepository;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.MemberService;
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -48,7 +48,7 @@ public class LectureServiceV2 {
 
     @Transactional
     public void createLecture(Long memberId, CreateLectureRequest request) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         Lecture lecture = createLecture(request);
         lectureRepository.save(lecture);
@@ -56,7 +56,7 @@ public class LectureServiceV2 {
 
     @Transactional
     public void createSubLecture(Long lectureId, Long memberId, CreateSubLectureRequest request) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         Lecture findLecture = findLecture(lectureId);
         SubLecture subLecture = createSubLecture(findLecture, request);
@@ -65,7 +65,7 @@ public class LectureServiceV2 {
 
     @Transactional
     public void createAssignments(Long subLectureId, Long memberId, CreateAssignmentRequest request) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         SubLecture subLecture = findSubLecture(subLectureId);
         Assignment assignment = createAssignment(request, subLecture);
@@ -80,7 +80,7 @@ public class LectureServiceV2 {
 
     @Transactional
     public void createAssignmentsAnswer(Long assignmentId, Long memberId, CreateAssignmentAnswerRequest createAssignmentAnswerRequest) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         Assignment assignment = findAssignment(assignmentId);
         List<AssignmentQuestion> questions = assignment.getAssignmentQuestions();
@@ -103,7 +103,7 @@ public class LectureServiceV2 {
     }
 
     public List<GetAssignmentAnswerResponse> getAssignmentAnswers(Pageable pageable, Long memberId) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         checkAdminPermission(findMember);
         Page<AssignmentSubmission> assignmentSubmissions = assignmentSubmissionRepository.findAllWithMemberAndAssignmentAndSubLecture(pageable);
         return assignmentSubmissions.stream()
@@ -133,7 +133,7 @@ public class LectureServiceV2 {
                 .build();
     }
 
-    private AssignmentSubmission createAssignmentSubmission(Assignment assignment, Member findMember) {
+    private AssignmentSubmission createAssignmentSubmission(Assignment assignment, MemberEntity findMember) {
         return AssignmentSubmission.builder()
                 .assignment(assignment)
                 .member(findMember)
@@ -203,7 +203,7 @@ public class LectureServiceV2 {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.SUB_CLASS_NOT_FOUND));
     }
 
-    private void checkAdminPermission(Member member) {
+    private void checkAdminPermission(MemberEntity member) {
         if (!member.isAdmin()){
             throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }

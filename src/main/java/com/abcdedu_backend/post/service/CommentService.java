@@ -1,13 +1,13 @@
 package com.abcdedu_backend.post.service;
 
+import com.abcdedu_backend.memberv2.adapter.out.entity.MemberEntity;
+import com.abcdedu_backend.memberv2.application.domain.MemberRole;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
 import com.abcdedu_backend.post.dto.request.CommentUpdateRequest;
 import com.abcdedu_backend.post.dto.response.CommentResponse;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.entity.Member;
-import com.abcdedu_backend.member.entity.MemberRole;
-import com.abcdedu_backend.member.service.MemberService;
+import com.abcdedu_backend.memberv2.application.MemberService;
 import com.abcdedu_backend.post.entity.Comment;
 import com.abcdedu_backend.post.entity.Post;
 import com.abcdedu_backend.post.repository.CommentRepository;
@@ -31,7 +31,7 @@ public class CommentService {
 
     @Transactional
     public Long createComment(Long postId, Long memberId, CommentCreateRequest createRequest) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         Post findpost = postService.checkPost(postId);
         CheckPostAllowedComment(findpost);
 
@@ -86,7 +86,7 @@ public class CommentService {
 
 
     public int countCommentsByMember(Long memberId) {
-        Member findMember = memberService.checkMember(memberId);
+        MemberEntity findMember = memberService.checkMember(memberId);
         List<Comment> findComments = commentRepository.findAllByMember(findMember);
         return findComments.size();
     }
@@ -104,7 +104,7 @@ public class CommentService {
     }
 
     private Comment checkVaildation(Long commentId, Long memberId) {
-        Member member = memberService.checkMember(memberId);
+        MemberEntity member = memberService.checkMember(memberId);
         Comment comment = checkComment(commentId);
         if (!member.getId().equals(comment.getMember().getId()) && !member.getRole().equals(MemberRole.ADMIN)) {
             throw new ApplicationException(ErrorCode.ADMIN_OR_WRITER_PERMISSION);
