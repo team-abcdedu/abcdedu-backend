@@ -79,4 +79,9 @@ public class MemberPersistence implements MemberRepository {
         return member.toDomain();
     }
 
+    @Override
+    public void deleteById(Long memberId) {
+        memberJpaRepository.deleteById(memberId);
+    }
+
 }

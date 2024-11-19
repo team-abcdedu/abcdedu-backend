@@ -22,4 +22,5 @@ public interface MemberInfoUseCase {
 
     Member checkMember(Long memberId);
 
+    void deleteMember(Long memberId);
 }

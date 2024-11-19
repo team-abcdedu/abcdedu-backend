@@ -26,4 +26,6 @@ public interface MemberRepository {
     Page<Member> findAllByCondition(String school, Long aLong, String name, MemberRole role, Pageable pageable);
 
     Member updateMemberRole(Long id, MemberRole roleName);
+
+    void deleteById(Long memberId);
 }

@@ -81,4 +81,10 @@ public class MemberInfoService implements MemberInfoUseCase{
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
     }
+
+    @Override
+    @Transactional
+    public void deleteMember(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
 }

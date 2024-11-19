@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE members SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Table(name = "members")
 public class MemberEntity extends BaseTimeEntity {
 
@@ -47,10 +51,13 @@ public class MemberEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(name = "deleted")
+    private boolean deleted;
+
+    @OneToMany(mappedBy = "member")
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member")
     private List<Comment> comments;
 
     public boolean isAdmin(){

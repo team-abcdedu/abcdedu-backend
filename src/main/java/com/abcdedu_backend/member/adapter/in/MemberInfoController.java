@@ -91,4 +91,15 @@ public class MemberInfoController {
         memberInfoUseCase.updatePassword(memberId, updatePasswordRequest.newPassword());
         return Response.success();
     }
+
+    @ApiResponses(value ={
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.", content = @Content),
+    })
+    @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴합니다.")
+    @DeleteMapping
+    public Response<Void> deleteMember(@JwtValidation Long memberId){
+        memberInfoUseCase.deleteMember(memberId);
+        return Response.success();
+    }
+
 }
