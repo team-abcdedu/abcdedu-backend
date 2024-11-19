@@ -1,6 +1,5 @@
 package com.abcdedu_backend.member.service;
 import com.abcdedu_backend.exception.ApplicationException;
-import com.abcdedu_backend.member.adapter.in.dto.request.ChangeMemberRoleRequest;
 import com.abcdedu_backend.member.application.AdminMemberService;
 import com.abcdedu_backend.member.domain.Member;
 import com.abcdedu_backend.member.domain.MemberRole;
@@ -28,9 +27,9 @@ class AdminMemberServiceTest {
     @Test
     void 역할_변경_성공() {
         // given
-        List<ChangeMemberRoleRequest> requests = List.of(
-                new ChangeMemberRoleRequest(1L),
-                new ChangeMemberRoleRequest(2L)
+        List<Long> ids = List.of(
+                1L,
+                2L
         );
 
         MemberRole newRole = MemberRole.STUDENT;
@@ -42,7 +41,7 @@ class AdminMemberServiceTest {
         doReturn(updatedMembers.get(1)).when(memberRepository).updateMemberRole(2L, newRole);
 
         // when
-        target.updateMembersRole(newRole, requests);
+        target.updateMembersRole(newRole, ids);
 
         // then
         verify(memberRepository, times(1)).updateMemberRole(1L, newRole);
@@ -52,11 +51,11 @@ class AdminMemberServiceTest {
     @Test
     void 관리자_역할로_변경_시_예외_발생() {
         // given
-        List<ChangeMemberRoleRequest> requests = List.of(
-                new ChangeMemberRoleRequest(1L)
+        List<Long> ids = List.of(
+                1L
         );
         // when & then
-        assertThrows(ApplicationException.class, () -> target.updateMembersRole(MemberRole.ADMIN, requests));
+        assertThrows(ApplicationException.class, () -> target.updateMembersRole(MemberRole.ADMIN, ids));
 
     }
 }

@@ -43,6 +43,7 @@ class MemberInfoServiceTest {
         doReturn(Optional.of(member)).when(memberRepository).findById(member.getId());
         doReturn(expectedImageUrl).when(fileHandler).getPresignedUrl(member.getImageObjectKey());
         MemberInfoDto expectedDto = MemberInfoDto.builder()
+                .id(member.getId())
                 .studentId(member.getStudentId())
                 .email(member.getEmail())
                 .name(member.getName())

@@ -1,16 +1,14 @@
-package com.abcdedu_backend.member.adapter.in.dto.request;
+package com.abcdedu_backend.member.application.dto.command;
 
-import com.abcdedu_backend.member.application.dto.command.SearchMembersCommand;
 import com.abcdedu_backend.member.domain.MemberRole;
 
-public record MemberSearchCondition(
+public record SearchMembersCommand(
         String school,
         Long studentId,
         String name,
         MemberRole role
-
-) {
-    public SearchMembersCommand toCommand() {
+){
+    public static SearchMembersCommand of(String school, Long studentId, String name, MemberRole role) {
         return new SearchMembersCommand(school, studentId, name, role);
     }
 }

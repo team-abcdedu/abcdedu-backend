@@ -1,9 +1,8 @@
 package com.abcdedu_backend.member.application;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
-import com.abcdedu_backend.member.adapter.in.dto.request.ChangeMemberRoleRequest;
-import com.abcdedu_backend.member.adapter.in.dto.request.MemberSearchCondition;
-import com.abcdedu_backend.member.adapter.in.dto.response.AdminSearchMemberResponse;
+import com.abcdedu_backend.member.application.dto.MemberInfoDto;
+import com.abcdedu_backend.member.application.dto.command.SearchMembersCommand;
 import com.abcdedu_backend.member.domain.Member;
 import com.abcdedu_backend.member.domain.MemberRole;
 import com.abcdedu_backend.member.application.out.MemberRepository;
@@ -24,24 +23,20 @@ public class AdminMemberService implements AdminMemberUseCase{
     private final MemberRepository memberRepository;
 
     @Override
-    public Page<AdminSearchMemberResponse> searchMembers(Pageable pageable, MemberSearchCondition cond) {
+    public Page<MemberInfoDto> searchMembers(Pageable pageable, SearchMembersCommand command) {
         Page<Member> members = memberRepository.findAllByCondition(
-                cond.school(),
-                cond.studentId(),
-                cond.name(),
-                cond.role(),
+                command.school(),
+                command.studentId(),
+                command.name(),
+                command.role(),
                 pageable);
         log.info("필터에 맞는 member 조회 성공");
-        return members.map(AdminSearchMemberResponse::fromMember);
+        return members.map(member -> MemberInfoDto.of(member));
     }
 
     @Transactional
-    public void updateMembersRole(MemberRole roleName, List<ChangeMemberRoleRequest> requests) {
+    public void updateMembersRole(MemberRole roleName, List<Long> ids) {
         checkIsAllowedRoleChange(roleName); // to관리자 변경 방지
-
-        List<Long> ids = requests.stream()
-                .map(ChangeMemberRoleRequest::memberId)
-                .toList();
         ids.forEach(id -> memberRepository.updateMemberRole(id, roleName));
     }
 

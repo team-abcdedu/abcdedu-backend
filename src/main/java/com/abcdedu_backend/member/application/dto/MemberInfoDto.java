@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record MemberInfoDto (
+        Long id,
         String name,
         String email,
         String school,
@@ -19,6 +20,7 @@ public record MemberInfoDto (
 ){
     public static MemberInfoDto of(Member member, String imageUrl) {
         return MemberInfoDto.builder()
+                .id(member.getId())
                 .studentId(member.getStudentId())
                 .email(member.getEmail())
                 .name(member.getName())
@@ -28,6 +30,18 @@ public record MemberInfoDto (
                 .createdAt(member.getCreatedAt())
                 .createPostCount(member.getPostCount())
                 .createCommentCount(member.getCommentCount())
+                .build();
+    }
+
+    public static MemberInfoDto of(Member member) {
+        return MemberInfoDto.builder()
+                .id(member.getId())
+                .studentId(member.getStudentId())
+                .email(member.getEmail())
+                .name(member.getName())
+                .role(member.getRole().toString())
+                .school(member.getSchool())
+                .createdAt(member.getCreatedAt())
                 .build();
     }
 }

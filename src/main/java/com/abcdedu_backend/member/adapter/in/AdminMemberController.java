@@ -8,6 +8,7 @@ import com.abcdedu_backend.member.adapter.in.dto.request.ChangeMemberRoleRequest
 import com.abcdedu_backend.member.adapter.in.dto.request.MemberSearchCondition;
 import com.abcdedu_backend.member.adapter.in.dto.response.AdminSearchMemberResponse;
 import com.abcdedu_backend.member.application.AdminMemberUseCase;
+import com.abcdedu_backend.member.application.dto.MemberInfoDto;
 import com.abcdedu_backend.member.domain.MemberRole;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,14 +30,18 @@ public class AdminMemberController {
     private final AdminMemberUseCase adminMemberUseCase;
     @Operation(summary = "멤버 조회", description = "필터링을 통한 멤버 조회")
     @GetMapping
-    public Response<PagedResponse<AdminSearchMemberResponse>> getmembersByCondition(PagingRequest pagingRequest, SortRequest sortRequest, @ModelAttribute MemberSearchCondition cond){
-        Page<AdminSearchMemberResponse> responses = adminMemberUseCase.searchMembers(new PageManager(pagingRequest, sortRequest).makePageRequest(), cond);
+    public Response<PagedResponse<AdminSearchMemberResponse>> getMembersByCondition(PagingRequest pagingRequest, SortRequest sortRequest, @ModelAttribute MemberSearchCondition cond){
+        Page<MemberInfoDto> members = adminMemberUseCase.searchMembers(new PageManager(pagingRequest, sortRequest).makePageRequest(), cond.toCommand());
+        Page<AdminSearchMemberResponse> responses = members.map(AdminSearchMemberResponse::fromMemberInfoDto);
         return Response.success(PagedResponse.from(responses));
     }
     @Operation(summary = "멤버 일괄 등급 변경", description = "현재 버전은 새싹 <-> 학생 변경만 가능합니다.")
     @PatchMapping("/role/{roleName}")
     public Response<Void> changeMembersRole(@PathVariable MemberRole roleName, @RequestBody List<ChangeMemberRoleRequest> requests) {
-        adminMemberUseCase.updateMembersRole(roleName, requests);
+        List<Long> ids = requests.stream()
+                .map(ChangeMemberRoleRequest::memberId)
+                .toList();
+        adminMemberUseCase.updateMembersRole(roleName, ids);
         return Response.success();
     }
 
