@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 
 @Entity
@@ -22,7 +22,7 @@ import org.hibernate.annotations.Where;
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE posts SET deleted = true WHERE id = ?")
-@Where(clause = "deleted = false")
+@SQLRestriction("deleted = false")
 @Table(name = "posts")
 public class Post extends BaseTimeEntity {
     @Id
@@ -56,7 +56,7 @@ public class Post extends BaseTimeEntity {
     private Boolean commentAllow;
 
     @Column(name = "deleted")
-    private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
+    private boolean deleted;
 
     @Column(name = "file_url")
     private String fileUrl;
