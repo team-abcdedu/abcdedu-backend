@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE members SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Table(name = "members")
 public class Member extends BaseTimeEntity {
 
@@ -43,6 +47,9 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
+
+    @Column(name = "deleted")
+    private boolean deleted;
 
     @OneToMany(mappedBy = "member")
     private List<Post> posts;
