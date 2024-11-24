@@ -1,12 +1,11 @@
 package com.abcdedu_backend.homework.service;
 
-import com.abcdedu_backend.homework.entity.HomeworkRepresentative;
-import com.abcdedu_backend.homework.repository.HomeworkRepresentativeRepository;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.homework.dto.response.HomeworkGetRes;
 import com.abcdedu_backend.homework.dto.response.HomeworkQuestionGetRes;
 import com.abcdedu_backend.homework.dto.request.HomeworkReplyCreateReq;
+import com.abcdedu_backend.homework.dto.response.HomeworkReplyGetRes;
 import com.abcdedu_backend.homework.entity.Homework;
 import com.abcdedu_backend.homework.entity.HomeworkQuestion;
 import com.abcdedu_backend.homework.entity.HomeworkReply;
@@ -31,7 +30,6 @@ public class HomeworkService {
     private final HomeworkRepository homeworkRepository;
     private final HomeworkQuestionRepository questionRepository;
     private final HomeworkReplyRepository replyRepository;
-    private final HomeworkRepresentativeRepository representativeRepository;
 
     public HomeworkGetRes getHomework(Long memberId, Long homeworkId) {
         checkPermission(memberId, MemberRole.STUDENT);
@@ -39,35 +37,44 @@ public class HomeworkService {
         return homeworkToHomeworkGetRes(homework);
     }
 
-    public HomeworkGetRes getHomeworkV2(Long memberId) {
-        checkPermission(memberId, MemberRole.STUDENT);
-        HomeworkRepresentative latestRepresentative = representativeRepository.findLatestRepresentative()
-                .orElseThrow(() -> new ApplicationException(ErrorCode.HOMEWORK_REPRESENTATIVE_NOT_FOUND));
-        return homeworkToHomeworkGetRes(latestRepresentative.getHomework());
-    }
-
     @Transactional
     public void createHomeworkReply(Long memberId, Long homeworkId, List<HomeworkReplyCreateReq> replyRequests) {
         Member member = checkPermission(memberId, MemberRole.STUDENT);
         Homework homework = checkHomework(homeworkId);
-        if (hasDuplicatedMemberReply(member, homework)) throw new ApplicationException(ErrorCode.HOMEWORK_REPLY_DUPLICATED);
         List<HomeworkQuestion> questions = checkQeustionsByHomework(homework);
         List<HomeworkReply> homeworkReplies = makeHomeworkReply(homework, questions, replyRequests, member);
         saveReplies(homeworkReplies);
     }
 
-    private boolean hasDuplicatedMemberReply(Member member, Homework homework) {
-        return !(replyRepository.findByHomeworkAndMember(homework, member).isEmpty());
-    }
+    public HomeworkReplyGetRes getReplies(Long memberId, Long homeworkId) {
+        checkPermission(memberId, MemberRole.ADMIN);
 
-    public void registerRepresentative(Long homeworkId, Long memberId) {
-        Member member = checkPermission(memberId, MemberRole.ADMIN);
         Homework homework = checkHomework(homeworkId);
-        HomeworkRepresentative representative = HomeworkRepresentative.builder()
-                .member(member)
-                .homework(homework)
-                .build();
-        representativeRepository.save(representative);
+        List<HomeworkQuestion> questions = checkQeustionsByHomework(homework);
+        List<HomeworkReply> replies = checkRepliesByHomework(homework);
+
+        // 설문 질문을 헤더로 설정
+        List<String> questionHeaders = questions.stream()
+                .map(HomeworkQuestion::getContent) // 질문 내용을 열 제목으로 사용
+                .toList();
+
+        // 각 사람의 응답을 레코드로 생성
+        List<List<String>> records = new ArrayList<>();
+        Map<Long, List<String>> respondentAnswersMap = new HashMap<>();
+
+        for (HomeworkReply reply : replies) {
+            Long respondentId = reply.getMember().getId(); // 응답자의 ID로 그룹화
+            HomeworkQuestion relatedQuestion = reply.getHomeworkQuestion(); // 응답과 연관된 질문
+
+            respondentAnswersMap
+                    .computeIfAbsent(respondentId, k -> new ArrayList<>(Collections.nCopies(questions.size(), "")))  // 질문 수만큼 빈 값으로 초기화
+                    .set(questions.indexOf(relatedQuestion), reply.getAnswer());  // 질문의 인덱스에 응답을 삽입
+        }
+        // 응답 데이터를 레코드 형식으로 변환
+        records.addAll(respondentAnswersMap.values());
+
+        log.info("응답 생성 성공, 응답 갯수 : {}", records.size());
+        return new HomeworkReplyGetRes(questionHeaders, records);
     }
 
     public Homework checkHomework(Long homeworkId) {
@@ -78,21 +85,25 @@ public class HomeworkService {
         return questionRepository.findAllByHomework(homework);
     }
 
+    public List<HomeworkReply> checkRepliesByHomework(Homework homework) {
+        return replyRepository.findAllByHomework(homework);
+    }
+
 
     public Member checkPermission(Long memberId, MemberRole memberRole) {
         Member member = memberService.checkMember(memberId);
         if (memberRole == MemberRole.STUDENT) {
-            if (member.isBasic()) {
+            if (!member.isStudent() && !member.isAdmin()) {
+                log.warn("사용자 역할 권한 검증 실패");
                 throw new ApplicationException(ErrorCode.STUDENT_VALID_PERMISSION);
             }
         } else if (memberRole == MemberRole.ADMIN) {
+            log.warn("사용자 역할 권한 검증 실패");
             if (!member.isAdmin()) throw new ApplicationException(ErrorCode.ADMIN_VALID_PERMISSION);
         }
         log.info("checkPermission() : 권한 확인 성공");
         return member;
     }
-
-
 
     private void saveReplies(List<HomeworkReply> replies) {
         for (HomeworkReply reply : replies) {
@@ -139,7 +150,6 @@ public class HomeworkService {
         }
         return replies;
     }
-
 
 
 }

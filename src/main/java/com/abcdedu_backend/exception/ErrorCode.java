@@ -66,8 +66,6 @@ public enum ErrorCode {
 
     // 공통 과제
     HOMEWORK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공통과제를 찾을 수 없습니다."),
-    HOMEWORK_REPLY_DUPLICATED(HttpStatus.FORBIDDEN, "이미 과제를 제출하였습니다."),
-    HOMEWORK_REPRESENTATIVE_NOT_FOUND(HttpStatus.NOT_FOUND, "공통과제 대표버전이 설정되지 않았습니다."),
 
     //파일 에러
     FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다."),

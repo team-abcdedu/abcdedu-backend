@@ -78,8 +78,6 @@ dependencies {
     // email 인증 의존성 추가
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-    // export Excel
-    implementation 'org.apache.poi:poi-ooxml:5.2.3'
 }
 
 tasks.named('test') {
