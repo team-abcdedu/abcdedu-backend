@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 
 @Entity
@@ -17,7 +17,7 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE comments SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted = false")
+@Where(clause = "deleted = false")
 @Table(name = "comments")
 public class Comment extends BaseTimeEntity {
     @Id
@@ -36,7 +36,7 @@ public class Comment extends BaseTimeEntity {
     private String content;
 
     @Column(name = "deleted")
-    private boolean deleted;
+    private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
 
     public void updateContent(String content) {
         this.content = content;
