@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record SurveyListResponse (
     Long id,
     String title,
-    LocalDateTime createAt,
+    LocalDateTime createdAt,
     String writerName
 ){
 }
