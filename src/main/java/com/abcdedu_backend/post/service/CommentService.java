@@ -1,5 +1,7 @@
 package com.abcdedu_backend.post.service;
 
+import com.abcdedu_backend.infra.file.FileDirectory;
+import com.abcdedu_backend.infra.file.FileHandler;
 import com.abcdedu_backend.post.dto.request.CommentCreateRequest;
 import com.abcdedu_backend.post.dto.request.CommentUpdateRequest;
 import com.abcdedu_backend.post.dto.response.CommentResponse;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,9 +31,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MemberService memberService;
     private final PostService postService;
+    private final FileHandler fileHandler;
 
     @Transactional
-    public Long createComment(Long postId, Long memberId, CommentCreateRequest createRequest) {
+    public Long createComment(Long postId, Long memberId, CommentCreateRequest createRequest, MultipartFile file) {
         Member findMember = memberService.checkMember(memberId);
         Post findpost = postService.checkPost(postId);
         CheckPostAllowedComment(findpost);
@@ -42,6 +46,12 @@ public class CommentService {
                 .build();
 
         saveComment(comment);
+
+        if (hasFile(file)) {
+            String objectKey = fileHandler.upload(file, FileDirectory.COMMENT_ATTACHMENT, comment.getId().toString());
+            comment.updateFileObjectKey(objectKey);
+        }
+
         findpost.incrementCommentCount();
         return comment.getId();
     }
@@ -55,6 +65,11 @@ public class CommentService {
         }
         log.info("createComment() : comment 생성 및 저장 성공 - {}", comment.getContent());
     }
+
+    private boolean hasFile(MultipartFile file) {
+        return file != null && !file.isEmpty();
+    }
+
 
 
     public Page<CommentResponse> readComments(Long postId, Pageable pageable) {
