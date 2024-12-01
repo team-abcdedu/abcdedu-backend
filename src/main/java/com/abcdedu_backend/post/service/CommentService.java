@@ -82,6 +82,7 @@ public class CommentService {
                         .writerName(comment.getMember().getName())
                         .writerEmail(comment.getMember().getEmail())
                         .createdAt(comment.getCreatedAt())
+                        .fileUrl(fileHandler.getPresignedUrl(comment.getFileObjectKey()))
                         .build());
     }
 
