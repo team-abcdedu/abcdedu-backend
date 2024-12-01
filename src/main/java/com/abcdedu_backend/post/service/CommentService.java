@@ -87,9 +87,13 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(Long commentId, Long memberId, CommentUpdateRequest updateRequest) {
+    public void updateComment(Long commentId, Long memberId, CommentUpdateRequest updateRequest, MultipartFile file) {
         Comment comment = checkVaildation(commentId, memberId);
         comment.updateContent(updateRequest.content());
+        String fileObjectKey = file == null
+                ? null
+                : fileHandler.upload(file, FileDirectory.COMMENT_ATTACHMENT, commentId.toString());
+        comment.updateFileObjectKey(fileObjectKey);
     }
 
     @Transactional

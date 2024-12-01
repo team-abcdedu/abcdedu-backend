@@ -1,6 +1,8 @@
 package com.abcdedu_backend.post.controller;
 
 import com.abcdedu_backend.common.jwt.JwtValidation;
+import com.abcdedu_backend.exception.ApplicationException;
+import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.post.dto.request.CommentUpdateRequest;
 import com.abcdedu_backend.post.service.CommentService;
 import com.abcdedu_backend.utils.Response;
@@ -9,9 +11,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 @RestController
 @RequestMapping("/comments")
 @RequiredArgsConstructor
@@ -41,8 +47,13 @@ public class CommentController {
             @ApiResponse(responseCode = "401", description = "해당 기능은 관리자/작성자만 사용가능합니다.", content = @Content)
     })
     @PatchMapping("/{commentId}")
-    public Response<Void> updateComment(@PathVariable Long commentId, @JwtValidation Long memberId, @RequestBody CommentUpdateRequest updateRequest) {
-        commentService.updateComment(commentId, memberId, updateRequest);
+    public Response<Void> updateComment(@PathVariable Long commentId,
+                                        @JwtValidation Long memberId,
+                                        @Valid @ModelAttribute CommentUpdateRequest updateRequest,
+                                        BindingResult bindingResult,
+                                        @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+        if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
+        commentService.updateComment(commentId, memberId, updateRequest, multipartFile);
         return Response.success();
     }
 
