@@ -62,6 +62,10 @@ public class MemberService {
             throw new ApplicationException(ErrorCode.LOGIN_FAILED);
         }
 
+        if (findMember.isDeleted()) {
+            throw new ApplicationException(ErrorCode.DELETED_USER);
+        }
+
         String accessToken = jwtUtil.createAccessToken(findMember.getId());
         String refreshToken = jwtUtil.createRefreshToken(findMember.getId());
 

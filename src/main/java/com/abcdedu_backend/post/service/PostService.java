@@ -15,7 +15,6 @@ import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.response.PostResponse;
 import com.abcdedu_backend.post.entity.Post;
 import com.abcdedu_backend.post.repository.PostReposiroty;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,8 +52,19 @@ public class PostService {
         if (post.getSecret()) {
             checkPermission(member, post);
         }
+        String imageUrl = !post.getFileUrl().isEmpty() ? fileHandler.getPresignedUrl(post.getFileUrl()) : "";
+
+        // 이전 글 조회
+        Post previousPost = postReposiroty.findFirstByIdLessThanOrderByIdDesc(postId)
+                .orElse(null);
+
+        // 다음 글 조회
+        Post nextPost = postReposiroty.findFirstByIdGreaterThanOrderByIdAsc(postId)
+                .orElse(null);
+
         post.increaseViewCount(); // 조회수 증가
-        return postToPostResponse(post);
+
+        return PostResponse.of(post, previousPost, nextPost, imageUrl);
     }
 
     // Todo. 삭제 예정
@@ -209,23 +219,12 @@ public class PostService {
     // ====== DTO, Entity 변환 =======
     // 다건 조회
     private PostListResponse postToPostListResponse(Post post) {
-        String writer = "";
-        String email = "";
 
-        try {
-            Member member = post.getMember();
-            if (!member.isDeleted()) {
-                writer = member.getName();
-                email = member.getEmail();
-            }
-        } catch (EntityNotFoundException e){
-            writer = "익명";
-        }
         return PostListResponse.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
-                .writer(writer)
-                .writerEmail(email)
+                .writer(post.getMember().isDeleted() ? "익명" : post.getMember().getName())
+                .writerEmail(post.getMember().isDeleted() ? "" : post.getMember().getEmail())
                 .viewCount(post.getViewCount())
                 .commentCount(post.getCommentCount())
                 .createdAt(post.getCreatedAt())
