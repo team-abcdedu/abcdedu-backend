@@ -223,28 +223,12 @@ public class PostService {
         return PostListResponse.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
-                .writer(post.getMember().isDeleted() ? "익명" : post.getMember().getName())
-                .writerEmail(post.getMember().isDeleted() ? "" : post.getMember().getEmail())
-                .viewCount(post.getViewCount())
-                .commentCount(post.getCommentCount())
-                .createdAt(post.getCreatedAt())
-                .secret(post.getSecret())
-                .build();
-    }
-
-    // 단건 조회
-    private PostResponse postToPostResponse(Post post) {
-        return PostResponse.builder()
-                .title(post.getTitle())
                 .writer(post.getMember().getName())
                 .writerEmail(post.getMember().getEmail())
-                .content(post.getContent())
-                .createdAt(post.getCreatedAt())
                 .viewCount(post.getViewCount())
                 .commentCount(post.getCommentCount())
-                .fileUrl(!post.getFileUrl().isEmpty() ? fileHandler.getPresignedUrl(post.getFileUrl()) : "")
+                .createdAt(post.getCreatedAt())
                 .secret(post.getSecret())
-                .commentAllow(post.getCommentAllow())
                 .build();
     }
 
