@@ -15,7 +15,8 @@ public enum FileDirectory {
     ASSIGNMENT_THEORY_FILE("이론","abcdedu/assignment/theory/"),
     ASSIGNMENT_DATA_FILE("자료","abcdedu/assignment/data/"),
     ASSIGNMENT_ANSWER_FILE("시험지","abcdedu/assignment/answer"),
-    POST_ATTACHMENT("게시글", "abcdedu/post/attachment/");
+    POST_ATTACHMENT("게시글", "abcdedu/post/attachment/"),
+    COMMENT_ATTACHMENT("댓글", "abcdedu/comment/attachment/");
 
     private final String type;
     private final String directoryName;
