@@ -15,7 +15,8 @@ public interface AdminMemberRepository extends JpaRepository<Member, Long> {
             "WHERE (:school IS NULL OR m.school LIKE %:school%) " +
             "AND (:studentId IS NULL OR m.studentId = :studentId) " +
             "AND (:name IS NULL OR m.name LIKE %:name%) " +
-            "AND (:role IS NULL OR m.role = :role)")
+            "AND (:role IS NULL OR m.role = :role)" +
+            "AND m.deleted = false")
     Page<Member> findAllByCondition(@Param("school") String school,
                                     @Param("studentId") Long studentId,
                                     @Param("name") String name,

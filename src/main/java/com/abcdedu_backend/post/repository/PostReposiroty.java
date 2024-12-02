@@ -8,8 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 
 public interface PostReposiroty extends JpaRepository<Post, Long> {
+
+    @Query("SELECT p FROM Post p WHERE p.id = :postId")
+    Optional<Post> findById(@Param("postId") Long postId);
+
 //    @EntityGraph(attributePaths = {"member"})
     @Query("SELECT p FROM Post p WHERE p.board.id = :boardId")
     Page<Post> findAllByBoardId(@Param("boardId") Long boardId, Pageable pageable);
@@ -18,5 +24,11 @@ public interface PostReposiroty extends JpaRepository<Post, Long> {
 //    @EntityGraph(attributePaths = {"member"})
     @Query("SELECT p FROM Post p WHERE p.board.name = :boardName")
     Page<Post> findAllByBoardName(@Param("boardName") String boardName, Pageable pageable);
+
+    // 이전 글 조회
+    Optional<Post> findFirstByIdLessThanOrderByIdDesc(Long postId);
+
+    // 다음 글 조회
+    Optional<Post> findFirstByIdGreaterThanOrderByIdAsc(Long postId);
 
 }
