@@ -5,7 +5,7 @@ import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.homework.dto.response.HomeworkGetRes;
 import com.abcdedu_backend.homework.dto.response.HomeworkQuestionGetRes;
 import com.abcdedu_backend.homework.dto.request.HomeworkReplyCreateReq;
-import com.abcdedu_backend.homework.dto.response.HomeworkRes;
+import com.abcdedu_backend.homework.dto.response.HomeworkReplyGetRes;
 import com.abcdedu_backend.homework.entity.Homework;
 import com.abcdedu_backend.homework.entity.HomeworkQuestion;
 import com.abcdedu_backend.homework.entity.HomeworkReply;
@@ -46,14 +46,35 @@ public class HomeworkService {
         saveReplies(homeworkReplies);
     }
 
-    public List<HomeworkRes> getHomeworks() {
-        List<Homework> homeworks = homeworkRepository.findAll();
-        return homeworks.stream().map(homework -> HomeworkRes.builder()
-                        .id(homework.getId())
-                        .title(homework.getTitle())
-                        .updatedDate(homework.getUpdatedAt())
-                        .writer(homework.getMember().getName()).build())
+    public HomeworkReplyGetRes getReplies(Long memberId, Long homeworkId) {
+        checkPermission(memberId, MemberRole.ADMIN);
+
+        Homework homework = checkHomework(homeworkId);
+        List<HomeworkQuestion> questions = checkQeustionsByHomework(homework);
+        List<HomeworkReply> replies = checkRepliesByHomework(homework);
+
+        // 설문 질문을 헤더로 설정
+        List<String> questionHeaders = questions.stream()
+                .map(HomeworkQuestion::getContent) // 질문 내용을 열 제목으로 사용
                 .toList();
+
+        // 각 사람의 응답을 레코드로 생성
+        List<List<String>> records = new ArrayList<>();
+        Map<Long, List<String>> respondentAnswersMap = new HashMap<>();
+
+        for (HomeworkReply reply : replies) {
+            Long respondentId = reply.getMember().getId(); // 응답자의 ID로 그룹화
+            HomeworkQuestion relatedQuestion = reply.getHomeworkQuestion(); // 응답과 연관된 질문
+
+            respondentAnswersMap
+                    .computeIfAbsent(respondentId, k -> new ArrayList<>(Collections.nCopies(questions.size(), "")))  // 질문 수만큼 빈 값으로 초기화
+                    .set(questions.indexOf(relatedQuestion), reply.getAnswer());  // 질문의 인덱스에 응답을 삽입
+        }
+        // 응답 데이터를 레코드 형식으로 변환
+        records.addAll(respondentAnswersMap.values());
+
+        log.info("응답 생성 성공, 응답 갯수 : {}", records.size());
+        return new HomeworkReplyGetRes(questionHeaders, records);
     }
 
     public Homework checkHomework(Long homeworkId) {
