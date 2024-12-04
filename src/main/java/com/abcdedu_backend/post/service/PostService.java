@@ -55,11 +55,11 @@ public class PostService {
         String imageUrl = !post.getFileUrl().isEmpty() ? fileHandler.getPresignedUrl(post.getFileUrl()) : "";
 
         // 이전 글 조회
-        Post previousPost = postReposiroty.findFirstByIdLessThanOrderByIdDesc(postId)
+        Post previousPost = postReposiroty.findFirstByIdLessThanAndBoardOrderByIdDesc(postId, post.getBoard())
                 .orElse(null);
 
         // 다음 글 조회
-        Post nextPost = postReposiroty.findFirstByIdGreaterThanOrderByIdAsc(postId)
+        Post nextPost = postReposiroty.findFirstByIdGreaterThanAndBoardOrderByIdAsc(postId, post.getBoard())
                 .orElse(null);
 
         post.increaseViewCount(); // 조회수 증가

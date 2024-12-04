@@ -1,6 +1,7 @@
 package com.abcdedu_backend.post.service;
 
 
+import com.abcdedu_backend.board.Board;
 import com.abcdedu_backend.exception.ApplicationException;
 import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.infra.file.FileHandler;
@@ -59,11 +60,15 @@ public class PostServiceTest {
         Post prevPost = Post.builder()
                 .id(postId - 1)
                 .title("Previous Title")
+                .member(writer)
+                .secret(false)
                 .build();
 
         Post nextPost = Post.builder()
                 .id(postId + 1)
                 .title("Next Title")
+                .member(writer)
+                .secret(false)
                 .build();
 
         String presignedUrl = "https://example.com/sample-file-url";
@@ -71,8 +76,8 @@ public class PostServiceTest {
         Post post = createPost(postId, writer);
         doReturn(Optional.of(post)).when(postReposiroty).findById(postId);
         doReturn(member).when(memberService).checkMember(memberId);
-        doReturn(Optional.of(prevPost)).when(postReposiroty).findFirstByIdLessThanOrderByIdDesc(postId);
-        doReturn(Optional.of(nextPost)).when(postReposiroty).findFirstByIdGreaterThanOrderByIdAsc(postId);
+        doReturn(Optional.of(prevPost)).when(postReposiroty).findFirstByIdLessThanAndBoardOrderByIdDesc(postId, post.getBoard());
+        doReturn(Optional.of(nextPost)).when(postReposiroty).findFirstByIdGreaterThanAndBoardOrderByIdAsc(postId, post.getBoard());
         doReturn(presignedUrl).when(fileHandler).getPresignedUrl("sample-file-url");
 
         PostResponse postResponse = target.getPost(postId, memberId);
@@ -107,11 +112,15 @@ public class PostServiceTest {
         Post prevPost = Post.builder()
                 .id(postId - 1)
                 .title("Previous Title")
+                .member(writer)
+                .secret(false)
                 .build();
 
         Post nextPost = Post.builder()
                 .id(postId + 1)
                 .title("Next Title")
+                .member(writer)
+                .secret(false)
                 .build();
 
         String presignedUrl = "https://example.com/sample-file-url";
@@ -119,8 +128,8 @@ public class PostServiceTest {
         Post post = createPost(postId, writer);
         doReturn(Optional.of(post)).when(postReposiroty).findById(postId);
         doReturn(member).when(memberService).checkMember(memberId);
-        doReturn(Optional.of(prevPost)).when(postReposiroty).findFirstByIdLessThanOrderByIdDesc(postId);
-        doReturn(Optional.of(nextPost)).when(postReposiroty).findFirstByIdGreaterThanOrderByIdAsc(postId);
+        doReturn(Optional.of(prevPost)).when(postReposiroty).findFirstByIdLessThanAndBoardOrderByIdDesc(postId, post.getBoard());
+        doReturn(Optional.of(nextPost)).when(postReposiroty).findFirstByIdGreaterThanAndBoardOrderByIdAsc(postId, post.getBoard());
         doReturn(presignedUrl).when(fileHandler).getPresignedUrl("sample-file-url");
 
         PostResponse postResponse = target.getPost(postId, memberId);
@@ -154,6 +163,8 @@ public class PostServiceTest {
         Post nextPost = Post.builder()
                 .id(postId + 1)
                 .title("Next Title")
+                .member(writer)
+                .secret(false)
                 .build();
 
         String presignedUrl = "https://example.com/sample-file-url";
@@ -161,8 +172,8 @@ public class PostServiceTest {
         Post post = createPost(postId, writer);
         doReturn(Optional.of(post)).when(postReposiroty).findById(postId);
         doReturn(member).when(memberService).checkMember(memberId);
-        doReturn(Optional.empty()).when(postReposiroty).findFirstByIdLessThanOrderByIdDesc(postId);
-        doReturn(Optional.of(nextPost)).when(postReposiroty).findFirstByIdGreaterThanOrderByIdAsc(postId);
+        doReturn(Optional.empty()).when(postReposiroty).findFirstByIdLessThanAndBoardOrderByIdDesc(postId, post.getBoard());
+        doReturn(Optional.of(nextPost)).when(postReposiroty).findFirstByIdGreaterThanAndBoardOrderByIdAsc(postId, post.getBoard());
         doReturn(presignedUrl).when(fileHandler).getPresignedUrl("sample-file-url");
 
         PostResponse postResponse = target.getPost(postId, memberId);
@@ -216,6 +227,7 @@ public class PostServiceTest {
                 .commentAllow(true)
                 .fileUrl("sample-file-url")
                 .member(member)
+                .board(Board.builder().id(1L).name("기본게시판").build())
                 .build();
     }
 }
