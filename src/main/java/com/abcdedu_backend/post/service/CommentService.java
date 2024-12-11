@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -82,7 +83,9 @@ public class CommentService {
                         .writerName(comment.getMember().getName())
                         .writerEmail(comment.getMember().getEmail())
                         .createdAt(comment.getCreatedAt())
-                        .fileUrl(fileHandler.getPresignedUrl(comment.getFileObjectKey()))
+                        .fileUrl(comment.hasFile()
+                                ? fileHandler.getPresignedUrl(comment.getFileObjectKey())
+                                : "")
                         .build());
     }
 
