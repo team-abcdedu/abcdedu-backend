@@ -121,6 +121,22 @@ class MemberServiceTest {
     }
 
     @Test
+    public void 회원탈퇴한_유저_로그인_실패(){
+        Member member = createMember();
+        member.delete();
+        //given
+        LoginRequest request = new LoginRequest("ehdcjs159@gmail.com", "123456");
+        doReturn(Optional.of(member)).when(memberRepository).findByEmail(request.email());
+
+        //when
+        Assertions.assertThrows(ApplicationException.class, () -> target.login(request));
+
+        //then
+        verify(memberRepository, times(1)).findByEmail(request.email());
+    }
+
+
+    @Test
     public void password_잘못_입력하여_로그인_실패(){
         //given
         LoginRequest request = new LoginRequest("asd123456@gmail.com", "123456789");

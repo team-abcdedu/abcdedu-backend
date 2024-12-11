@@ -53,8 +53,19 @@ public class PostService {
         if (post.getSecret()) {
             checkPermission(member, post);
         }
+        String imageUrl = !post.getFileUrl().isEmpty() ? fileHandler.getPresignedUrl(post.getFileUrl()) : "";
+
+        // 이전 글 조회
+        Post previousPost = postReposiroty.findFirstByIdLessThanAndBoardOrderByIdDesc(postId, post.getBoard())
+                .orElse(null);
+
+        // 다음 글 조회
+        Post nextPost = postReposiroty.findFirstByIdGreaterThanAndBoardOrderByIdAsc(postId, post.getBoard())
+                .orElse(null);
+
         post.increaseViewCount(); // 조회수 증가
-        return postToPostResponse(post);
+
+        return PostResponse.of(post, previousPost, nextPost, imageUrl);
     }
 
     // Todo. 삭제 예정
@@ -230,22 +241,6 @@ public class PostService {
                 .commentCount(post.getCommentCount())
                 .createdAt(post.getCreatedAt())
                 .secret(post.getSecret())
-                .build();
-    }
-
-    // 단건 조회
-    private PostResponse postToPostResponse(Post post) {
-        return PostResponse.builder()
-                .title(post.getTitle())
-                .writer(post.getMember().getName())
-                .writerEmail(post.getMember().getEmail())
-                .content(post.getContent())
-                .createdAt(post.getCreatedAt())
-                .viewCount(post.getViewCount())
-                .commentCount(post.getCommentCount())
-                .fileUrl(!post.getFileUrl().isEmpty() ? fileHandler.getPresignedUrl(post.getFileUrl()) : "")
-                .secret(post.getSecret())
-                .commentAllow(post.getCommentAllow())
                 .build();
     }
 

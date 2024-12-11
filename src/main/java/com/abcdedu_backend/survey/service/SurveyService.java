@@ -78,12 +78,7 @@ public class SurveyService {
         checkSurveyPermmision(memberId, MemberRole.ADMIN);
         Page<Survey> surveys = surveyRepository.findAll(pageable);
         return surveys
-                .map(survey -> SurveyListResponse.builder()
-                        .id(survey.getId())
-                        .title(survey.getTitle())
-                        .writerName(survey.getMember().getName())
-                        .createAt(survey.getCreatedAt())
-                        .build());
+                .map(survey -> SurveyListResponse.of(survey.getId(), survey.getTitle(), survey.getMember().getName(), survey.getCreatedAt()));
     }
 
     /**
@@ -167,8 +162,7 @@ public class SurveyService {
 
 
     // 질문-응답 조회
-    public SurveyRepliesGetResponse getSurveyReplies(Long memberId, Long surveyId) {
-        checkSurveyPermmision(memberId, MemberRole.ADMIN);
+    public SurveyRepliesGetResponse getSurveyReplies(Long surveyId) {
         Survey findSurvey = checkSurvey(surveyId);
         List<SurveyQuestion> questions = questionRepository.findBySurvey(findSurvey);
         List<SurveyReply> replies = replyRepository.findBySurvey(findSurvey);

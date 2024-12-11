@@ -24,41 +24,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/surveys")
 @RequiredArgsConstructor
-@Tag(name = "설문 기능", description = "설문 관련 api 입니다. 응답 등록, 설문 조회 (응답하기 위한) 외에 모든 기능 관리자만 사용가능 합니다.")
+@Tag(name = "설문 기능", description = "일반사용자가 대표 설문에 대해 응답을 등록하는 api 입니다.")
 public class SurveyController {
 
     private final SurveyService surveyService;
 
-    // ====== 설문
-    @Operation(summary = "설문 등록", description = "여러 개의 질문을 담을 설문을 등록한다.")
-    @PostMapping
-    public Response<Long> createSurvey(@Valid @RequestBody SurveyCreateRequest request, @JwtValidation Long memberId) {
-        Long surveyId = surveyService.createSurvey(request, memberId);
-        return Response.success(surveyId);
-    }
-
-    @Operation(summary = "설문 리스트 조회")
-    @GetMapping
-    public Response<PagedResponse<SurveyListResponse>> getSurveys(@JwtValidation Long memberId, PagingRequest pagingRequest, SortRequest sortRequest) {
-        Page<SurveyListResponse> surveys = surveyService.getSurveys(memberId, new PageManager(pagingRequest, sortRequest).makePageRequest());
-        return Response.success(PagedResponse.from(surveys));
-    }
-
-    @Operation(summary = "설문 조회", description = "설문, 질문, 선택지가 함께 조회된다.")
+    @Operation(summary = "설문 조회", description = "답변을 하기 위해 설문을 조회한다.")
     @GetMapping("/{surveyId}")
     public Response<SurveyGetResponse> getSurvey(@JwtValidation Long memberId, @PathVariable Long surveyId) {
         SurveyGetResponse surveyGetResponse = surveyService.getSurvey(memberId, surveyId);
         return Response.success(surveyGetResponse);
     }
 
-    @Operation(summary = "설문 삭제")
-    @DeleteMapping("/{surveyId}")
-    public Response<Void> deleteSurvey(@JwtValidation Long memberId, @PathVariable Long surveyId) {
-        surveyService.deleteSurvey(memberId, surveyId);
-        return Response.success();
-    }
-
-    // ======== 응답
     @Operation(summary = "응답 등록", description = "학생들이 응답을 등록합니다. 학생 이상만 설문이 가능합니다. 응답 id가 반환됩니다.")
     @PostMapping("/{surveyId}/replies")
     public Response<Void> getSurveyReplys(

@@ -125,8 +125,11 @@ public class PostController {
 //            @ApiResponse(responseCode = "403", description = "댓글 불가 게시글입니다.", content = @Content)
 //    })
     public Response<Long> createComment(@PathVariable Long postId, @JwtValidation Long memberId,
-                                        @Valid @RequestBody CommentCreateRequest createRequest) {
-        Long commentId = commentService.createComment(postId, memberId, createRequest);
+                                        @Valid @ModelAttribute CommentCreateRequest createRequest,
+                                        BindingResult bindingResult,
+                                        @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+        if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
+        Long commentId = commentService.createComment(postId, memberId, createRequest, multipartFile);
         return Response.success(commentId);
     }
 

@@ -35,11 +35,22 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "content", length = 200, nullable = false)
     private String content;
 
+    @Column(length=100)
+    private String fileObjectKey;
+
     @Column(name = "deleted")
     private boolean deleted = false;  // 소프트 삭제 여부를 나타내는 필드
 
     public void updateContent(String content) {
         this.content = content;
+    }
+
+    public void updateFileObjectKey(String fileObjectKey) {
+        this.fileObjectKey = fileObjectKey;
+    }
+
+    public boolean hasFile() {
+        return !(fileObjectKey == null || fileObjectKey.isEmpty());
     }
 
 

@@ -18,8 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLDelete(sql = "UPDATE members SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted = false")
+//@SQLDelete(sql = "UPDATE members SET deleted = true WHERE id = ?") // 복잡한 로직 수정이 어려워 제거
+//@SQLRestriction("deleted = false")
 @Table(name = "members")
 public class Member extends BaseTimeEntity {
 
@@ -81,6 +81,10 @@ public class Member extends BaseTimeEntity {
 
     public void updatePassword(String newEncodedPassword){
         this.encodedPassword = newEncodedPassword;
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 
 }
