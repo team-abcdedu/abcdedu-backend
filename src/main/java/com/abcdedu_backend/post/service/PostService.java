@@ -15,6 +15,7 @@ import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import com.abcdedu_backend.post.dto.response.PostResponse;
 import com.abcdedu_backend.post.entity.Post;
 import com.abcdedu_backend.post.repository.PostReposiroty;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -219,12 +220,23 @@ public class PostService {
     // ====== DTO, Entity 변환 =======
     // 다건 조회
     private PostListResponse postToPostListResponse(Post post) {
+        String writer = "";
+        String email = "";
 
+        try {
+            Member member = post.getMember();
+            if (!member.isDeleted()) {
+                writer = member.getName();
+                email = member.getEmail();
+            }
+        } catch (EntityNotFoundException e){
+            writer = "익명";
+        }
         return PostListResponse.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
-                .writer(post.getMember().getName())
-                .writerEmail(post.getMember().getEmail())
+                .writer(writer)
+                .writerEmail(email)
                 .viewCount(post.getViewCount())
                 .commentCount(post.getCommentCount())
                 .createdAt(post.getCreatedAt())

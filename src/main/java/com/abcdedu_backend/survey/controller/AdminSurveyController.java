@@ -1,6 +1,4 @@
 package com.abcdedu_backend.survey.controller;
-
-
 import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.common.page.PageManager;
 import com.abcdedu_backend.common.page.request.PagingRequest;
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 public class AdminSurveyController {
 
     private final SurveyService surveyService;
-
 
     @Operation(summary = "설문 등록", description = "여러 개의 질문을 담을 설문을 등록한다.")
     @PostMapping
@@ -56,6 +53,4 @@ public class AdminSurveyController {
         surveyService.deleteSurvey(memberId, surveyId);
         return Response.success();
     }
-
-
 }

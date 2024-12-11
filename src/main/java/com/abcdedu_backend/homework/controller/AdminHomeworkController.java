@@ -1,5 +1,4 @@
 package com.abcdedu_backend.homework.controller;
-
 import com.abcdedu_backend.homework.dto.response.HomeworkRes;
 import com.abcdedu_backend.homework.service.HomeworkService;
 import com.abcdedu_backend.utils.Response;
@@ -25,5 +24,4 @@ public class AdminHomeworkController {
     public Response<List<HomeworkRes>> readList() {
         return Response.success(homeworkService.getHomeworks());
     }
-
 }
