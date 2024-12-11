@@ -103,6 +103,11 @@ public class CommentService {
     public void deleteComment(Long postId, Long commentId, Long memberId) {
         checkVaildation(commentId, memberId);
         postService.checkPost(postId).decrementCommentCount();
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.COMMENT_NOT_FOUND));
+        if (comment.hasFile()){
+            fileHandler.delete(comment.getFileObjectKey());
+        }
         commentRepository.deleteById(commentId);
     }
 
