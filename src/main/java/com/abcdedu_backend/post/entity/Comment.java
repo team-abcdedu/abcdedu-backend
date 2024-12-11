@@ -49,5 +49,9 @@ public class Comment extends BaseTimeEntity {
         this.fileObjectKey = fileObjectKey;
     }
 
+    public boolean hasFile() {
+        return !(fileObjectKey == null || fileObjectKey.isEmpty());
+    }
+
 
 }

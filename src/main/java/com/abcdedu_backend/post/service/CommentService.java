@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -82,7 +83,9 @@ public class CommentService {
                         .writerName(comment.getMember().getName())
                         .writerEmail(comment.getMember().getEmail())
                         .createdAt(comment.getCreatedAt())
-                        .fileUrl(fileHandler.getPresignedUrl(comment.getFileObjectKey()))
+                        .fileUrl(comment.hasFile()
+                                ? fileHandler.getPresignedUrl(comment.getFileObjectKey())
+                                : "")
                         .build());
     }
 
@@ -100,6 +103,11 @@ public class CommentService {
     public void deleteComment(Long postId, Long commentId, Long memberId) {
         checkVaildation(commentId, memberId);
         postService.checkPost(postId).decrementCommentCount();
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.COMMENT_NOT_FOUND));
+        if (comment.hasFile()){
+            fileHandler.delete(comment.getFileObjectKey());
+        }
         commentRepository.deleteById(commentId);
     }
 
