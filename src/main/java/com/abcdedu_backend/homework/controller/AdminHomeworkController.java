@@ -15,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/admin/homeworks/replies")
+@RequestMapping("/admin/homeworks")
 @RequiredArgsConstructor
 @Tag(name = "관리자 기능")
 public class AdminHomeworkController {
