@@ -1,5 +1,8 @@
 package com.abcdedu_backend.utils.exportable;
 
+
+import jakarta.servlet.http.HttpServletResponse;
+
 public interface Exportable {
     /**
      * file을 만들기 위해 준비하는 모든 행위 (엑셀로 치면 work북 생성 및 행, 열 설정)
@@ -9,7 +12,6 @@ public interface Exportable {
 
     /**
      * 실제로 파일을 다운할 수 있게 파일로 export
-     * @return 사용자가 다운 받을 file
      */
-    Object export();
+    void export(HttpServletResponse response);
 }

@@ -74,7 +74,10 @@ public enum ErrorCode {
     //email 에러
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 인증에 실패하였습니다."),
     CODE_MISMATCH(HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다."),
-    EMAIL_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일로 등록된 코드가 존재하지 않습니다.");
+    EMAIL_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일로 등록된 코드가 존재하지 않습니다."),
+
+    //export 에러
+    EXPORT_IO_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 추출하는데 실패하였습니다.");
 
 
     private HttpStatus status;
