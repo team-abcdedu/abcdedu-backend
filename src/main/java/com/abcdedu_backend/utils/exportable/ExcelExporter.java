@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,29 +16,35 @@ import java.util.List;
  * 엑셀 생성 작업
  *  : ExcelData에서 데이터를 받아 엑셀 워크북을 생성하고 반환한다.
  */
+@Component
 public class ExcelExporter implements Exportable {
 
-    private final ExcelData excelData;
-
-    public ExcelExporter(ExcelData excelData) {
-        this.excelData = excelData;
+    @Override
+    public void export(HttpServletResponse response, ExportDataProvider dataProvider) {
+        if (!(dataProvider instanceof ExcelData excelData)) {
+            throw new ApplicationException(ErrorCode.EXPORT_ILLEGAL_ERROR);
+        }
+        try (Workbook workbook = generateTool(excelData)) {
+            response.setContentType(excelData.getResponseContentType());
+            response.setHeader(excelData.getResponseHeaderName(), excelData.getResponseHeaderValue());
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            throw new ApplicationException(ErrorCode.EXPORT_IO_ERROR);
+        }
     }
 
-    @Override
-    public Workbook generateTool() {
+    private Workbook generateTool(final ExcelData excelData) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(excelData.getWorkbookName());
-        generateHeader(sheet);
-        generateRowData(sheet);
-
+        generateHeader(sheet, excelData);
+        generateRowData(sheet, excelData);
         return workbook;
     }
-
 
     /**
      * Sheet 헤더 생성
      */
-    private void generateHeader(Sheet sheet) {
+    private void generateHeader(Sheet sheet, final ExcelData excelData) {
         Row headerRow = sheet.createRow(0);
         List<String> headerNames = excelData.getHeaderName();
         for (int i = 0; i < headerNames.size(); i++) {
@@ -49,7 +56,7 @@ public class ExcelExporter implements Exportable {
     /**
      * Sheet 행 생성
      */
-    private void generateRowData(Sheet sheet) {
+    private void generateRowData(Sheet sheet, final ExcelData excelData) {
         List<List<Object>> rowData = excelData.getRowData();
         for (int rowIndex = 0; rowIndex < rowData.size(); rowIndex++) {
             Row row = sheet.createRow(rowIndex + 1);
@@ -57,18 +64,6 @@ public class ExcelExporter implements Exportable {
             for (int colIndex = 0; colIndex < rowValues.size(); colIndex++) {
                 row.createCell(colIndex).setCellValue(String.valueOf(rowValues.get(colIndex)));
             }
-        }
-    }
-
-
-    @Override
-    public void export(HttpServletResponse response) {
-        try (Workbook workbook = generateTool()) {
-            response.setContentType(excelData.getResponseContentType());
-            response.setHeader(excelData.getResponseHeaderName(), excelData.getResponseHeaderValue());
-            workbook.write(response.getOutputStream());
-        } catch (IOException e) {
-           throw new ApplicationException(ErrorCode.EXPORT_IO_ERROR);
         }
     }
 

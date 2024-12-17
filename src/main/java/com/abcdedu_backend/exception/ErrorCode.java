@@ -77,7 +77,8 @@ public enum ErrorCode {
     EMAIL_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일로 등록된 코드가 존재하지 않습니다."),
 
     //export 에러
-    EXPORT_IO_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 추출하는데 실패하였습니다.");
+    EXPORT_IO_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 추출하는데 실패하였습니다."),
+    EXPORT_ILLEGAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "추출할 파일 형식과 맞지 않은 타입의 데이터가 입력되었습니다.");
 
 
     private HttpStatus status;

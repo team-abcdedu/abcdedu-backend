@@ -7,7 +7,7 @@ import com.abcdedu_backend.homework.entity.HomeworkReply;
 import com.abcdedu_backend.homework.repository.HomeworkReplyRepository;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.utils.exportable.ExcelData;
-import com.abcdedu_backend.utils.exportable.ExcelExporter;
+import com.abcdedu_backend.utils.exportable.Exportable;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class HomeworkReplyService {
 
     private final HomeworkReplyRepository replyRepository;
+    private final Exportable exportable;
 
     public void exportRepliesByMember(HomeworkReplyReadReq req, HttpServletResponse response, Homework homework)  {
         // 데이터 조회
@@ -61,12 +62,8 @@ public class HomeworkReplyService {
             rowData.add(row);
         }
 
-        // ExcelData 생성
         ExcelData excelData = new ExcelData("homework_replies", headerNames, rowData);
-
-        // ExcelExporter를 이용해 엑셀 생성 및 응답
-        ExcelExporter excelExporter = new ExcelExporter(excelData);
-        excelExporter.export(response);
+        exportable.export(response, excelData);
     }
 
 }
