@@ -64,8 +64,8 @@ public class ExcelExporter implements Exportable {
     @Override
     public void export(HttpServletResponse response) {
         try (Workbook workbook = generateTool()) {
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment;filename=" + excelData.getWorkbookName() + ".xlsx");
+            response.setContentType(excelData.getResponseContentType());
+            response.setHeader(excelData.getResponseHeaderName(), excelData.getResponseHeaderValue());
             workbook.write(response.getOutputStream());
         } catch (IOException e) {
            throw new ApplicationException(ErrorCode.EXPORT_IO_ERROR);

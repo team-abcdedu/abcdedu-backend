@@ -13,4 +13,10 @@ public class ExcelData implements ExportDataProvider {
 
     private final List<List<Object>> rowData;
 
+    private final String responseContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    private final String responseHeaderName = "Content-Disposition";
+
+    public String getResponseHeaderValue() {
+        return "attachment;filename=" + workbookName + ".xlsx";
+    }
 }
