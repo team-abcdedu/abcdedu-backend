@@ -17,6 +17,8 @@ import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,14 +48,10 @@ public class HomeworkService {
         saveReplies(homeworkReplies);
     }
 
-    public List<HomeworkRes> getHomeworks() {
-        List<Homework> homeworks = homeworkRepository.findAll();
-        return homeworks.stream().map(homework -> HomeworkRes.builder()
-                        .id(homework.getId())
-                        .title(homework.getTitle())
-                        .updatedDate(homework.getUpdatedAt())
-                        .writer(homework.getMember().getName()).build())
-                .toList();
+    public Page<HomeworkRes> getHomeworks(Pageable pageable) {
+        Page<Homework> homeworks = homeworkRepository.findAll(pageable);
+        log.info("homework repository에서 Page로 데이터 불러오기 성공");
+        return homeworks.map(HomeworkRes::fromHomework);
     }
 
     public Homework checkHomework(Long homeworkId) {
@@ -63,12 +61,7 @@ public class HomeworkService {
     public List<HomeworkQuestion> checkQeustionsByHomework(Homework homework) {
         return questionRepository.findAllByHomework(homework);
     }
-
-    public List<HomeworkReply> checkRepliesByHomework(Homework homework) {
-        return replyRepository.findAllByHomework(homework);
-    }
-
-
+    
     public Member checkPermission(Long memberId, MemberRole memberRole) {
         Member member = memberService.checkMember(memberId);
         if (memberRole == MemberRole.STUDENT) {
