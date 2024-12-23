@@ -4,6 +4,7 @@ import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.homework.dto.response.HomeworkGetRes;
 import com.abcdedu_backend.homework.dto.request.HomeworkReplyCreateReq;
 import com.abcdedu_backend.homework.service.HomeworkService;
+import com.abcdedu_backend.homework.service.ReadRepresentativeService;
 import com.abcdedu_backend.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,11 +23,13 @@ import java.util.List;
 public class HomeworkController {
 
     private final HomeworkService homeworkService;
+    private final ReadRepresentativeService readRepresentativeService;
 
     @Operation(summary = "공통 과제 상세 조회", description = "응답을 하기 위해 문제 내용이 조회된다.")
-    @GetMapping("/{homeworkId}")
-    public Response<HomeworkGetRes> getHomework(@JwtValidation Long memberId, @PathVariable Long homeworkId) {
-        HomeworkGetRes res = homeworkService.getHomework(memberId, homeworkId);
+    @GetMapping
+    public Response<HomeworkGetRes> getHomework(@JwtValidation Long memberId) {
+        Long representativeHomeworkId = readRepresentativeService.readRepresentativeHomework();
+        HomeworkGetRes res = homeworkService.getHomework(memberId, representativeHomeworkId);
         return Response.success(res);
     }
 
