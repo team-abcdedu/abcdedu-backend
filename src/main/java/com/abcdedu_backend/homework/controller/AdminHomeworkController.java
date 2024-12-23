@@ -28,9 +28,9 @@ public class AdminHomeworkController {
     private final HomeworkAdminService homeworkAdminService;
 
     @Operation(summary = "대표 공통과제 등록", description = "메인에 과제로 띄울 대표 버전을 선택한다.")
-    @PostMapping("/representative/{homeworkId}")
+    @PostMapping("/representative")
     public Response<Void> registerRepresentative(@Valid @RequestBody RepresentativeRegisterRequest request) {
-        // homeworkAdminService.registerAsRepresentative(request);
+        homeworkAdminService.registerAsRepresentative(request);
         return Response.success();
     }
 

@@ -26,5 +26,13 @@ public class HomeworkRepresentative extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member registrant; // 대표 공통과제로 등록한 관리자
+
+    public static HomeworkRepresentative of(Homework homework, Member member) {
+        return HomeworkRepresentative.builder()
+                .homework(homework)
+                .registrant(member)
+                .build();
+
+    }
 }
 
