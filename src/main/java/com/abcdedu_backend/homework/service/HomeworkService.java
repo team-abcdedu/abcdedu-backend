@@ -92,6 +92,7 @@ public class HomeworkService {
 
     private HomeworkGetRes homeworkToHomeworkGetRes(Homework homework) {
         return HomeworkGetRes.builder()
+                .homeworkId(homework.getId())
                 .title(homework.getTitle())
                 .description(homework.getDescription())
                 .additionalDescription(homework.getAdditionalDescription())
