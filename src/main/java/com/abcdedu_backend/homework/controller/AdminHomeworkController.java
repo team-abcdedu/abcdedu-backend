@@ -43,7 +43,7 @@ public class AdminHomeworkController {
         return Response.success(PagedResponse.from(homeworks));
     }
 
-    @Operation(summary = "공통 과제 상세 조회", description = "과제, 질문이 함께 조회된다.")
+    @Operation(summary = "공통 과제 상세 조회", description = "개발중입니다. 아직 사용할 수 없습니다. 과제, 질문이 함께 조회된다.")
     @GetMapping("/{homeworkId}")
     public Response<Void> getHomework(@PathVariable Long homeworkId) {
         return Response.success();
@@ -61,7 +61,7 @@ public class AdminHomeworkController {
         return Response.success();
     }
 
-    @Operation(summary = "공통 과제 삭제")
+    @Operation(summary = "공통 과제 삭제", description = "개발중입니다. 아직 사용할 수 없습니다.")
     @DeleteMapping("/{homeworkId}")
     public Response<Void> deleteSurvey(@PathVariable Long homeworkId) {
         return Response.success();
