@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,17 +25,24 @@ public class HomeworkAdminService {
     private final HomeworkRepository homeworkRepository;
     private final HomeworkRepresentativeRepository representativeRepository;
     private final MemberRepository memberRepository;
+    private final ReadRepresentativeService representativeService;
 
     public Page<HomeworkRes> getHomeworks(Pageable pageable) {
+        Long representativeHomeworkId = representativeService.readRepresentativeHomework();
+
         Page<Homework> homeworks = homeworkRepository.findAll(pageable);
-        log.info("homework repository에서 Page로 데이터 불러오기 성공");
-        return homeworks.map(HomeworkRes::fromHomework);
+        return homeworks.map(homework ->
+                HomeworkRes.fromHomework(
+                        homework,
+                        homework.getId().equals(representativeHomeworkId)
+                )
+        );
     }
 
     @Transactional
-    public void registerAsRepresentative(Long registerId, RepresentativeRegisterRequest request) {
+    public void registerAsRepresentative(Long registrantId, RepresentativeRegisterRequest request) {
         Homework homework = checkHomework(request.homeworkId());
-        Member member = checkMember(registerId);
+        Member member = checkMember(registrantId);
         try {
             representativeRepository.save(HomeworkRepresentative.of(homework, member));
         } catch (Exception e) {
