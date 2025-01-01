@@ -1,4 +1,5 @@
 package com.abcdedu_backend.homework.controller;
+import com.abcdedu_backend.common.jwt.JwtValidation;
 import com.abcdedu_backend.common.page.PageManager;
 import com.abcdedu_backend.common.page.request.PagingRequest;
 import com.abcdedu_backend.common.page.request.SortRequest;
@@ -29,8 +30,8 @@ public class AdminHomeworkController {
 
     @Operation(summary = "대표 공통과제 등록", description = "메인에 과제로 띄울 대표 버전을 선택한다.")
     @PostMapping("/representative")
-    public Response<Void> registerRepresentative(@Valid @RequestBody RepresentativeRegisterRequest request) {
-        homeworkAdminService.registerAsRepresentative(request);
+    public Response<Void> registerRepresentative(@JwtValidation Long registerId, @Valid @RequestBody RepresentativeRegisterRequest request) {
+        homeworkAdminService.registerAsRepresentative(registerId, request);
         return Response.success();
     }
 

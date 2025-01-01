@@ -32,9 +32,9 @@ public class HomeworkAdminService {
     }
 
     @Transactional
-    public void registerAsRepresentative(RepresentativeRegisterRequest request) {
+    public void registerAsRepresentative(Long registerId, RepresentativeRegisterRequest request) {
         Homework homework = checkHomework(request.homeworkId());
-        Member member = checkMember(request.memberId());
+        Member member = checkMember(registerId);
         try {
             representativeRepository.save(HomeworkRepresentative.of(homework, member));
         } catch (Exception e) {
