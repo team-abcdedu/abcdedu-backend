@@ -43,7 +43,7 @@ class AdminHomeworkControllerTest {
     @Test
     void 대표과제_요청양식에_맞게_요청하고_성공하기() throws Exception {
         //given
-        RepresentativeRegisterRequest request = new RepresentativeRegisterRequest(1L, 1L);
+        RepresentativeRegisterRequest request = new RepresentativeRegisterRequest(1L);
         // when & then
         mockMvc.perform(
                 post("/admin/homeworks/representative")
