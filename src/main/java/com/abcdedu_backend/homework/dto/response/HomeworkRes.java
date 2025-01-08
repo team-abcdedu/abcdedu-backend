@@ -11,14 +11,16 @@ public record HomeworkRes(
        Long id,
        String title,
        LocalDateTime updatedDate,
-       String writer
+       String writer,
+       boolean isRepresentative // 대표 과제 여부
 ) {
 
-    public static HomeworkRes fromHomework(Homework h) {
+    public static HomeworkRes fromHomework(Homework h, boolean isRepresentative) {
         return new HomeworkRes(
                 h.getId(),
                 h.getTitle(),
                 h.getUpdatedAt(),
-                h.getMember().getName());
+                h.getMember().getName(),
+                isRepresentative);
     }
 }

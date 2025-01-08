@@ -5,7 +5,6 @@ import com.abcdedu_backend.exception.ErrorCode;
 import com.abcdedu_backend.homework.dto.response.HomeworkGetRes;
 import com.abcdedu_backend.homework.dto.response.HomeworkQuestionGetRes;
 import com.abcdedu_backend.homework.dto.request.HomeworkReplyCreateReq;
-import com.abcdedu_backend.homework.dto.response.HomeworkRes;
 import com.abcdedu_backend.homework.entity.Homework;
 import com.abcdedu_backend.homework.entity.HomeworkQuestion;
 import com.abcdedu_backend.homework.entity.HomeworkReply;
@@ -17,8 +16,6 @@ import com.abcdedu_backend.member.entity.MemberRole;
 import com.abcdedu_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,12 +43,6 @@ public class HomeworkService {
         List<HomeworkQuestion> questions = checkQeustionsByHomework(homework);
         List<HomeworkReply> homeworkReplies = makeHomeworkReply(homework, questions, replyRequests, member);
         saveReplies(homeworkReplies);
-    }
-
-    public Page<HomeworkRes> getHomeworks(Pageable pageable) {
-        Page<Homework> homeworks = homeworkRepository.findAll(pageable);
-        log.info("homework repository에서 Page로 데이터 불러오기 성공");
-        return homeworks.map(HomeworkRes::fromHomework);
     }
 
     public Homework checkHomework(Long homeworkId) {
@@ -101,6 +92,7 @@ public class HomeworkService {
 
     private HomeworkGetRes homeworkToHomeworkGetRes(Homework homework) {
         return HomeworkGetRes.builder()
+                .homeworkId(homework.getId())
                 .title(homework.getTitle())
                 .description(homework.getDescription())
                 .additionalDescription(homework.getAdditionalDescription())
