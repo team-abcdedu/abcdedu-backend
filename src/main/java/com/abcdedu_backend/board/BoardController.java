@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,15 +35,21 @@ import java.util.List;
         @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리입니다.", content = @Content),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content)
 })
+@Slf4j
 public class BoardController {
 
     private final BoardService boardService;
     private final PostService postService;
 
     @Operation(summary = "게시판 카테고리 추가", description = "카테고리를 추가합니다. 관리자 이상만 가능합니다.")
-    @PostMapping("/")
+    @PostMapping
     public Response<Long> addBoard(@Valid @RequestBody BoardCreateRequest req, @JwtValidation Long memberId) {
         return Response.success(boardService.addBoard(req, memberId));
+    }
+    @Operation(summary = "모든 게시판 카테고리 조회", description = "카테고리를 모두 조회합니다.")
+    @GetMapping
+    public Response<List<BoardResponse>> findAllBoard() {
+        return Response.success(boardService.findAllBoard());
     }
 
     @Operation(summary = "게시판 카테고리 삭제", description = "카테고리를 삭제합니다. 관리자 이상만 가능합니다.")
@@ -52,25 +59,11 @@ public class BoardController {
         return Response.success();
     }
 
-    @Operation(summary = "모든 게시판 카테고리 조회", description = "카테고리를 모두 조회합니다.")
-    @GetMapping("/")
-    public Response<List<BoardResponse>> findAllBoard() {
-        return Response.success(boardService.findAllBoard());
-    }
-
-
-    @Deprecated
-    @GetMapping("v1/{boardId}/posts")
-    @Operation(summary = "카테고리별 게시글 목록", description = "해당 기능은 V2 로 대체됩니다.")
-    public Response<PagedResponse<PostListResponse>> getPostList(@PathVariable Long boardId, PagingRequest pagingRequest, SortRequest sortRequest) {
-        Page<PostListResponse> allPosts = postService.getPosts(boardId, new PageManager(pagingRequest, sortRequest).makePageRequest());
-        return Response.success(PagedResponse.from(allPosts));
-    }
-
     @GetMapping("/{boardName}/posts")
-    @Operation(summary = "카테고리별 게시글 목록V2", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다." +
+    @Operation(summary = "카테고리별 게시글 목록", description = "게시글 목록을 카테고리별로 조회합니다. 로그인 안 한 사람도 볼 수 있습니다." +
             "boardName은 대소문자 상관 없이 이름만 맞으면 조회 가능합니다.")
     public Response<PagedResponse<PostListResponse>> getPostListV2(@PathVariable String boardName, PagingRequest pagingRequest, SortRequest sortRequest) {
+        log.info("[GET] /{}/posts", boardName);
         Page<PostListResponse> allPosts = postService.getPostsV2(boardName, new PageManager(pagingRequest, sortRequest).makePageRequest());
         return Response.success(PagedResponse.from(allPosts));
     }
