@@ -9,8 +9,7 @@ import com.abcdedu_backend.homework.entity.HomeworkQuestion;
 import com.abcdedu_backend.homework.repository.HomeworkReplyRepository;
 import com.abcdedu_backend.member.entity.Member;
 import com.abcdedu_backend.utils.exportable.ExcelData;
-import com.abcdedu_backend.utils.exportable.Exportable;
-import jakarta.servlet.http.HttpServletResponse;
+import com.abcdedu_backend.utils.exportable.ExportDataProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -25,9 +24,8 @@ import java.util.stream.Collectors;
 public class HomeworkReplyService {
 
     private final HomeworkReplyRepository replyRepository;
-    private final Exportable exportable;
 
-    public void exportRepliesByMember(HomeworkReplyReadReq req, HttpServletResponse response, Homework homework) {
+    public ExportDataProvider exportRepliesByMember(HomeworkReplyReadReq req, Homework homework) {
         List<ReplyWithMemberResponse> replies = new ArrayList<>();
         try {
             replies = replyRepository.findRepliesByHomeworkAndCreatedAtBetween(homework, req.fromDate(), req.toDate());
@@ -41,8 +39,7 @@ public class HomeworkReplyService {
                 .distinct()
                 .toList();
 
-        ExcelData excelData = new ExcelData("homework_replies", generateHeader(questions), generateRow(replies, questions));
-        exportable.export(response, excelData);
+        return new ExcelData("homework_replies", generateHeader(questions), generateRow(replies, questions));
     }
 
     private List<String> generateHeader(List<HomeworkQuestion> questions) {
