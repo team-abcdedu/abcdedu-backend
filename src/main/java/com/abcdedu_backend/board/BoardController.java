@@ -40,7 +40,7 @@ public class BoardController {
     private final PostService postService;
 
     @Operation(summary = "게시판 카테고리 추가", description = "카테고리를 추가합니다. 관리자 이상만 가능합니다.")
-    @PostMapping()
+    @PostMapping
     public Response<Long> addBoard(@Valid @RequestBody BoardCreateRequest req, @JwtValidation Long memberId) {
         return Response.success(boardService.addBoard(req, memberId));
     }
@@ -53,7 +53,7 @@ public class BoardController {
     }
 
     @Operation(summary = "모든 게시판 카테고리 조회", description = "카테고리를 모두 조회합니다.")
-    @GetMapping()
+    @GetMapping
     public Response<List<BoardResponse>> findAllBoard() {
         return Response.success(boardService.findAllBoard());
     }

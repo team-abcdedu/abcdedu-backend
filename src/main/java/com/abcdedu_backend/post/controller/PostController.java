@@ -16,7 +16,6 @@ import com.abcdedu_backend.post.dto.response.CommentResponse;
 import com.abcdedu_backend.post.dto.response.PostResponse;
 import com.abcdedu_backend.post.service.PostService;
 import com.abcdedu_backend.utils.Response;
-import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -53,7 +52,7 @@ public class PostController {
         return Response.success(postService.getPost(postId, memberId));
     }
 
-    @PostMapping()
+    @PostMapping
     @Operation(summary = "게시글 생성", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다." +
             "자료실 카테고리에선 게시글 작성이 관리자등급 이상에게만 허용됩니다. ")
     public Response<Long> createPostV2(@Valid @ModelAttribute PostCreateRequestV2 req,
