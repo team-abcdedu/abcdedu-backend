@@ -16,7 +16,6 @@ import com.abcdedu_backend.post.dto.response.CommentResponse;
 import com.abcdedu_backend.post.dto.response.PostResponse;
 import com.abcdedu_backend.post.service.PostService;
 import com.abcdedu_backend.utils.Response;
-import com.abcdedu_backend.post.dto.request.PostCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,29 +47,13 @@ public class PostController {
 
     @GetMapping("/{postId}")
     @Operation(summary = "특정 게시글 조회", description = "특정 게시글을 조회합니다. 비밀글은 관리자와 글쓴이만 볼 수 있습니다.")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
-//            @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
-//    })
     public Response<PostResponse> readPost(@Valid @PathVariable Long postId,
                                            @JwtValidation Long memberId) {
         return Response.success(postService.getPost(postId, memberId));
     }
 
-    @Deprecated
-    @PostMapping("/v1")
+    @PostMapping
     @Operation(summary = "게시글 생성", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다." +
-            "게시글 생성V2 으로 업그레이드")
-    public Response<Long> createPost(@Valid @ModelAttribute PostCreateRequest req,
-                                     BindingResult bindingResult,
-                                     @RequestPart(value = "file", required = false) MultipartFile multipartFile,
-                                     @JwtValidation Long memberId) {
-        if (bindingResult.hasErrors()) throw new ApplicationException(ErrorCode.INVALID_REQUEST);
-        return Response.success(postService.createPost(req, memberId, multipartFile));
-    }
-
-    @PostMapping()
-    @Operation(summary = "게시글 생성V2", description = "게시글을 작성합니다. 역할이 학생이상이여야만 작성이 가능합니다." +
             "자료실 카테고리에선 게시글 작성이 관리자등급 이상에게만 허용됩니다. ")
     public Response<Long> createPostV2(@Valid @ModelAttribute PostCreateRequestV2 req,
                                      BindingResult bindingResult,
@@ -94,12 +77,6 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "게시글을 수정합니다..")
-    /*
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "해당 포스트가 없습니다.", content = @Content),
-            @ApiResponse(responseCode = "403", description = "본인과 관리자만 가능한 기능입니다.", content = @Content),
-    })
-     */
     public Response<Long> updatePost(@PathVariable Long postId,
                                      @Valid @ModelAttribute PostUpdateRequest postUpdateRequest,
                                      BindingResult bindingResult,
